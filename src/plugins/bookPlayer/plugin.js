@@ -18,7 +18,7 @@ import Events from '../../utils/events.ts';
 import 'material-design-icons-iconfont';
 import '../../elements/emby-button/paper-icon-button-light';
 
-import html from './template.html';
+import html from './template';
 import './style.scss';
 
 const THEMES = {

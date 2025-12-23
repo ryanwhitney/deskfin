@@ -25,11 +25,7 @@ type Command = {
 };
 
 const t = (key: string, fallback: string) => {
-    try {
-        return globalize.translate(key);
-    } catch {
-        return fallback;
-    }
+    return globalize.tryTranslate?.(key) ?? fallback;
 };
 
 export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({ item, queryKey }) => {

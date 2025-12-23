@@ -1,4 +1,4 @@
-<div class="topButtons">
+export default `<div class="topButtons">
     <button is="paper-icon-button-light" id="btnBookplayerToc" class="autoSize bookplayerButton hide-mouse-idle-tv" tabindex="-1">
         <span class="material-icons bookplayerButtonIcon toc" aria-hidden="true"></span>
     </button>
@@ -26,3 +26,6 @@
 </div>
 
 <div id="bookPlayerContainer" class="bookPlayerContainer"></div>
+`;
+
+

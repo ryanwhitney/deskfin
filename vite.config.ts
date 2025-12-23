@@ -33,7 +33,14 @@ const Assets = [
     'libpgs/dist/libpgs.worker.js'
 ];
 
-const THEMES = fg.globSync('themes/**/*.scss', { cwd: path.resolve(__dirname, 'src') });
+const THEME_ENTRIES = fg.globSync('themes/*/theme.scss', { cwd: path.resolve(__dirname, 'src') });
+const THEME_INPUTS = Object.fromEntries(
+    THEME_ENTRIES.map((rel) => {
+        const name = rel.replace(/\.scss$/, ''); // e.g. themes/dark/theme -> themes/dark/theme.css
+        const abs = path.resolve(__dirname, 'src', rel);
+        return [name, abs];
+    })
+);
 
 export default defineConfig({
     assetsInclude: ['**/controllers/**/*.html', '**/apps/**/*.html'],
@@ -80,7 +87,8 @@ export default defineConfig({
         assetsDir: '.',
         rollupOptions: {
             input: {
-                main: path.resolve(__dirname, 'src/index.html')
+                main: path.resolve(__dirname, 'src/index.html'),
+                ...THEME_INPUTS
             },
             output: {
                 entryFileNames: (chunkInfo) => {

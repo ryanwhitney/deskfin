@@ -235,6 +235,27 @@ function translateKeyFromModule(key, module) {
     return key;
 }
 
+export function tryTranslate(key) {
+    const parts = key.split('#');
+    let module;
+    if (parts.length > 1) {
+        module = parts[0];
+        key = parts[1];
+    }
+
+    let dictionary = getDictionary(module, getCurrentLocale());
+    if (dictionary?.[key]) {
+        return dictionary[key];
+    }
+
+    dictionary = getDictionary(module, FALLBACK_CULTURE);
+    if (dictionary?.[key]) {
+        return dictionary[key];
+    }
+
+    return undefined;
+}
+
 export function translate(key) {
     let val = translateKey(key);
     for (let i = 1; i < arguments.length; i++) {
@@ -289,6 +310,7 @@ Events.on(userSettings, 'change', function (e, name) {
 
 export default {
     translate,
+    tryTranslate,
     translateHtml,
     loadStrings,
     defaultModule,

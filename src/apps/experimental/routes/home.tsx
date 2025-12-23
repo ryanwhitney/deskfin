@@ -31,11 +31,7 @@ import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base
 import './home.modern.scss';
 
 const t = (key: string, fallback: string) => {
-    try {
-        return globalize.translate(key);
-    } catch {
-        return fallback;
-    }
+    return globalize.tryTranslate?.(key) ?? fallback;
 };
 
 const buildPrimaryImageUrl = (item: { Id?: string | null; ImageTags?: Record<string, string> | null; PrimaryImageTag?: string | null }, maxWidth = 420) => {
