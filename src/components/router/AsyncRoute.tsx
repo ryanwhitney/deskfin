@@ -17,11 +17,11 @@ export interface AsyncRoute {
 const importRoute = (page: string, type: AppType) => {
     switch (type) {
         case AppType.Dashboard:
-            return import(/* webpackChunkName: "[request]" */ `../../apps/dashboard/routes/${page}`);
+            return import(/* @vite-ignore */ `../../apps/dashboard/routes/${page}`);
         case AppType.Experimental:
-            return import(/* webpackChunkName: "[request]" */ `../../apps/experimental/routes/${page}`);
+            return import(/* @vite-ignore */ `../../apps/experimental/routes/${page}`);
         case AppType.Stable:
-            return import(/* webpackChunkName: "[request]" */ `../../apps/stable/routes/${page}`);
+            return import(/* @vite-ignore */ `../../apps/stable/routes/${page}`);
     }
 };
 

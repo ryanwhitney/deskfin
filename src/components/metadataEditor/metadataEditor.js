@@ -21,7 +21,7 @@ import '../../styles/flexstyles.scss';
 import './style.scss';
 import toast from '../toast/toast';
 import { appRouter } from '../router/appRouter';
-import template from './metadataEditor.template.html';
+import template from './metadataEditor.template.js';
 import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
 import { SeriesStatus } from '@jellyfin/sdk/lib/generated-client/models/series-status';
 

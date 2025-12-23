@@ -33,31 +33,22 @@ interface ViewOptions {
     }
 }
 
-const importController = (
+const importController = async (
     appType: AppType,
     controller: string,
     view: string
 ) => {
-    switch (appType) {
-        case AppType.Dashboard:
-            return Promise.all([
-                import(/* webpackChunkName: "[request]" */ `../../apps/dashboard/controllers/${controller}`),
-                import(/* webpackChunkName: "[request]" */ `../../apps/dashboard/controllers/${view}`)
-                    .then(html => globalize.translateHtml(html))
-            ]);
-        case AppType.Wizard:
-            return Promise.all([
-                import(/* webpackChunkName: "[request]" */ `../../apps/wizard/controllers/${controller}`),
-                import(/* webpackChunkName: "[request]" */ `../../apps/wizard/controllers/${view}`)
-                    .then(html => globalize.translateHtml(html))
-            ]);
-        default:
-            return Promise.all([
-                import(/* webpackChunkName: "[request]" */ `../../controllers/${controller}`),
-                import(/* webpackChunkName: "[request]" */ `../../controllers/${view}`)
-                    .then(html => globalize.translateHtml(html))
-            ]);
-    }
+    const basePath = appType === AppType.Dashboard 
+        ? '/src/apps/dashboard/controllers'
+        : appType === AppType.Wizard
+        ? '/src/apps/wizard/controllers'
+        : '/src/controllers';
+    
+    const controllerFactory = await import(/* @vite-ignore */ `${basePath}/${controller}`);
+    const response = await fetch(`${basePath}/${view}`);
+    const viewHtml = await response.text();
+    
+    return [controllerFactory, globalize.translateHtml(viewHtml)];
 };
 
 const loadView = async (

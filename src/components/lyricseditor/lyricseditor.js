@@ -18,8 +18,8 @@ import './lyricseditor.scss';
 import '../../elements/emby-button/emby-button';
 import '../../styles/flexstyles.scss';
 import toast from '../toast/toast';
-import template from './lyricseditor.template.html';
-import templatePreview from './lyricspreview.template.html';
+import template from './lyricseditor.template.js';
+import templatePreview from './lyricspreview.template.js';
 import { deleteLyrics } from '../../scripts/deleteHelper';
 
 let currentItem;

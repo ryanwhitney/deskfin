@@ -17,7 +17,7 @@ import '../listview/listview.scss';
 import '../../elements/emby-select/emby-select';
 import '../../elements/emby-checkbox/emby-checkbox';
 import toast from '../toast/toast';
-import template from './homeScreenSettings.template.html';
+import template from './homeScreenSettings.template.js';
 import { LibraryTab } from '../../types/libraryTab.ts';
 
 const numConfigurableSections = 10;

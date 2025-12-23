@@ -9,7 +9,7 @@ import scrollHelper from '../../scripts/scrollHelper';
 import layoutManager from '../layoutManager';
 import globalize from 'lib/globalize';
 import { ServerConnections } from 'lib/jellyfin-apiclient';
-import template from './lyricsuploader.template.html';
+import template from './lyricsuploader.template.js';
 import toast from '../toast/toast';
 import '../../elements/emby-button/emby-button';
 import '../../elements/emby-select/emby-select';

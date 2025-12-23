@@ -7,7 +7,7 @@ import Events from '../../utils/events.ts';
 import '../../elements/emby-checkbox/emby-checkbox';
 import '../../elements/emby-collapse/emby-collapse';
 import './style.scss';
-import template from './filterdialog.template.html';
+import template from './filterdialog.template.js';
 import { stopMultiSelect } from '../../components/multiSelect/multiSelect';
 
 function merge(resultItems, queryItems, delimiter) {

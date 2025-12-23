@@ -195,7 +195,7 @@ function loadTranslation(translations, lang) {
 
         const url = filtered[0].path;
 
-        import(/* webpackChunkName: "[request]" */ `../../strings/${url}`).then((fileContent) => {
+        import(/* @vite-ignore */ `../../strings/${url}`).then((fileContent) => {
             resolve(fileContent);
         }).catch(() => {
             resolve({});

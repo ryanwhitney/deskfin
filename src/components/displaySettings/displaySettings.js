@@ -18,7 +18,7 @@ import '../../elements/emby-checkbox/emby-checkbox';
 import '../../elements/emby-button/emby-button';
 import '../../elements/emby-textarea/emby-textarea';
 import toast from '../toast/toast';
-import template from './displaySettings.template.html';
+import template from './displaySettings.template.js';
 
 function fillThemes(select, selectedTheme) {
     skinManager.getThemes().then(themes => {

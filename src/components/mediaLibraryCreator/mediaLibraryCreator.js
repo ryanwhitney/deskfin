@@ -21,7 +21,7 @@ import '../../styles/flexstyles.scss';
 import './style.scss';
 import toast from '../toast/toast';
 import alert from '../alert';
-import template from './mediaLibraryCreator.template.html';
+import template from './mediaLibraryCreator.template.js';
 
 function onAddLibrary(e) {
     e.preventDefault();
