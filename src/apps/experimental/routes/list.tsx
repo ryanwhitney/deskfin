@@ -4,6 +4,7 @@ import { Navigate, useSearchParams } from 'react-router-dom';
 
 import Page from 'components/Page';
 import globalize from 'lib/globalize';
+import { ServerConnections } from 'lib/jellyfin-apiclient';
 import { useItem } from 'hooks/useItem';
 
 /**
@@ -29,7 +30,7 @@ export default function ListRoute() {
     if (isLoading) {
         return (
             <Page id='listPage' className='mainAnimatedPage libraryPage'>
-                <div className='padded-left padded-right padded-top'>Loading…</div>
+                <div className='padded-left padded-right padded-top'></div>
             </Page>
         );
     }
@@ -57,7 +58,9 @@ export default function ListRoute() {
 
     // Unknown / legacy library type: fall back to the legacy list ViewManager route.
     // (We can add a generic React "folder browser" later once we inventory remaining collection types.)
-    return <Navigate replace to={`/legacylist?parentId=${parentId}`} />;
+    const serverId = ServerConnections.currentApiClient()?.serverId();
+    const serverIdParam = serverId ? `&serverId=${encodeURIComponent(serverId)}` : '';
+    return <Navigate replace to={`/legacylist?parentId=${encodeURIComponent(parentId)}${serverIdParam}`} />;
 }
 
 

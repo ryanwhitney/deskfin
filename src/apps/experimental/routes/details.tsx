@@ -156,7 +156,7 @@ export default function DetailsPage() {
     if (isLoading) {
         return (
             <Page id='detailsPage' className='detailsPage' isBackButtonEnabled>
-                <div className='detailsContainer'>Loading…</div>
+                <div className='detailsContainer'></div>
             </Page>
         );
     }

@@ -16,9 +16,20 @@ import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collec
 import { ItemSortBy } from '@jellyfin/sdk/lib/generated-client/models/item-sort-by';
 import { stopMultiSelect } from 'components/multiSelect/multiSelect';
 
+function getApiClientFromParams(params) {
+    if (params?.serverId) {
+        return ServerConnections.getApiClient(params.serverId);
+    }
+    return ServerConnections.currentApiClient();
+}
+
 function getInitialLiveTvQuery(instance, params, startIndex = 0, limit = 300) {
+    const apiClient = getApiClientFromParams(params);
+    if (!apiClient) {
+        throw new Error('ApiClient is not available');
+    }
     const query = {
-        UserId: ServerConnections.getApiClient(params.serverId).getCurrentUserId(),
+        UserId: apiClient.getCurrentUserId(),
         StartIndex: startIndex,
         Fields: 'ChannelInfo,PrimaryImageAspectRatio',
         Limit: limit
@@ -237,7 +248,10 @@ function updateAlphaPickerState(instance) {
 }
 
 function getItems(instance, params, item, sortBy, startIndex, limit) {
-    const apiClient = ServerConnections.getApiClient(params.serverId);
+    const apiClient = getApiClientFromParams(params);
+    if (!apiClient) {
+        return Promise.resolve({ Items: [], TotalRecordCount: 0 });
+    }
 
     instance.queryRecursive = false;
     if (params.type === 'Recordings') {
@@ -346,7 +360,10 @@ function getItem(params) {
         return Promise.resolve(null);
     }
 
-    const apiClient = ServerConnections.getApiClient(params.serverId);
+    const apiClient = getApiClientFromParams(params);
+    if (!apiClient) {
+        return Promise.resolve(null);
+    }
     const itemId = params.genreId || params.musicGenreId || params.studioId || params.personId || params.parentId;
 
     if (itemId) {

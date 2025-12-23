@@ -603,7 +603,6 @@ const Home: FC = () => {
                 backDropType='movie,series,book'
             >
             <div className='homeModern'>
-                {loading ? <div className='homeLoading'>{t('Loading', 'Loading…')}</div> : null}
 
                 {/* Libraries */}
                 {sectionOrder.includes(HomeSectionType.SmallLibraryTiles) && userViews.length ? (
