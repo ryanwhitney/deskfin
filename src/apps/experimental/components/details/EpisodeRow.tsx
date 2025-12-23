@@ -1,6 +1,5 @@
 import React, { type FC, useMemo } from 'react';
 import IconButton from '@mui/material/IconButton';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 import { playbackManager } from 'components/playback/playbackmanager';
 import { ServerConnections } from 'lib/jellyfin-apiclient';
@@ -9,6 +8,8 @@ import PlayedButton from 'elements/emby-playstatebutton/PlayedButton';
 import globalize from 'lib/globalize';
 import type { ItemDto } from 'types/base/models/item-dto';
 import { DetailsMoreMenu } from './DetailsMoreMenu';
+import JfIcon from 'components/JfIcon';
+import { IconSvgs } from '../../../../assets/icons';
 
 interface EpisodeRowProps {
     episode: ItemDto;
@@ -75,7 +76,7 @@ export const EpisodeRow: FC<EpisodeRowProps> = ({ episode, queryKey, showSeriesA
                     title={t('Play', 'Play')}
                     onClick={onPlayClick}
                 >
-                    <PlayArrowIcon />
+                    <JfIcon svg={IconSvgs.play} />
                 </button>
             </div>
 
@@ -109,7 +110,7 @@ export const EpisodeRow: FC<EpisodeRowProps> = ({ episode, queryKey, showSeriesA
 
             <div className='episodeActions' onClick={(e) => e.preventDefault()}>
                 <IconButton className='episodeActionBtn' size='small' title={t('Play', 'Play')} onClick={onPlayClick}>
-                    <PlayArrowIcon />
+                    <JfIcon svg={IconSvgs.play} />
                 </IconButton>
                 <PlayedButton
                     className='episodeActionBtn'

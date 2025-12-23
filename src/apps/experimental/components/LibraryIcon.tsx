@@ -1,21 +1,10 @@
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client';
 import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
-import Favorite from '@mui/icons-material/Favorite';
-import Movie from '@mui/icons-material/Movie';
-import MusicNote from '@mui/icons-material/MusicNote';
-import Photo from '@mui/icons-material/Photo';
-import LiveTv from '@mui/icons-material/LiveTv';
-import Tv from '@mui/icons-material/Tv';
-import Theaters from '@mui/icons-material/Theaters';
-import MusicVideo from '@mui/icons-material/MusicVideo';
-import Book from '@mui/icons-material/Book';
-import Queue from '@mui/icons-material/Queue';
-import Quiz from '@mui/icons-material/Quiz';
-import VideoLibrary from '@mui/icons-material/VideoLibrary';
-import Folder from '@mui/icons-material/Folder';
 import React, { FC } from 'react';
 
 import { MetaView } from '../constants/metaView';
+import JfIcon from 'components/JfIcon';
+import { IconSvgs } from '../../../assets/icons';
 
 interface LibraryIconProps {
     item: BaseItemDto
@@ -25,35 +14,35 @@ const LibraryIcon: FC<LibraryIconProps> = ({
     item
 }) => {
     if (item.Id === MetaView.Favorites.Id) {
-        return <Favorite />;
+        return <JfIcon svg={IconSvgs.heart} />;
     }
 
     switch (item.CollectionType) {
         case CollectionType.Movies:
-            return <Movie />;
+            return <JfIcon svg={IconSvgs.movie} />;
         case CollectionType.Music:
-            return <MusicNote />;
+            return <JfIcon svg={IconSvgs.playback} />;
         case CollectionType.Homevideos:
         case CollectionType.Photos:
-            return <Photo />;
+            return <JfIcon svg={IconSvgs.photo} />;
         case CollectionType.Livetv:
-            return <LiveTv />;
+            return <JfIcon svg={IconSvgs.liveTv} />;
         case CollectionType.Tvshows:
-            return <Tv />;
+            return <JfIcon svg={IconSvgs.tv} />;
         case CollectionType.Trailers:
-            return <Theaters />;
+            return <JfIcon svg={IconSvgs.movie} />;
         case CollectionType.Musicvideos:
-            return <MusicVideo />;
+            return <JfIcon svg={IconSvgs.playback} />;
         case CollectionType.Books:
-            return <Book />;
+            return <JfIcon svg={IconSvgs.info} />;
         case CollectionType.Boxsets:
-            return <VideoLibrary />;
+            return <JfIcon svg={IconSvgs.collection} />;
         case CollectionType.Playlists:
-            return <Queue />;
+            return <JfIcon svg={IconSvgs.addTo} />;
         case undefined:
-            return <Quiz />;
+            return <JfIcon svg={IconSvgs.info} />;
         default:
-            return <Folder />;
+            return <JfIcon svg={IconSvgs.collection} />;
     }
 };
 

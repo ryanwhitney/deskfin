@@ -6,10 +6,6 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import CheckIcon from '@mui/icons-material/Check';
 
 import { ServerConnections } from 'lib/jellyfin-apiclient';
 import { useApi } from 'hooks/useApi';
@@ -25,6 +21,8 @@ import layoutManager from 'components/layoutManager';
 import { DEFAULT_SECTIONS, HomeSectionType } from 'types/homeSectionType';
 import type { ItemDto } from 'types/base/models/item-dto';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
+import JfIcon from 'components/JfIcon';
+import { IconSvgs, getLegacyCommandIcon } from '../../../assets/icons';
 
 import './home.modern.scss';
 
@@ -139,7 +137,7 @@ const ItemMoreMenu: FC<{ item: ItemDto; user: any; onAfterAction: () => void }> 
                     setAnchorEl(e.currentTarget);
                 }}
             >
-                <MoreVertIcon />
+                <JfIcon svg={IconSvgs.ellipsis} />
             </IconButton>
             <Menu
                 anchorEl={anchorEl}
@@ -168,7 +166,9 @@ const ItemMoreMenu: FC<{ item: ItemDto; user: any; onAfterAction: () => void }> 
                         >
                             {cmd.icon ? (
                                 <ListItemIcon>
-                                    <span className='material-icons' aria-hidden='true'>{cmd.icon}</span>
+                                    {getLegacyCommandIcon(cmd.icon) ? (
+                                        <JfIcon svg={getLegacyCommandIcon(cmd.icon)!} />
+                                    ) : null}
                                 </ListItemIcon>
                             ) : null}
                             <ListItemText primary={cmd.name ?? cmd.id} />
@@ -306,7 +306,7 @@ const HomeCard: FC<{
                         title={t('Play', 'Play')}
                         onClick={onCenterPlayClick}
                     >
-                        <PlayArrowIcon />
+                        <JfIcon svg={IconSvgs.play} />
                     </button>
                 ) : null}
             </div>
@@ -336,10 +336,14 @@ const HomeCard: FC<{
 
             <div className='homeCardActions'>
                 <IconButton className='homeIconBtn' size='small' title={isFavorite ? t('Favorite', 'Favorite') : t('AddToFavorites', 'Add to favorites')} onClick={() => onToggleFavorite(item)}>
-                    <FavoriteIcon color={isFavorite ? 'error' : undefined} />
+                    <span style={{ color: isFavorite ? '#ff4d6d' : undefined }}>
+                        <JfIcon svg={IconSvgs.heart} />
+                    </span>
                 </IconButton>
                 <IconButton className='homeIconBtn' size='small' title={isPlayed ? t('Watched', 'Watched') : t('MarkPlayed', 'Mark played')} onClick={() => onTogglePlayed(item)}>
-                    <CheckIcon color={isPlayed ? 'success' : undefined} />
+                    <span style={{ color: isPlayed ? '#4ade80' : undefined }}>
+                        <JfIcon svg={IconSvgs.checkmark} />
+                    </span>
                 </IconButton>
                 <ItemMoreMenu item={item} user={user} onAfterAction={onAfterAction} />
             </div>

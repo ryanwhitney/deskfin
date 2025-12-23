@@ -8,6 +8,7 @@ import ServerButton from 'components/toolbar/ServerButton';
 import RemotePlayButton from './RemotePlayButton';
 import SyncPlayButton from './SyncPlayButton';
 import SearchButton from './SearchButton';
+import ExperimentalUserMenuButton from './ExperimentalUserMenuButton';
 import UserViewNav from './userViews/UserViewNav';
 
 interface AppToolbarProps {
@@ -43,12 +44,13 @@ const ExperimentalAppToolbar: FC<AppToolbarProps> = ({
                     <SyncPlayButton />
                     <RemotePlayButton />
                     <SearchButton />
+                    <ExperimentalUserMenuButton />
                 </>
             )}
             isDrawerAvailable={isDrawerAvailable}
             isDrawerOpen={isDrawerOpen}
             onDrawerButtonClick={onDrawerButtonClick}
-            isUserMenuAvailable={!isPublicPath}
+            isUserMenuAvailable={false}
         >
             {!isDrawerAvailable && (
                 <Stack

@@ -1,8 +1,9 @@
 import React, { type FC } from 'react';
 import classNames from 'classnames';
-import StarIcon from '@mui/icons-material/Star';
 import Box from '@mui/material/Box';
 import type {} from '@mui/material/themeCssVarsAugmentation';
+import JfIcon from 'components/JfIcon';
+import { IconSvgs } from '../../assets/icons';
 
 interface StarIconsProps {
     className?: string;
@@ -18,13 +19,15 @@ const StarIcons: FC<StarIconsProps> = ({ className, communityRating }) => {
 
     return (
         <Box className={cssClass}>
-            <StarIcon
-                fontSize={'small'}
+            <span
+                // Keep existing theme tint behavior.
                 // eslint-disable-next-line react/jsx-no-bind
-                sx={(theme) => ({
-                    color: theme.vars.palette.starIcon.main
-                })}
-            />
+                style={{
+                    color: 'var(--mui-palette-starIcon-main, #f5c84b)'
+                }}
+            >
+                <JfIcon svg={IconSvgs.star} />
+            </span>
             {communityRating.toFixed(1)}
         </Box>
     );

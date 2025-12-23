@@ -2,11 +2,12 @@ import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-ite
 import { useQueryClient } from '@tanstack/react-query';
 import React, { type FC, useCallback } from 'react';
 import IconButton from '@mui/material/IconButton';
-import CheckIcon from '@mui/icons-material/Check';
 
 import { ItemAction } from 'constants/itemAction';
 import globalize from 'lib/globalize';
 import { useTogglePlayedMutation } from 'hooks/useFetchItems';
+import JfIcon from 'components/JfIcon';
+import { IconSvgs } from '../../assets/icons';
 
 interface PlayedButtonProps {
     className?: string;
@@ -67,9 +68,9 @@ const PlayedButton: FC<PlayedButtonProps> = ({
             size='small'
             onClick={onClick}
         >
-            <CheckIcon
-                color={isPlayed ? 'error' : undefined}
-            />
+            <span style={{ color: isPlayed ? '#4ade80' : undefined }}>
+                <JfIcon svg={IconSvgs.checkmark} />
+            </span>
         </IconButton>
     );
 };

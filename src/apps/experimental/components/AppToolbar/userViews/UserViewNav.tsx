@@ -1,9 +1,7 @@
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
 import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
 import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
-import Favorite from '@mui/icons-material/Favorite';
 import Button from '@mui/material/Button/Button';
-import Icon from '@mui/material/Icon';
 import { Theme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import React, { useCallback, useMemo, useState } from 'react';
@@ -13,11 +11,13 @@ import LibraryIcon from 'apps/experimental/components/LibraryIcon';
 import { MetaView } from 'apps/experimental/constants/metaView';
 import { isLibraryPath } from 'apps/experimental/features/libraries/utils/path';
 import { appRouter } from 'components/router/appRouter';
+import JfIcon from 'components/JfIcon';
 import { useApi } from 'hooks/useApi';
 import useCurrentTab from 'hooks/useCurrentTab';
 import { useUserViews } from 'hooks/useUserViews';
 import { useWebConfig } from 'hooks/useWebConfig';
 import globalize from 'lib/globalize';
+import { IconSvgs } from '../../../../../assets/icons';
 
 import UserViewsMenu from './UserViewsMenu';
 
@@ -109,9 +109,12 @@ const UserViewNav = () => {
             <Button
                 variant='text'
                 color={(currentUserView?.Id === MetaView.Favorites.Id) ? 'primary' : 'inherit'}
-                startIcon={<Favorite />}
+                startIcon={<JfIcon svg={IconSvgs.heart} />}
                 component={Link}
                 to='/home?tab=1'
+                disableRipple
+                disableFocusRipple
+                disableTouchRipple
             >
                 {globalize.translate(MetaView.Favorites.Name)}
             </Button>
@@ -121,11 +124,14 @@ const UserViewNav = () => {
                     key={link.name}
                     variant='text'
                     color='inherit'
-                    startIcon={<Icon>{link.icon || 'link'}</Icon>}
+                    startIcon={<JfIcon svg={IconSvgs.info} />}
                     component='a'
                     href={link.url}
                     target='_blank'
                     rel='noopener noreferrer'
+                    disableRipple
+                    disableFocusRipple
+                    disableTouchRipple
                 >
                     {link.name}
                 </Button>
@@ -139,6 +145,9 @@ const UserViewNav = () => {
                     startIcon={<LibraryIcon item={view} />}
                     component={Link}
                     to={appRouter.getRouteUrl(view, { context: view.CollectionType }).substring(1)}
+                    disableRipple
+                    disableFocusRipple
+                    disableTouchRipple
                 >
                     {view.Name}
                 </Button>
@@ -152,6 +161,9 @@ const UserViewNav = () => {
                         aria-controls={OVERFLOW_MENU_ID}
                         aria-haspopup='true'
                         onClick={onOverflowButtonClick}
+                        disableRipple
+                        disableFocusRipple
+                        disableTouchRipple
                     >
                         {globalize.translate('ButtonMore')}
                     </Button>

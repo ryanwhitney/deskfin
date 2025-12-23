@@ -1,11 +1,12 @@
 import React, { type FC, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import IconButton from '@mui/material/IconButton';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 
 import { ItemAction } from 'constants/itemAction';
 import { useToggleFavoriteMutation } from 'hooks/useFetchItems';
 import globalize from 'lib/globalize';
+import JfIcon from 'components/JfIcon';
+import { IconSvgs } from '../../assets/icons';
 
 interface FavoriteButtonProps {
     className?: string;
@@ -53,9 +54,9 @@ const FavoriteButton: FC<FavoriteButtonProps> = ({
             size='small'
             onClick={onClick}
         >
-            <FavoriteIcon
-                color={isFavorite ? 'error' : undefined}
-            />
+            <span style={{ color: isFavorite ? '#ff4d6d' : undefined }}>
+                <JfIcon svg={IconSvgs.heart} />
+            </span>
         </IconButton>
     );
 };

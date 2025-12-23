@@ -28,13 +28,6 @@ export const ApiProvider: FC<PropsWithChildren<unknown>> = ({ children }) => {
     }), [ api, legacyApiClient, user ]);
 
     useEffect(() => {
-        ServerConnections.currentApiClient()
-            ?.getCurrentUser()
-            .then(newUser => updateApiUser(undefined, newUser))
-            .catch(err => {
-                console.info('[ApiProvider] Could not get current user', err);
-            });
-
         const updateApiUser = (_e: Event | undefined, newUser: UserDto) => {
             setUser(newUser);
 
@@ -47,6 +40,13 @@ export const ApiProvider: FC<PropsWithChildren<unknown>> = ({ children }) => {
             setLegacyApiClient(undefined);
             setUser(undefined);
         };
+
+        ServerConnections.currentApiClient()
+            ?.getCurrentUser()
+            .then(newUser => updateApiUser(undefined, newUser))
+            .catch(err => {
+                console.info('[ApiProvider] Could not get current user', err);
+            });
 
         events.on(ServerConnections, 'localusersignedin', updateApiUser);
         events.on(ServerConnections, 'localusersignedout', resetApiUser);

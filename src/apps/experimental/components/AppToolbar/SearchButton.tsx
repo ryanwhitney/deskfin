@@ -6,10 +6,11 @@ import {
     useLocation,
     useSearchParams
 } from 'react-router-dom';
-import SearchIcon from '@mui/icons-material/Search';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
 import globalize from 'lib/globalize';
+import JfIcon from 'components/JfIcon';
+import { IconSvgs } from '../../../../assets/icons';
 
 const getUrlParams = (searchParams: URLSearchParams) => {
     const parentId =
@@ -47,9 +48,12 @@ const SearchButton: FC = () => {
                 color='inherit'
                 component={Link}
                 disabled={isSearchPath}
+                disableRipple
+                disableFocusRipple
+                disableTouchRipple
                 to={createSearchLink}
             >
-                <SearchIcon />
+                <JfIcon svg={IconSvgs.search} />
             </IconButton>
         </Tooltip>
     );

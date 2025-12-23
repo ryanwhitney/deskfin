@@ -5,12 +5,13 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 import globalize from 'lib/globalize';
 import { useApi } from 'hooks/useApi';
 import * as itemContextMenu from 'components/itemContextMenu';
 import type { ItemDto } from 'types/base/models/item-dto';
+import JfIcon from 'components/JfIcon';
+import { IconSvgs, getLegacyCommandIcon } from '../../../../assets/icons';
 
 interface DetailsMoreMenuProps {
     item: ItemDto;
@@ -115,7 +116,7 @@ export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({ item, queryKey, clas
     return (
         <>
             <IconButton className={className ?? 'detailsIconBtn'} size='small' title={t('ButtonMore', 'More')} onClick={openMenu}>
-                <MoreVertIcon />
+                <JfIcon svg={IconSvgs.ellipsis} />
             </IconButton>
 
             <Menu
@@ -137,7 +138,9 @@ export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({ item, queryKey, clas
                         <MenuItem key={cmd.id ?? idx} onClick={() => onCommandClick(cmd.id!)}>
                             {cmd.icon ? (
                                 <ListItemIcon>
-                                    <span className='material-icons' aria-hidden='true'>{cmd.icon}</span>
+                                    {getLegacyCommandIcon(cmd.icon) ? (
+                                        <JfIcon svg={getLegacyCommandIcon(cmd.icon)!} />
+                                    ) : null}
                                 </ListItemIcon>
                             ) : null}
                             <ListItemText primary={cmd.name ?? cmd.id} />

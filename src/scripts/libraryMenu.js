@@ -521,16 +521,11 @@ function onLogoutClick() {
 function updateCastIcon() {
     const context = document;
     const info = playbackManager.getPlayerInfo();
-    const icon = headerCastButton.querySelector('.material-icons');
-
-    icon.classList.remove('cast_connected', 'cast');
 
     if (info && !info.isLocalPlayer) {
-        icon.classList.add('cast_connected');
         headerCastButton.classList.add('castButton-active');
         context.querySelector('.headerSelectedPlayer').innerText = info.deviceName || info.name;
     } else {
-        icon.classList.add('cast');
         headerCastButton.classList.remove('castButton-active');
         context.querySelector('.headerSelectedPlayer').innerHTML = '';
     }

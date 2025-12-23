@@ -422,7 +422,7 @@ export default function DetailsPage() {
 
                 {guests.length ? (
                     <div className='detailsSection'>
-                        <h2 className='detailsSectionTitle'>{globalize.translate('GuestStars')}</h2>
+                        <h2 className='detailsSectionTitle'>{globalize.tryTranslate('GuestStars') ?? 'Guest Stars'}</h2>
                         <div className='detailsPeople'>
                             {guests.slice(0, 24).map(p => (
                                 <div key={p.Id || p.Name} className='person'>
