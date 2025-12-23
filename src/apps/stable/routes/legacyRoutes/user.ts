@@ -87,11 +87,7 @@ export const LEGACY_USER_ROUTES: LegacyRoute[] = [
             isThemeMediaSupported: true
         }
     }, {
-        path: 'home',
-        pageProps: {
-            controller: 'home',
-            view: 'home.html'
-        }
+        // Home route moved to asyncRoutes for modern React version
     }, {
         path: 'movies',
         pageProps: {

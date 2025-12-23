@@ -67,8 +67,10 @@ const DEFAULT_LOCALE = 'en-US';
 let localeString = DEFAULT_LOCALE;
 let locale = enUS;
 
+// Avoid dynamic imports in the browser; map everything to en-US for now.
+// Extend this map with explicit imports if more locales are required.
 export function fetchLocale(localeName: string) {
-    return import(/* @vite-ignore */ `date-fns/locale/${localeName}/index.js`);
+    return Promise.resolve(enUS);
 }
 
 export function normalizeLocale(localeName: string) {
@@ -81,7 +83,8 @@ export async function updateLocale(newLocale: string) {
     console.debug('[dateFnsLocale] updating date-fns locale', newLocale);
     localeString = normalizeLocale(newLocale);
     console.debug('[dateFnsLocale] mapped to date-fns locale', localeString);
-    locale = await fetchLocale(localeString);
+    const fetched = await fetchLocale(localeString);
+    locale = fetched;
 }
 
 export function getLocale() {

@@ -1,29 +1,53 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
+import { ServerConnections } from 'lib/jellyfin-apiclient';
 import globalize from '../../../lib/globalize';
 import { clearBackdrop } from '../../../components/backdrop/backdrop';
-import layoutManager from '../../../components/layoutManager';
 import Page from '../../../components/Page';
 import { EventType } from 'constants/eventType';
 import Events from 'utils/events';
+import './home.modern.scss';
 
-import '../../../elements/emby-tabs/emby-tabs';
-import '../../../elements/emby-button/emby-button';
-import '../../../elements/emby-scroller/emby-scroller';
-
-type OnResumeOptions = {
-    autoFocus?: boolean;
-    refresh?: boolean
+type MediaItem = {
+    Id: string;
+    Name: string;
+    SeriesName?: string;
+    PrimaryImageTag?: string;
+    ImageTags?: Record<string, string>;
 };
 
-type ControllerProps = {
-    onResume: (
-        options: OnResumeOptions
-    ) => void;
-    refreshed: boolean;
-    onPause: () => void;
-    destroy: () => void;
+const buildImageUrl = (item: MediaItem, maxWidth = 500) => {
+    const apiClient = ServerConnections.currentApiClient();
+    if (!apiClient || !item.Id) return '';
+    const tag = item.PrimaryImageTag || item.ImageTags?.Primary;
+    if (!tag) return '';
+    return apiClient.getImageUrl(item.Id, { type: 'Primary', tag, maxWidth });
+};
+
+const SectionGrid: React.FC<{ title: string; items: MediaItem[] }> = ({ title, items }) => {
+    if (!items.length) return null;
+    return (
+        <section className='section'>
+            <h2 className='sectionTitle'>{title}</h2>
+            <div className='cardGrid'>
+                {items.map(item => (
+                    <a key={item.Id} className='card' href={`#/details?id=${item.Id}`}>
+                        <div
+                            className='thumb'
+                            style={{
+                                backgroundImage: buildImageUrl(item)
+                                    ? `url(${buildImageUrl(item)})`
+                                    : 'linear-gradient(135deg, #1f1f1f, #2a2a2a)'
+                            }}
+                        />
+                        <div className='title'>{item.Name}</div>
+                        {item.SeriesName && <div className='subtitle'>{item.SeriesName}</div>}
+                    </a>
+                ))}
+            </div>
+        </section>
+    );
 };
 
 const Home = () => {
@@ -31,149 +55,81 @@ const Home = () => {
     const initialTabIndex = parseInt(searchParams.get('tab') ?? '0', 10);
 
     const libraryMenu = useMemo(async () => ((await import('../../../scripts/libraryMenu')).default), []);
-    const mainTabsManager = useMemo(() => import('../../../components/maintabsmanager'), []);
-    const tabController = useRef<ControllerProps | null>();
-    const tabControllers = useMemo<ControllerProps[]>(() => [], []);
-
     const documentRef = useRef<Document>(document);
-    const element = useRef<HTMLDivElement>(null);
 
-    const setTitle = async () => {
-        (await libraryMenu).setTitle(null);
-    };
+    const [ resume, setResume ] = useState<MediaItem[]>([]);
+    const [ nextUp, setNextUp ] = useState<MediaItem[]>([]);
+    const [ latest, setLatest ] = useState<MediaItem[]>([]);
+    const [ favorites, setFavorites ] = useState<MediaItem[]>([]);
 
-    const getTabs = () => {
-        return [{
-            name: globalize.translate('Home')
-        }, {
-            name: globalize.translate('Favorites')
-        }];
-    };
-
-    const getTabContainers = () => {
-        return element.current?.querySelectorAll('.tabContent');
-    };
-
-    const getTabController = useCallback((index: number) => {
-        if (index == null) {
-            throw new Error('index cannot be null');
+    const t = useCallback((key: string, fallback: string) => {
+        try {
+            return globalize.translate(key);
+        } catch {
+            return fallback;
         }
-
-        let depends = '';
-
-        switch (index) {
-            case 0:
-                depends = 'hometab';
-                break;
-
-            case 1:
-                depends = 'favorites';
-        }
-
-        return import(/* @vite-ignore */ `../../../controllers/${depends}`).then(({ default: ControllerFactory }) => {
-            let controller = tabControllers[index];
-
-            if (!controller) {
-                const tabContent = element.current?.querySelector(".tabContent[data-index='" + index + "']");
-                controller = new ControllerFactory(tabContent, null);
-                tabControllers[index] = controller;
-            }
-
-            return controller;
-        });
-    }, [ tabControllers ]);
-
-    const loadTab = useCallback((index: number, previousIndex: number | null) => {
-        getTabController(index).then((controller) => {
-            const refresh = !controller.refreshed;
-
-            controller.onResume({
-                autoFocus: previousIndex == null && layoutManager.tv,
-                refresh: refresh
-            });
-
-            controller.refreshed = true;
-            tabController.current = controller;
-        }).catch(err => {
-            console.error('[Home] failed to get tab controller', err);
-        });
-    }, [ getTabController ]);
-
-    const onTabChange = useCallback((e: { detail: { selectedTabIndex: string; previousIndex: number | null }; }) => {
-        const newIndex = parseInt(e.detail.selectedTabIndex, 10);
-        const previousIndex = e.detail.previousIndex;
-
-        const previousTabController = previousIndex == null ? null : tabControllers[previousIndex];
-        if (previousTabController?.onPause) {
-            previousTabController.onPause();
-        }
-
-        loadTab(newIndex, previousIndex);
-    }, [ loadTab, tabControllers ]);
-
-    const onSetTabs = useCallback(async () => {
-        (await mainTabsManager).setTabs(element.current, initialTabIndex, getTabs, getTabContainers, null, onTabChange, false);
-    }, [ initialTabIndex, mainTabsManager, onTabChange ]);
-
-    const onResume = useCallback(async () => {
-        void setTitle();
-        clearBackdrop();
-
-        const currentTabController = tabController.current;
-
-        if (!currentTabController) {
-            (await mainTabsManager).selectedTabIndex(initialTabIndex);
-        } else if (currentTabController?.onResume) {
-            currentTabController.onResume({});
-        }
-        (documentRef.current.querySelector('.skinHeader') as HTMLDivElement).classList.add('noHomeButtonHeader');
-    }, [ initialTabIndex, mainTabsManager ]);
-
-    const onPause = useCallback(() => {
-        const currentTabController = tabController.current;
-        if (currentTabController?.onPause) {
-            currentTabController.onPause();
-        }
-        (documentRef.current.querySelector('.skinHeader') as HTMLDivElement).classList.remove('noHomeButtonHeader');
     }, []);
 
-    const renderHome = useCallback(() => {
-        void onSetTabs();
-        void onResume();
-    }, [ onResume, onSetTabs ]);
+    const setTitle = useCallback(async () => {
+        (await libraryMenu).setTitle(null);
+    }, [ libraryMenu ]);
+
+    const fetchSections = useCallback(async () => {
+        const apiClient = ServerConnections.currentApiClient();
+        const userId = apiClient?.getCurrentUserId?.();
+        if (!apiClient || !userId) return;
+
+        try {
+            const withBase = (path: string) => apiClient.getUrl(path);
+            const [ resumeResp, nextResp, latestResp, favResp ] = await Promise.all([
+                apiClient.getJSON(withBase(`Users/${userId}/Items/Resume?Limit=12&Recursive=true&Fields=PrimaryImageAspectRatio&ImageTypeLimit=1&EnableImageTypes=Primary%2CBackdrop%2CThumb&MediaTypes=Video`)),
+                apiClient.getJSON(withBase(`Shows/NextUp?Limit=24&Fields=PrimaryImageAspectRatio%2CDateCreated%2CPath%2CMediaSourceCount&UserId=${userId}&ImageTypeLimit=1&EnableImageTypes=Primary%2CBackdrop%2CBanner%2CThumb&EnableTotalRecordCount=false`)),
+                apiClient.getJSON(withBase(`Users/${userId}/Items/Latest?Limit=24&Fields=PrimaryImageAspectRatio%2CPath&ImageTypeLimit=1&EnableImageTypes=Primary%2CBackdrop%2CThumb`)),
+                apiClient.getJSON(withBase(`Users/${userId}/Items?Limit=24&Recursive=true&Filters=IsFavorite&Fields=PrimaryImageAspectRatio&ImageTypeLimit=1&EnableImageTypes=Primary%2CBackdrop%2CThumb`))
+            ]);
+
+            setResume(resumeResp?.Items || []);
+            setNextUp(nextResp?.Items || []);
+            setLatest(latestResp?.Items || resumeResp?.Items || []);
+            setFavorites(favResp?.Items || []);
+        } catch (err) {
+            console.error('[Home] failed to load sections', err);
+        }
+    }, []);
 
     useEffect(() => {
-        if (documentRef.current?.querySelector('.headerTabs')) {
-            renderHome();
-        }
+        void setTitle();
+        clearBackdrop();
+        void fetchSections();
+        documentRef.current.querySelector('.skinHeader')?.classList.add('noHomeButtonHeader');
 
         return () => {
-            onPause();
+            documentRef.current.querySelector('.skinHeader')?.classList.remove('noHomeButtonHeader');
         };
-    }, [onPause, renderHome]);
+    }, [ fetchSections, setTitle ]);
 
     useEffect(() => {
         const doc = documentRef.current;
-        if (doc) Events.on(doc, EventType.HEADER_RENDERED, renderHome);
-
+        const rerender = () => void fetchSections();
+        if (doc) Events.on(doc, EventType.HEADER_RENDERED, rerender);
         return () => {
-            if (doc) Events.off(doc, EventType.HEADER_RENDERED, renderHome);
+            if (doc) Events.off(doc, EventType.HEADER_RENDERED, rerender);
         };
-    }, [ renderHome ]);
+    }, [ fetchSections ]);
 
     return (
-        <div ref={element}>
+        <div>
             <Page
                 id='indexPage'
-                className='mainAnimatedPage homePage libraryPage allLibraryPage backdropPage pageWithAbsoluteTabs withTabs'
+                className='mainAnimatedPage homePage libraryPage allLibraryPage backdropPage'
                 isBackButtonEnabled={false}
                 backDropType='movie,series,book'
             >
-                <div className='tabContent pageTabContent' id='homeTab' data-index='0'>
-                    <div className='sections'></div>
-                </div>
-                <div className='tabContent pageTabContent' id='favoritesTab' data-index='1'>
-                    <div className='sections'></div>
+                <div className='sections'>
+                    <SectionGrid title={t('HeaderContinueWatching', 'Continue Watching')} items={resume} />
+                    <SectionGrid title={t('HeaderNextUp', 'Next Up')} items={nextUp} />
+                    <SectionGrid title={t('HeaderLatest', 'Latest')} items={latest} />
+                    <SectionGrid title={t('Favorites', 'Favorites')} items={favorites} />
                 </div>
             </Page>
         </div>
