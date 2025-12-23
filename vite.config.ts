@@ -79,7 +79,10 @@ export default defineConfig({
         ),
         __PACKAGE_JSON_NAME__: JSON.stringify(PACKAGE_JSON.name),
         __PACKAGE_JSON_VERSION__: JSON.stringify(PACKAGE_JSON.version),
-        __USE_SYSTEM_FONTS__: !!JSON.parse(process.env.USE_SYSTEM_FONTS || '0'),
+        // Prefer system fonts by default (macOS/iOS-focused fork). Can still be overridden for experimentation.
+        __USE_SYSTEM_FONTS__: process.env.USE_SYSTEM_FONTS
+            ? !!JSON.parse(process.env.USE_SYSTEM_FONTS)
+            : true,
         __WEBPACK_SERVE__: false
     },
     build: {

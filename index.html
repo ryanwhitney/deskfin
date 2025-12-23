@@ -57,6 +57,24 @@
             background-color: #101010;
         }
 
+        /* Inline splash to avoid blank screen before JS/CSS bundles load */
+        .splashLogo {
+            width: 30%;
+            height: 30%;
+            min-width: 160px;
+            min-height: 160px;
+            max-width: 360px;
+            max-height: 360px;
+            background-image: url(/node_modules/@jellyfin/ux-web/icon-transparent.png);
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
         .hide,
         .layout-desktop .hide-desktop,
         .layout-mobile .hide-mobile,

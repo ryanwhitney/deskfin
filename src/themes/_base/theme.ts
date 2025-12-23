@@ -35,7 +35,7 @@ export const DEFAULT_COLOR_SCHEME: ColorSystemOptions = {
 /** The default customizations to the default MUI theme. */
 export const DEFAULT_THEME_OPTIONS: ThemeOptions = {
     typography: {
-        fontFamily: '"Noto Sans", sans-serif',
+        fontFamily: '-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Helvetica,Arial,"Apple Color Emoji",sans-serif',
         button: {
             textTransform: 'none'
         },

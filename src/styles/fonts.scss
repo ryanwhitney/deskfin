@@ -5,6 +5,16 @@
 
 html {
     @include font($size: 93%);
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Text",
+        "SF Pro Display",
+        "Helvetica Neue",
+        Helvetica,
+        Arial,
+        "Apple Color Emoji",
+        sans-serif;
     text-size-adjust: 100%;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;

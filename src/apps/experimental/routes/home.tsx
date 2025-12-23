@@ -22,12 +22,16 @@ import { playbackManager } from 'components/playback/playbackmanager';
 import * as itemContextMenu from 'components/itemContextMenu';
 import layoutManager from 'components/layoutManager';
 import { DEFAULT_SECTIONS, HomeSectionType } from 'types/homeSectionType';
-import Events from 'utils/events';
-import { EventType } from 'constants/eventType';
 import type { ItemDto } from 'types/base/models/item-dto';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
 
 import './home.modern.scss';
+
+let ignoreHomeCardNavigateUntil = 0;
+const nowMs = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
+const suppressHomeCardNavigate = (ms = 500) => {
+    ignoreHomeCardNavigateUntil = nowMs() + ms;
+};
 
 const t = (key: string, fallback: string) => {
     return globalize.tryTranslate?.(key) ?? fallback;
@@ -47,6 +51,7 @@ const ItemMoreMenu: FC<{ item: ItemDto; user: any; onAfterAction: () => void }> 
     const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>(null);
     const open = Boolean(anchorEl);
     const [ commands, setCommands ] = useState<Command[]>([]);
+    const menuPaperRef = useRef<HTMLDivElement | null>(null);
 
     const menuOptions = useMemo(() => ({
         item,
@@ -77,7 +82,36 @@ const ItemMoreMenu: FC<{ item: ItemDto; user: any; onAfterAction: () => void }> 
         void load();
     }, [menuOptions, open]);
 
-    const close = () => setAnchorEl(null);
+    // Prevent "click-through" when dismissing the menu by capturing outside click events.
+    useEffect(() => {
+        if (!open) return;
+
+        const onWindowEvent = (e: Event) => {
+            const target = e.target as Node | null;
+            if (!target) return;
+
+            // Allow clicks inside the menu and on the anchor button itself.
+            if (menuPaperRef.current?.contains(target)) return;
+            if (anchorEl?.contains(target)) return;
+
+            // Swallow the click and also suppress any imminent "ghost click" navigation on the card.
+            suppressHomeCardNavigate();
+            e.preventDefault();
+            e.stopPropagation();
+            close();
+        };
+
+        window.addEventListener('click', onWindowEvent, true);
+        return () => {
+            window.removeEventListener('click', onWindowEvent, true);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [open, anchorEl]);
+
+    const close = () => {
+        suppressHomeCardNavigate();
+        setAnchorEl(null);
+    };
 
     const onCommand = async (id: string) => {
         close();
@@ -93,7 +127,17 @@ const ItemMoreMenu: FC<{ item: ItemDto; user: any; onAfterAction: () => void }> 
 
     return (
         <>
-            <IconButton className='homeIconBtn' size='small' title={t('ButtonMore', 'More')} onClick={(e) => setAnchorEl(e.currentTarget)}>
+            <IconButton
+                className='homeIconBtn'
+                size='small'
+                title={t('ButtonMore', 'More')}
+                onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    suppressHomeCardNavigate();
+                    setAnchorEl(e.currentTarget);
+                }}
+            >
                 <MoreVertIcon />
             </IconButton>
             <Menu
@@ -102,6 +146,7 @@ const ItemMoreMenu: FC<{ item: ItemDto; user: any; onAfterAction: () => void }> 
                 onClose={close}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                slotProps={{ paper: { ref: menuPaperRef } }}
             >
                 {commands.map((cmd, idx) => {
                     if (cmd.divider) {
@@ -110,7 +155,16 @@ const ItemMoreMenu: FC<{ item: ItemDto; user: any; onAfterAction: () => void }> 
                     }
                     if (!cmd.id) return null;
                     return (
-                        <MenuItem key={cmd.id} onClick={() => onCommand(cmd.id!)}>
+                        <MenuItem
+                            key={cmd.id}
+                            onClick={(e) => {
+                                // Ensure menu interactions never trigger the underlying card click.
+                                e.preventDefault();
+                                e.stopPropagation();
+                                suppressHomeCardNavigate();
+                                void onCommand(cmd.id!);
+                            }}
+                        >
                             {cmd.icon ? (
                                 <ListItemIcon>
                                     <span className='material-icons' aria-hidden='true'>{cmd.icon}</span>
@@ -224,6 +278,7 @@ const HomeCard: FC<{
     };
 
     const onCardClick: React.MouseEventHandler = (e) => {
+        if (nowMs() < ignoreHomeCardNavigateUntil) return;
         const el = e.target as HTMLElement | null;
         if (el?.closest('a,button,.homeCardActions')) {
             return;
@@ -356,8 +411,9 @@ const Home: FC = () => {
     const [ onNow, setOnNow ] = useState<ItemDto[]>([]);
     const [ latestByLibrary, setLatestByLibrary ] = useState<LatestByLibrary[]>([]);
 
-    const refreshAll = useCallback(async () => {
+    const refreshAll = useCallback(async (options?: { priorityOnly?: boolean }) => {
         if (!apiClient || !user?.Id) return;
+        const priorityOnly = !!options?.priorityOnly;
         setLoading(true);
         try {
             const sectionOrder = getAllSectionsToShow(10);
@@ -376,7 +432,7 @@ const Home: FC = () => {
                 }).then(r => setResumeVideo((r?.Items || []) as ItemDto[])));
             }
 
-            if (sectionOrder.includes(HomeSectionType.ResumeAudio)) {
+            if (!priorityOnly && sectionOrder.includes(HomeSectionType.ResumeAudio)) {
                 tasks.push(apiClient.getResumableItems(apiClient.getCurrentUserId(), {
                     Limit: 12,
                     Recursive: true,
@@ -388,7 +444,7 @@ const Home: FC = () => {
                 }).then(r => setResumeAudio((r?.Items || []) as ItemDto[])));
             }
 
-            if (sectionOrder.includes(HomeSectionType.ResumeBook)) {
+            if (!priorityOnly && sectionOrder.includes(HomeSectionType.ResumeBook)) {
                 tasks.push(apiClient.getResumableItems(apiClient.getCurrentUserId(), {
                     Limit: 12,
                     Recursive: true,
@@ -417,7 +473,7 @@ const Home: FC = () => {
                 }).then(r => setNextUp((r?.Items || []) as ItemDto[])));
             }
 
-            if (sectionOrder.includes(HomeSectionType.ActiveRecordings)) {
+            if (!priorityOnly && sectionOrder.includes(HomeSectionType.ActiveRecordings)) {
                 tasks.push(apiClient.getLiveTvRecordings({
                     userId: apiClient.getCurrentUserId(),
                     Limit: 12,
@@ -428,7 +484,7 @@ const Home: FC = () => {
                 }).then(r => setActiveRecordings((r?.Items || []) as ItemDto[])));
             }
 
-            if (sectionOrder.includes(HomeSectionType.LiveTv) && user?.Policy?.EnableLiveTvAccess) {
+            if (!priorityOnly && sectionOrder.includes(HomeSectionType.LiveTv) && user?.Policy?.EnableLiveTvAccess) {
                 tasks.push(apiClient.getLiveTvRecommendedPrograms({
                     userId: apiClient.getCurrentUserId(),
                     IsAiring: true,
@@ -440,7 +496,7 @@ const Home: FC = () => {
                 }).then(r => setOnNow((r?.Items || []) as ItemDto[])));
             }
 
-            if (sectionOrder.includes(HomeSectionType.LatestMedia) && userViews.length) {
+            if (!priorityOnly && sectionOrder.includes(HomeSectionType.LatestMedia) && userViews.length) {
                 const excludeViewTypes = ['playlists', 'livetv', 'boxsets', 'channels', 'folders'];
                 const userExcludeItems = user.Configuration?.LatestItemsExcludes ?? [];
                 const filteredViews = userViews.filter(v =>
@@ -472,12 +528,14 @@ const Home: FC = () => {
     }, [apiClient, user, userViews]);
 
     const onAfterAction = useCallback(() => {
+        void refreshAll({ priorityOnly: true });
         void refreshAll();
     }, [refreshAll]);
 
     const onToggleFavorite = useCallback(async (item: ItemDto) => {
         try {
             await toggleFavorite({ itemId: item.Id!, isFavorite: !!item.UserData?.IsFavorite });
+            void refreshAll({ priorityOnly: true });
             void refreshAll();
         } catch (e) {
             console.error('[Home] favorite failed', e);
@@ -487,6 +545,7 @@ const Home: FC = () => {
     const onTogglePlayed = useCallback(async (item: ItemDto) => {
         try {
             await togglePlayed({ itemId: item.Id!, isPlayed: !!item.UserData?.Played });
+            void refreshAll({ priorityOnly: true });
             void refreshAll();
         } catch (e) {
             console.error('[Home] played failed', e);
@@ -496,21 +555,35 @@ const Home: FC = () => {
     useEffect(() => {
         clearBackdrop();
         documentRef.current.querySelector('.skinHeader')?.classList.add('noHomeButtonHeader');
-        void refreshAll();
+        const start = performance.now();
+        void refreshAll({ priorityOnly: true }).finally(() => {
+            const ms = Math.round(performance.now() - start);
+            console.info(`[Home] priority loaded in ${ms}ms`);
+        });
+
+        const schedule = (cb: () => void) => {
+            const ric = (window as any).requestIdleCallback as undefined | ((fn: () => void, opts?: { timeout: number }) => void);
+            if (ric) {
+                ric(cb, { timeout: 1500 });
+            } else {
+                setTimeout(cb, 0);
+            }
+        };
+        schedule(() => {
+            const d0 = performance.now();
+            void refreshAll().finally(() => {
+                const ms = Math.round(performance.now() - d0);
+                console.info(`[Home] deferred loaded in ${ms}ms`);
+            });
+        });
 
         return () => {
             documentRef.current.querySelector('.skinHeader')?.classList.remove('noHomeButtonHeader');
         };
     }, [refreshAll]);
 
-    useEffect(() => {
-        const doc = documentRef.current;
-        const rerender = () => void refreshAll();
-        if (doc) Events.on(doc, EventType.HEADER_RENDERED, rerender);
-        return () => {
-            if (doc) Events.off(doc, EventType.HEADER_RENDERED, rerender);
-        };
-    }, [refreshAll]);
+    // NOTE: We used to refetch on HEADER_RENDERED, but it can fire multiple times during startup,
+    // leading to redundant network calls and slower first paint.
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const libraryMenu = useMemo(async () => ((await import('../../../scripts/libraryMenu')).default), []);

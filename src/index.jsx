@@ -66,17 +66,33 @@ build: ${__JF_BUILD_VERSION__}`);
         document.querySelector('.skinHeader').classList.remove('noHeaderRight');
     });
 
-    // Initialize the api client
-    const serverUrl = await serverAddress();
-    if (serverUrl) {
-        ServerConnections.initApiClient(serverUrl);
-    }
-
     // Initialize automatic (default) cast target
     initializeAutoCast();
 
-    // Load the translation dictionary
-    await loadCoreDictionary();
+    // Kick off slow startup tasks in parallel so we can render ASAP.
+    const t0 = performance.now();
+
+    const serverPromise = (async () => {
+        const s0 = performance.now();
+        const serverUrl = await serverAddress();
+        const ms = Math.round(performance.now() - s0);
+        console.info(`[boot] serverAddress resolved in ${ms}ms`);
+        if (serverUrl) {
+            ServerConnections.initApiClient(serverUrl);
+        }
+    })().catch((e) => {
+        console.warn('[boot] serverAddress failed', e);
+    });
+
+    const dictPromise = (async () => {
+        const d0 = performance.now();
+        await loadCoreDictionary();
+        const ms = Math.round(performance.now() - d0);
+        console.info(`[boot] core dictionary loaded in ${ms}ms`);
+    })().catch((e) => {
+        console.warn('[boot] loadCoreDictionary failed', e);
+    });
+
     // Update localization on user changes
     Events.on(ServerConnections, 'localusersignedin', globalize.updateCurrentCulture);
     Events.on(ServerConnections, 'localusersignedout', globalize.updateCurrentCulture);
@@ -89,8 +105,8 @@ build: ${__JF_BUILD_VERSION__}`);
         import('./styles/ios.scss');
     }
 
-    // Load frontend plugins
-    await loadPlugins();
+    // Load frontend plugins (do not block first render)
+    void loadPlugins();
 
     // Establish the websocket connection
     Events.on(appHost, 'resume', () => {
@@ -109,6 +125,10 @@ build: ${__JF_BUILD_VERSION__}`);
 
     // Render the app
     await renderApp();
+    console.info(`[boot] first render in ${Math.round(performance.now() - t0)}ms`);
+
+    // Ensure background tasks finish (don’t block first paint, but keep behavior consistent)
+    await Promise.all([serverPromise, dictPromise]);
 
     // Load platform specific features
     loadPlatformFeatures();
@@ -128,7 +148,6 @@ function loadFonts() {
     } else {
         console.debug('using default fonts');
         import('./styles/fonts.scss');
-        import('./styles/fonts.noto.scss');
     }
 }
 

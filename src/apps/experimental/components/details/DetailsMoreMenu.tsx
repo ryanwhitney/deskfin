@@ -1,4 +1,4 @@
-import React, { type FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { type FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
@@ -35,9 +35,14 @@ export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({ item, queryKey, clas
     const [ anchorEl, setAnchorEl ] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const [ commands, setCommands ] = useState<Command[]>([]);
+    const menuPaperRef = useRef<HTMLDivElement | null>(null);
 
     const close = useCallback(() => setAnchorEl(null), []);
-    const openMenu = useCallback((e: React.MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget), []);
+    const openMenu = useCallback((e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setAnchorEl(e.currentTarget);
+    }, []);
 
     const menuOptions = useMemo(() => {
         return {
@@ -71,6 +76,30 @@ export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({ item, queryKey, clas
         if (open) void load();
     }, [menuOptions, open, user]);
 
+    // Prevent "click-through" when dismissing the menu by capturing outside click events.
+    // IMPORTANT: do NOT close on pointerdown; that can remove the listener before the actual click fires.
+    useEffect(() => {
+        if (!open) return;
+
+        const onWindowEvent = (e: Event) => {
+            const target = e.target as Node | null;
+            if (!target) return;
+
+            // Allow clicks inside the menu and on the anchor button itself.
+            if (menuPaperRef.current?.contains(target)) return;
+            if (anchorEl?.contains(target)) return;
+
+            e.preventDefault();
+            e.stopPropagation();
+            close();
+        };
+
+        window.addEventListener('click', onWindowEvent, true);
+        return () => {
+            window.removeEventListener('click', onWindowEvent, true);
+        };
+    }, [anchorEl, close, open]);
+
     const onCommandClick = useCallback(async (commandId: string) => {
         close();
         try {
@@ -95,6 +124,7 @@ export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({ item, queryKey, clas
                 onClose={close}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+                slotProps={{ paper: { ref: menuPaperRef } }}
             >
                 {commands.map((cmd, idx) => {
                     if (cmd.divider) {
