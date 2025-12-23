@@ -413,6 +413,11 @@ class AppRouter {
                 return url;
             }
 
+            if (item.CollectionType == CollectionType.Boxsets) {
+                url = `#/collections?topParentId=${item.Id}&collectionType=${item.CollectionType}`;
+                return url;
+            }
+
             if (item.CollectionType == CollectionType.Tvshows) {
                 url = `#/tv?topParentId=${item.Id}&collectionType=${item.CollectionType}`;
 

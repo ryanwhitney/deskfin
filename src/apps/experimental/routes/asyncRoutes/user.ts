@@ -4,6 +4,7 @@ import { AppType } from 'constants/appType';
 export const ASYNC_USER_ROUTES: AsyncRoute[] = [
     { path: 'details', page: 'details', type: AppType.Experimental },
     { path: 'genre', page: 'genre', type: AppType.Experimental },
+    { path: 'collections', page: 'collections', type: AppType.Experimental },
     { path: 'home', type: AppType.Experimental },
     { path: 'homevideos', type: AppType.Experimental },
     { path: 'list', type: AppType.Experimental },

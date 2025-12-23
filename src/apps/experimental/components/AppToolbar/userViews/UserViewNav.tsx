@@ -29,6 +29,7 @@ const OVERFLOW_MENU_ID = 'user-view-overflow-menu';
 
 const HOME_PATH = '/home';
 const LIST_PATH = '/list';
+const COLLECTIONS_PATH = '/collections';
 
 const getCurrentUserView = (
     userViews: BaseItemDto[] | undefined,
@@ -37,7 +38,7 @@ const getCurrentUserView = (
     collectionType: string | null,
     tab: number
 ) => {
-    const isUserViewPath = isLibraryPath(pathname) || [HOME_PATH, LIST_PATH].includes(pathname);
+    const isUserViewPath = isLibraryPath(pathname) || [HOME_PATH, LIST_PATH, COLLECTIONS_PATH].includes(pathname);
     if (!isUserViewPath) return undefined;
 
     if (collectionType === CollectionType.Livetv) {

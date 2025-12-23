@@ -55,6 +55,9 @@ export default function ListRoute() {
     if (collectionType === CollectionType.Livetv) {
         return <Navigate replace to={'/livetv'} />;
     }
+    if (collectionType === CollectionType.Boxsets) {
+        return <Navigate replace to={`/collections?topParentId=${parentId}&collectionType=${CollectionType.Boxsets}`} />;
+    }
 
     // Unknown / legacy library type: fall back to the legacy list ViewManager route.
     // (We can add a generic React "folder browser" later once we inventory remaining collection types.)

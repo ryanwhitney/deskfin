@@ -67,6 +67,7 @@ export default function DetailsPage() {
     const itemType = item?.Type as ItemKind | undefined;
     const isSeries = itemType === ItemKind.Series;
     const isSeason = itemType === ItemKind.Season;
+    const isBoxSet = itemType === ItemKind.BoxSet || item?.Type === 'BoxSet';
 
     const { data: nextUpItems } = useQuery({
         queryKey: [ 'NextUpForSeries', item?.Id ],
@@ -124,9 +125,20 @@ export default function DetailsPage() {
         enableImageTypes: [ ImageType.Primary, ImageType.Thumb, ImageType.Backdrop ]
     }, { enabled: !!item?.Id && isSeries });
 
+    const { data: boxSetItemsResult, isPending: isBoxSetItemsPending } = useGetItems({
+        parentId: item?.Id ?? undefined,
+        recursive: false,
+        limit: 200,
+        enableTotalRecordCount: false,
+        fields: [ ItemFields.PrimaryImageAspectRatio, ItemFields.MediaSourceCount, ItemFields.Overview ],
+        imageTypeLimit: 1,
+        enableImageTypes: [ ImageType.Primary, ImageType.Thumb, ImageType.Backdrop ]
+    }, { enabled: !!item?.Id && isBoxSet });
+
     const seasons = (seasonsResult?.Items || []) as ItemDto[];
     const episodes = (episodesResult?.Items || []) as ItemDto[];
     const seriesEpisodes = (seriesEpisodesResult?.Items || []) as ItemDto[];
+    const boxSetItems = (boxSetItemsResult?.Items || []) as ItemDto[];
     const nextUpEpisode = (nextUpItems || [])[0] as ItemDto | undefined;
 
     const episodeCardOptions = useMemo(() => ({
@@ -142,11 +154,22 @@ export default function DetailsPage() {
         action: ItemAction.Link
     }), [ __legacyApiClient__ ]);
 
+    const boxSetCardOptions = useMemo(() => ({
+        scalable: true,
+        shape: CardShape.Auto,
+        overlayPlayButton: true,
+        showTitle: true,
+        showYear: true,
+        showDetailsMenu: true,
+        serverId: __legacyApiClient__?.serverId(),
+        action: ItemAction.Link
+    }), [ __legacyApiClient__ ]);
+
     if (!itemId) {
         return (
             <Page id='detailsPage' className='detailsPage' isBackButtonEnabled>
                 <div className='detailsContainer'>
-                    <h1 className='detailsTitle'>{globalize.translate('Error')}</h1>
+                    <h1 className='detailsTitle'>{globalize.tryTranslate?.('Error') ?? 'Error'}</h1>
                     <div className='detailsMeta'>Missing id</div>
                 </div>
             </Page>
@@ -165,7 +188,7 @@ export default function DetailsPage() {
         return (
             <Page id='detailsPage' className='detailsPage' isBackButtonEnabled>
                 <div className='detailsContainer'>
-                    <h1 className='detailsTitle'>{globalize.translate('Error')}</h1>
+                    <h1 className='detailsTitle'>{globalize.tryTranslate?.('Error') ?? 'Error'}</h1>
                     <div className='detailsMeta'>Failed to load item</div>
                 </div>
             </Page>
@@ -355,6 +378,27 @@ export default function DetailsPage() {
                                 <EpisodeRow key={ep.Id} episode={ep} queryKey={[ ...queryKey, 'SeasonEpisodes' ]} showSeriesAndSeason={false} />
                             ))}
                         </div>
+                    </div>
+                ) : null}
+
+                {isBoxSet ? (
+                    <div className='detailsSection'>
+                        <h2 className='detailsSectionTitle'>{globalize.tryTranslate?.('Items') ?? 'Items'}</h2>
+                        {isBoxSetItemsPending ? (
+                            <div className='detailsMeta'>Loading…</div>
+                        ) : boxSetItems.length ? (
+                            <div className='itemsContainer vertical-wrap'>
+                                <Cards
+                                    items={boxSetItems}
+                                    cardOptions={{
+                                        ...boxSetCardOptions,
+                                        queryKey: [ ...queryKey, 'BoxSetItems' ]
+                                    }}
+                                />
+                            </div>
+                        ) : (
+                            <div className='detailsMeta'>{globalize.tryTranslate?.('MessageNoItemsAvailable') ?? 'No items available'}</div>
+                        )}
                     </div>
                 ) : null}
 

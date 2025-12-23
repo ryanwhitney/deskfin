@@ -1,4 +1,5 @@
 import React, { type FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
@@ -395,6 +396,8 @@ const Home: FC = () => {
     const { user, __legacyApiClient__ } = useApi();
     const apiClient = __legacyApiClient__;
     const documentRef = useRef<Document>(document);
+    const [ searchParams ] = useSearchParams();
+    const isFavoritesTab = searchParams.get('tab') === '1';
 
     const { data: userViewsResp } = useUserViews(user?.Id);
     const userViews = (userViewsResp?.Items || []) as BaseItemDto[];
@@ -410,6 +413,11 @@ const Home: FC = () => {
     const [ activeRecordings, setActiveRecordings ] = useState<ItemDto[]>([]);
     const [ onNow, setOnNow ] = useState<ItemDto[]>([]);
     const [ latestByLibrary, setLatestByLibrary ] = useState<LatestByLibrary[]>([]);
+
+    const [ favoriteMovies, setFavoriteMovies ] = useState<ItemDto[]>([]);
+    const [ favoriteShows, setFavoriteShows ] = useState<ItemDto[]>([]);
+    const [ favoriteEpisodes, setFavoriteEpisodes ] = useState<ItemDto[]>([]);
+    const [ favoriteCollections, setFavoriteCollections ] = useState<ItemDto[]>([]);
 
     const refreshAll = useCallback(async (options?: { priorityOnly?: boolean }) => {
         if (!apiClient || !user?.Id) return;
@@ -527,60 +535,113 @@ const Home: FC = () => {
         }
     }, [apiClient, user, userViews]);
 
+    const refreshFavorites = useCallback(async () => {
+        if (!apiClient || !user?.Id) return;
+        setLoading(true);
+        try {
+            const baseOptions: any = {
+                SortBy: 'SortName',
+                SortOrder: 'Ascending',
+                Filters: 'IsFavorite',
+                Recursive: true,
+                Fields: 'PrimaryImageAspectRatio,MediaSourceCount',
+                CollapseBoxSetItems: false,
+                ExcludeLocationTypes: 'Virtual',
+                EnableTotalRecordCount: false,
+                ImageTypeLimit: 1,
+                EnableImageTypes: 'Primary,Backdrop,Thumb',
+                Limit: 24
+            };
+            const userId = apiClient.getCurrentUserId();
+
+            const [ movies, shows, episodes, collections ] = await Promise.all([
+                apiClient.getItems(userId, { ...baseOptions, IncludeItemTypes: 'Movie' }),
+                apiClient.getItems(userId, { ...baseOptions, IncludeItemTypes: 'Series' }),
+                apiClient.getItems(userId, { ...baseOptions, IncludeItemTypes: 'Episode' }),
+                apiClient.getItems(userId, { ...baseOptions, IncludeItemTypes: 'BoxSet' })
+            ]);
+
+            setFavoriteMovies((movies?.Items || []) as ItemDto[]);
+            setFavoriteShows((shows?.Items || []) as ItemDto[]);
+            setFavoriteEpisodes((episodes?.Items || []) as ItemDto[]);
+            setFavoriteCollections((collections?.Items || []) as ItemDto[]);
+        } catch (e) {
+            console.error('[Home/Favorites] refresh failed', e);
+        } finally {
+            setLoading(false);
+        }
+    }, [apiClient, user?.Id]);
+
     const onAfterAction = useCallback(() => {
-        void refreshAll({ priorityOnly: true });
-        void refreshAll();
-    }, [refreshAll]);
+        if (isFavoritesTab) {
+            void refreshFavorites();
+        } else {
+            void refreshAll({ priorityOnly: true });
+            void refreshAll();
+        }
+    }, [isFavoritesTab, refreshAll, refreshFavorites]);
 
     const onToggleFavorite = useCallback(async (item: ItemDto) => {
         try {
             await toggleFavorite({ itemId: item.Id!, isFavorite: !!item.UserData?.IsFavorite });
-            void refreshAll({ priorityOnly: true });
-            void refreshAll();
+            if (isFavoritesTab) {
+                void refreshFavorites();
+            } else {
+                void refreshAll({ priorityOnly: true });
+                void refreshAll();
+            }
         } catch (e) {
             console.error('[Home] favorite failed', e);
         }
-    }, [refreshAll, toggleFavorite]);
+    }, [isFavoritesTab, refreshAll, refreshFavorites, toggleFavorite]);
 
     const onTogglePlayed = useCallback(async (item: ItemDto) => {
         try {
             await togglePlayed({ itemId: item.Id!, isPlayed: !!item.UserData?.Played });
-            void refreshAll({ priorityOnly: true });
-            void refreshAll();
+            if (isFavoritesTab) {
+                void refreshFavorites();
+            } else {
+                void refreshAll({ priorityOnly: true });
+                void refreshAll();
+            }
         } catch (e) {
             console.error('[Home] played failed', e);
         }
-    }, [refreshAll, togglePlayed]);
+    }, [isFavoritesTab, refreshAll, refreshFavorites, togglePlayed]);
 
     useEffect(() => {
         clearBackdrop();
         documentRef.current.querySelector('.skinHeader')?.classList.add('noHomeButtonHeader');
-        const start = performance.now();
-        void refreshAll({ priorityOnly: true }).finally(() => {
-            const ms = Math.round(performance.now() - start);
-            console.info(`[Home] priority loaded in ${ms}ms`);
-        });
-
-        const schedule = (cb: () => void) => {
-            const ric = (window as any).requestIdleCallback as undefined | ((fn: () => void, opts?: { timeout: number }) => void);
-            if (ric) {
-                ric(cb, { timeout: 1500 });
-            } else {
-                setTimeout(cb, 0);
-            }
-        };
-        schedule(() => {
-            const d0 = performance.now();
-            void refreshAll().finally(() => {
-                const ms = Math.round(performance.now() - d0);
-                console.info(`[Home] deferred loaded in ${ms}ms`);
+        if (isFavoritesTab) {
+            void refreshFavorites();
+        } else {
+            const start = performance.now();
+            void refreshAll({ priorityOnly: true }).finally(() => {
+                const ms = Math.round(performance.now() - start);
+                console.info(`[Home] priority loaded in ${ms}ms`);
             });
-        });
+
+            const schedule = (cb: () => void) => {
+                const ric = (window as any).requestIdleCallback as undefined | ((fn: () => void, opts?: { timeout: number }) => void);
+                if (ric) {
+                    ric(cb, { timeout: 1500 });
+                } else {
+                    setTimeout(cb, 0);
+                }
+            };
+            schedule(() => {
+                const d0 = performance.now();
+                void refreshAll().finally(() => {
+                    const ms = Math.round(performance.now() - d0);
+                    console.info(`[Home] deferred loaded in ${ms}ms`);
+                });
+            });
+        }
 
         return () => {
             documentRef.current.querySelector('.skinHeader')?.classList.remove('noHomeButtonHeader');
         };
-    }, [refreshAll]);
+    }, [isFavoritesTab, refreshAll, refreshFavorites]);
 
     // NOTE: We used to refetch on HEADER_RENDERED, but it can fire multiple times during startup,
     // leading to redundant network calls and slower first paint.
@@ -589,9 +650,9 @@ const Home: FC = () => {
     const libraryMenu = useMemo(async () => ((await import('../../../scripts/libraryMenu')).default), []);
     useEffect(() => {
         void (async () => {
-            (await libraryMenu).setTitle(null);
+            (await libraryMenu).setTitle(isFavoritesTab ? (t('Favorites', 'Favorites')) : null);
         })();
-    }, [libraryMenu]);
+    }, [isFavoritesTab, libraryMenu]);
 
     const sectionOrder = useMemo(() => getAllSectionsToShow(10), []);
 
@@ -603,6 +664,48 @@ const Home: FC = () => {
                 backDropType='movie,series,book'
             >
             <div className='homeModern'>
+                {isFavoritesTab ? (
+                    <>
+                        <section className='homeSection'>
+                            <h2 className='homeSectionTitle'>{t('Favorites', 'Favorites')}</h2>
+                            {loading ? <div className='homeMuted'>Loading…</div> : null}
+                        </section>
+
+                        <HomeRow
+                            title={t('Movies', 'Movies')}
+                            items={favoriteMovies}
+                            user={user}
+                            onAfterAction={onAfterAction}
+                            onToggleFavorite={onToggleFavorite}
+                            onTogglePlayed={onTogglePlayed}
+                        />
+                        <HomeRow
+                            title={t('Shows', 'Shows')}
+                            items={favoriteShows}
+                            user={user}
+                            onAfterAction={onAfterAction}
+                            onToggleFavorite={onToggleFavorite}
+                            onTogglePlayed={onTogglePlayed}
+                        />
+                        <HomeRow
+                            title={t('Episodes', 'Episodes')}
+                            items={favoriteEpisodes}
+                            user={user}
+                            onAfterAction={onAfterAction}
+                            onToggleFavorite={onToggleFavorite}
+                            onTogglePlayed={onTogglePlayed}
+                        />
+                        <HomeRow
+                            title={t('Collections', 'Collections')}
+                            items={favoriteCollections}
+                            user={user}
+                            onAfterAction={onAfterAction}
+                            onToggleFavorite={onToggleFavorite}
+                            onTogglePlayed={onTogglePlayed}
+                        />
+                    </>
+                ) : (
+                    <>
 
                 {/* Libraries */}
                 {sectionOrder.includes(HomeSectionType.SmallLibraryTiles) && userViews.length ? (
@@ -617,6 +720,7 @@ const Home: FC = () => {
                                     : ct === 'music' ? 'music'
                                     : ct === 'homevideos' ? 'homevideos'
                                     : ct === 'books' ? 'books'
+                                    : ct === 'boxsets' ? 'collections'
                                     : 'list';
                                 const href = base === 'list'
                                     ? `#/list?parentId=${v.Id}`
@@ -732,6 +836,8 @@ const Home: FC = () => {
                         ))}
                     </>
                 ) : null}
+                    </>
+                )}
                 </div>
             </Page>
     );
