@@ -3,8 +3,11 @@ import { AppType } from 'constants/appType';
 
 export const ASYNC_USER_ROUTES: AsyncRoute[] = [
     { path: 'details', page: 'details', type: AppType.Experimental },
+    { path: 'genre', page: 'genre', type: AppType.Experimental },
     { path: 'home', type: AppType.Experimental },
     { path: 'homevideos', type: AppType.Experimental },
+    { path: 'list', type: AppType.Experimental },
+    { path: 'books', type: AppType.Experimental },
     { path: 'livetv', type: AppType.Experimental },
     { path: 'movies', type: AppType.Experimental },
     { path: 'music', type: AppType.Experimental },
@@ -12,6 +15,7 @@ export const ASYNC_USER_ROUTES: AsyncRoute[] = [
     { path: 'mypreferencesmenu', page: 'user/settings' },
     { path: 'quickconnect', page: 'quickConnect' },
     { path: 'search' },
+    { path: 'person', page: 'person', type: AppType.Experimental },
     { path: 'tv', page: 'shows', type: AppType.Experimental },
     { path: 'userprofile', page: 'user/userprofile' }
 ];

@@ -7,7 +7,6 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import ReplayIcon from '@mui/icons-material/Replay';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import CheckIcon from '@mui/icons-material/Check';
 
@@ -138,6 +137,68 @@ const HomeCard: FC<{
     const isPlayed = !!item.UserData?.Played;
     const isResumable = !!item.UserData?.PlaybackPositionTicks && item.UserData.PlaybackPositionTicks > 0;
 
+    const detailsHref = `#/details?id=${item.Id}`;
+    const meta = useMemo(() => {
+        const type = item.Type as string | undefined;
+
+        const year = item.ProductionYear ?? (item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : undefined);
+        const endYear = item.EndDate ? new Date(item.EndDate).getFullYear() : undefined;
+
+        if (type === 'Movie') {
+            return {
+                title: item.Name || '',
+                titleHref: detailsHref,
+                subtitle: year ? `${year}` : '',
+                subtitleHref: undefined
+            };
+        }
+
+        if (type === 'Series') {
+            const start = year;
+            const subtitle = start
+                ? (endYear ? (endYear === start ? `${start}` : `${start}–${endYear}`) : `${start}–present`)
+                : '';
+            return {
+                title: item.Name || '',
+                titleHref: detailsHref,
+                subtitle,
+                subtitleHref: undefined
+            };
+        }
+
+        if (type === 'Episode') {
+            const seriesId = (item as any).SeriesId as string | undefined;
+            const seriesName = item.SeriesName as string | undefined;
+            const parentIndex = (item as any).ParentIndexNumber as number | undefined;
+            const index = (item as any).IndexNumber as number | undefined;
+            const s = parentIndex != null ? `S${parentIndex}` : '';
+            const e = index != null ? `E${index}` : '';
+            const prefix = (s || e) ? `${s}${s && e ? ':' : ''}${e}` : '';
+            const epTitle = item.Name || '';
+            const subtitle = prefix ? `${prefix}: ${epTitle}` : epTitle;
+
+            return {
+                title: seriesName || item.Name || '',
+                titleHref: seriesId ? `#/details?id=${seriesId}` : detailsHref,
+                subtitle,
+                subtitleHref: detailsHref
+            };
+        }
+
+        // Generic fallback: title is item name; subtitle is best-effort (series/artist)
+        const artistItems = (item as any).ArtistItems as Array<{ Id?: string; Name?: string }> | undefined;
+        const firstArtist = artistItems?.[0];
+        const subtitleText = (item.SeriesName || item.AlbumArtist || item.Artists?.[0] || firstArtist?.Name || '') as string;
+        const subtitleHref = firstArtist?.Id ? `#/person?id=${firstArtist.Id}` : detailsHref;
+
+        return {
+            title: item.Name || '',
+            titleHref: detailsHref,
+            subtitle: subtitleText,
+            subtitleHref
+        };
+    }, [detailsHref, item ]);
+
     const progressPct = (() => {
         const pos = item.UserData?.PlaybackPositionTicks ?? 0;
         const rt = item.RunTimeTicks ?? 0;
@@ -156,20 +217,43 @@ const HomeCard: FC<{
         }
     };
 
+    const onCenterPlayClick: React.MouseEventHandler = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        void onPlay(isResumable);
+    };
+
+    const onCardClick: React.MouseEventHandler = (e) => {
+        const el = e.target as HTMLElement | null;
+        if (el?.closest('a,button,.homeCardActions')) {
+            return;
+        }
+        window.location.href = detailsHref;
+    };
+
     return (
-        <div className='homeCard'>
-            <a
-                className='homeCardLink'
-                href={`#/details?id=${item.Id}`}
-                aria-label={item.Name || t('LabelMediaDetails', 'Details')}
-            >
+        <div className='homeCard' onClick={onCardClick}>
+            <div className='homeThumbWrap'>
                 <div
                     className='homeThumb'
                     style={{
                         backgroundImage: img ? `url(${img})` : 'linear-gradient(135deg, #1f1f1f, #2a2a2a)'
                     }}
+                    aria-label={item.Name || t('LabelMediaDetails', 'Item')}
                 />
-            </a>
+
+                {playbackManager.canPlay(item) ? (
+                    <button
+                        type='button'
+                        className='homePlayOverlay'
+                        aria-label={t('Play', 'Play')}
+                        title={t('Play', 'Play')}
+                        onClick={onCenterPlayClick}
+                    >
+                        <PlayArrowIcon />
+                    </button>
+                ) : null}
+            </div>
 
             {progressPct > 0 ? (
                 <div className='homeProgress'>
@@ -178,16 +262,23 @@ const HomeCard: FC<{
             ) : null}
 
             <div className='homeCardMeta'>
-                <div className='homeCardTitle' title={item.Name || ''}>{item.Name}</div>
-                <div className='homeCardSub'>
-                    {item.SeriesName || item.AlbumArtist || item.Artists?.[0] || ''}
-                </div>
+                <a className='homeCardTitle' href={meta.titleHref} title={meta.title}>
+                    {meta.title}
+                </a>
+                {meta.subtitle ? (
+                    meta.subtitleHref ? (
+                        <a className='homeCardSub' href={meta.subtitleHref} title={meta.subtitle}>
+                            {meta.subtitle}
+                        </a>
+                    ) : (
+                        <div className='homeCardSub' title={meta.subtitle}>
+                            {meta.subtitle}
+                        </div>
+                    )
+                ) : null}
             </div>
 
             <div className='homeCardActions'>
-                <IconButton className='homeIconBtn' size='small' title={isResumable ? t('Resume', 'Resume') : t('Play', 'Play')} onClick={() => onPlay(isResumable)}>
-                    {isResumable ? <ReplayIcon /> : <PlayArrowIcon />}
-                </IconButton>
                 <IconButton className='homeIconBtn' size='small' title={isFavorite ? t('Favorite', 'Favorite') : t('AddToFavorites', 'Add to favorites')} onClick={() => onToggleFavorite(item)}>
                     <FavoriteIcon color={isFavorite ? 'error' : undefined} />
                 </IconButton>
@@ -446,16 +537,30 @@ const Home: FC = () => {
                     <section className='homeSection'>
                         <h2 className='homeSectionTitle'>{t('HeaderMyMedia', 'My Media')}</h2>
                         <div className='homeRow'>
-                            {userViews.map(v => (
+                            {userViews.map(v => {
+                                const ct = v.CollectionType;
+                                const base =
+                                    ct === 'movies' ? 'movies'
+                                    : ct === 'tvshows' ? 'tv'
+                                    : ct === 'music' ? 'music'
+                                    : ct === 'homevideos' ? 'homevideos'
+                                    : ct === 'books' ? 'books'
+                                    : 'list';
+                                const href = base === 'list'
+                                    ? `#/list?parentId=${v.Id}`
+                                    : `#/${base}?topParentId=${v.Id}`;
+
+                                return (
                                 <a
                                     key={v.Id}
                                     className='homeLibraryTile'
-                                    href={`#/list?parentId=${v.Id}`}
+                                    href={href}
                                     aria-label={v.Name ?? t('HeaderMyMedia', 'Library')}
                                 >
                                     <div className='homeLibraryTitle'>{v.Name ?? t('HeaderMyMedia', 'Library')}</div>
                                 </a>
-                            ))}
+                                );
+                            })}
                         </div>
                     </section>
                 ) : null}

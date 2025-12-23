@@ -43,12 +43,11 @@
     background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.08);
     overflow: hidden;
+    cursor: pointer;
 }
 
-.homeCardLink {
-    display: block;
-    text-decoration: none;
-    color: inherit;
+.homeThumbWrap {
+    position: relative;
 }
 
 .homeThumb {
@@ -59,6 +58,29 @@
     background-repeat: no-repeat;
     background-color: #1c1c1c;
 }
+
+.homePlayOverlay {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 48px;
+    height: 48px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #f3f3f3;
+    cursor: pointer;
+}
+
+.homePlayOverlay:hover {
+    background: rgba(0, 0, 0, 0.70);
+}
+
+.homePlayOverlay :global(svg) { font-size: 1.4rem; }
 
 .homeProgress {
     height: 3px;
@@ -81,6 +103,13 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    color: #eee;
+    text-decoration: none;
+    display: block;
+}
+
+.homeCardTitle:hover {
+    text-decoration: underline;
 }
 
 .homeCardSub {
@@ -90,6 +119,12 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-decoration: none;
+    display: block;
+}
+
+.homeCardSub:hover {
+    text-decoration: underline;
 }
 
 .homeCardActions {

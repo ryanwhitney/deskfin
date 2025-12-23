@@ -52,7 +52,10 @@ const fetchGetItems = async (
     }
 };
 
-export const useGetItems = (parametersOptions: ItemsApiGetItemsRequest) => {
+export const useGetItems = (
+    parametersOptions: ItemsApiGetItemsRequest,
+    options?: { enabled?: boolean }
+) => {
     const currentApi = useApi();
     return useQuery({
         queryKey: [
@@ -64,7 +67,7 @@ export const useGetItems = (parametersOptions: ItemsApiGetItemsRequest) => {
         queryFn: ({ signal }) =>
             fetchGetItems(currentApi, parametersOptions, { signal }),
         gcTime: parametersOptions.sortBy?.includes(ItemSortBy.Random) ? 0 : undefined,
-        enabled: !!currentApi.api && !!currentApi.user?.Id
+        enabled: (options?.enabled ?? true) && !!currentApi.api && !!currentApi.user?.Id
     });
 };
 

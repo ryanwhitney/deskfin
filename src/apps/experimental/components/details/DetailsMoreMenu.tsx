@@ -15,6 +15,7 @@ import type { ItemDto } from 'types/base/models/item-dto';
 interface DetailsMoreMenuProps {
     item: ItemDto;
     queryKey: string[];
+    className?: string;
 }
 
 type Command = {
@@ -28,7 +29,7 @@ const t = (key: string, fallback: string) => {
     return globalize.tryTranslate?.(key) ?? fallback;
 };
 
-export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({ item, queryKey }) => {
+export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({ item, queryKey, className }) => {
     const queryClient = useQueryClient();
     const { user } = useApi();
     const [ anchorEl, setAnchorEl ] = useState<null | HTMLElement>(null);
@@ -84,7 +85,7 @@ export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({ item, queryKey }) =>
 
     return (
         <>
-            <IconButton className='detailsIconBtn' size='small' title={t('ButtonMore', 'More')} onClick={openMenu}>
+            <IconButton className={className ?? 'detailsIconBtn'} size='small' title={t('ButtonMore', 'More')} onClick={openMenu}>
                 <MoreVertIcon />
             </IconButton>
 
