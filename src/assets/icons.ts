@@ -97,42 +97,10 @@ export const Icons = {
     macMini: iconMacMini
 } as const;
 
-// Normalize SVG markup so it scales correctly (no hardcoded width/height) and tints via currentColor.
-// IMPORTANT:
-// - Do NOT add strokes; many icons are filled shapes and adding stroke warps the design.
-// - Do NOT delete existing strokes; some icons are stroke-only.
+// Light normalization: ensure viewBox, strip width/height, tint to currentColor.
 const toCurrentColorSvg = (svg: string) => {
     let out = svg;
 
-    // Rewrite inline style attributes to use currentColor for fill/stroke while preserving other declarations.
-    out = out.replace(/\sstyle="([^"]*)"/g, (_m, styleValue: string) => {
-        const parts = styleValue
-            .split(';')
-            .map(s => s.trim())
-            .filter(Boolean);
-
-        const rewritten = parts.map(part => {
-            const [ rawKey, rawVal ] = part.split(':');
-            const key = rawKey?.trim();
-            const val = rawVal?.trim();
-            if (!key || val == null) return part;
-
-            if (key === 'fill') {
-                if (val === 'none') return 'fill:none';
-                return 'fill:currentColor';
-            }
-            if (key === 'stroke') {
-                if (val === 'none') return 'stroke:none';
-                return 'stroke:currentColor';
-            }
-            return `${key}:${val}`;
-        });
-
-        return rewritten.length ? ` style="${rewritten.join(';')};"` : '';
-    });
-
-    // If the SVG has no viewBox, derive one from width/height before stripping sizing.
-    // This prevents "invisible" icons when authors export fixed-size SVGs without a viewBox.
     if (out.startsWith('<svg') && !out.includes('viewBox=')) {
         const widthMatch = out.match(/\swidth="([\d.]+)"/);
         const heightMatch = out.match(/\sheight="([\d.]+)"/);
@@ -141,63 +109,11 @@ const toCurrentColorSvg = (svg: string) => {
         }
     }
 
-    // Remove clip-path references/defs that can zero-out rendering in some browsers.
-    out = out.replace(/\sclip-path="url\(#.*?\)"/g, '');
-    out = out.replace(/<defs[\s\S]*?<\/defs>/g, '');
-
-    // Drop any black background rectangles/paths that hide the glyph.
-    out = out.replace(/<rect[^>]*fill="black"[^>]*>\s*<\/rect>/gi, '');
-    out = out.replace(/<path[^>]*fill="black"[^>]*>\s*<\/path>/gi, '');
-
-    // Strip width/height so the icon scales via CSS box (we keep viewBox).
-    out = out
-        .replace(/\swidth="[^"]*"/g, '')
-        .replace(/\sheight="[^"]*"/g, '');
-
-    // Keep existing stroke attributes, but tint them. Do not add new strokes.
-    out = out.replace(/\sstroke="(?!none)[^"]*"/g, ' stroke="currentColor"');
-
-    // Also tint common presentation attrs inside paths (stroke-width, linecap, linejoin stay intact).
-    out = out.replace(/\sstroke-width="([^"]*)"/g, (_m, v) => ` stroke-width="${v}"`);
-
-    // Force fills to currentColor, but keep fill="none" (e.g., open shapes).
+    out = out.replace(/\swidth="[^"]*"/g, '').replace(/\sheight="[^"]*"/g, '');
     out = out.replace(/\sfill="(?!none)[^"]*"/g, ' fill="currentColor"');
-
-    // If there is no explicit fill or stroke anywhere, ensure shapes inherit currentColor by setting on root.
+    out = out.replace(/\sstroke="(?!none)[^"]*"/g, ' stroke="currentColor"');
     if (!/fill="/.test(out) && !/stroke="/.test(out) && out.startsWith('<svg')) {
         out = out.replace('<svg', '<svg fill="currentColor"');
-    }
-
-    // For multi-path icons that were exported as layered solid fills, make all but the last path outlines to avoid solid squares.
-    const pathMatches = [...out.matchAll(/<path[^>]*>/g)];
-    if (pathMatches.length > 1) {
-        const lastIndex = pathMatches.length - 1;
-        pathMatches.forEach((match, idx) => {
-            if (idx === lastIndex) return;
-            const original = match[0];
-            let patched = original;
-            if (/fill="/.test(patched)) {
-                patched = patched.replace(/\sfill="[^"]*"/g, ' fill="none"');
-            } else {
-                patched = patched.replace('<path', '<path fill="none"');
-            }
-            if (/stroke="/.test(patched)) {
-                patched = patched.replace(/\sstroke="[^"]*"/g, ' stroke="currentColor"');
-            } else {
-                patched = patched.replace('<path', '<path stroke="currentColor"');
-            }
-            out = out.replace(original, patched);
-        });
-    }
-
-    // If there is no explicit fill or stroke anywhere, ensure shapes inherit currentColor by setting on root.
-    if (!/fill="/.test(out) && !/stroke="/.test(out) && out.startsWith('<svg')) {
-        out = out.replace('<svg', '<svg fill="currentColor"');
-    }
-
-    // Ensure the root SVG has preserveAspectRatio so it doesn't distort in flex/layout contexts.
-    if (out.startsWith('<svg') && !out.includes('preserveAspectRatio=')) {
-        out = out.replace('<svg', '<svg preserveAspectRatio="xMidYMid meet"');
     }
 
     return out;
