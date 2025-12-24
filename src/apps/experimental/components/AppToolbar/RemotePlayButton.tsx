@@ -1,6 +1,3 @@
-import React from 'react';
+export { default } from '../../app/layout/toolbar/RemotePlayButton';
 
-// Remote play / cast is removed per request.
-const RemotePlayButton = () => null;
 
-export default RemotePlayButton;

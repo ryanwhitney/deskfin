@@ -10,8 +10,8 @@ import type { ItemDto } from 'types/base/models/item-dto';
 import { ItemKind } from 'types/base/models/item-kind';
 import itemHelper from 'components/itemHelper';
 import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from '../../../../../../assets/icons';
-import { Button, IconButton } from '../../../../components/Elements/Button';
+import { IconSvgs } from 'assets/icons';
+import { Button, IconButton } from 'apps/experimental/shared/ui/button';
 
 interface PlayOrResumeButtonProps {
     item: ItemDto;

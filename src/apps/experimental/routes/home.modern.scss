@@ -1,3 +1,5 @@
+@import "../features/home/styles/home.modern.scss";
+
 .homeModern {
     display: flex;
     flex-direction: column;
@@ -66,6 +68,23 @@
         transition: all 200ms ease;
     }
 
+    .homeCountBadge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        height: 16px;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.55);
+        color: #f3f3f3;
+        font-size: 12px;
+        font-weight: 640;
+        line-height: 1;
+        pointer-events: none;
+        backdrop-filter: blur(6px);
+        display: flex;
+        align-items: center;
+        padding: 0 4px;
+    }
 
     .homePlayOverlay {
         opacity: 0;
@@ -85,21 +104,20 @@
         cursor: pointer;
         transition: all 100ms ease-in;
         > span {
-                transform: scale(1);
-                transition: all 200ms ease;
-            }
-        &:hover{
+            transform: scale(1);
+            transition: all 200ms ease;
+        }
+        &:hover {
             width: 62px;
             height: 62px;
             opacity: 1;
-            background: rgba(59, 130, 246, .3);
+            background: rgba(59, 130, 246, 0.3);
             > span {
                 transform: scale(1.4);
                 color: #3b82f6;
             }
         }
     }
-
 
     .homeCardActions {
         opacity: 0;
@@ -110,26 +128,23 @@
         gap: 6px;
     }
 
-    &:hover{
-         .homeThumb {
-            box-shadow: inset 0 0 20cqh rgba(0,0,0,.8);
-
+    &:hover {
+        .homeThumb {
+            box-shadow: inset 0 0 20cqh rgba(0, 0, 0, 0.8);
         }
-        .homeCardActions{
+        .homeCardActions {
             opacity: 1;
-            filter: brightness(1)
+            filter: brightness(1);
         }
-        .homePlayOverlay{
+        .homePlayOverlay {
             opacity: 1;
-         }
+        }
     }
 }
 
-
-
 .homeProgress {
     height: 3px;
-    background: rgba(255, 255, 255, 0.10);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .homeProgressBar {
@@ -172,7 +187,6 @@
     text-decoration: underline;
 }
 
-
 .homeMenuDivider {
     height: 1px;
     background: rgba(255, 255, 255, 0.08);
@@ -198,4 +212,3 @@
         width: 150px;
     }
 }
-

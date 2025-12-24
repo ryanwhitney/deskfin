@@ -1,6 +1,3 @@
-import React from 'react';
+export { default } from '../../app/layout/toolbar/SyncPlayButton';
 
-// SyncPlay button removed per request.
-const SyncPlayButton = () => null;
 
-export default SyncPlayButton;

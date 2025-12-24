@@ -1,0 +1,478 @@
+.detailsPage {
+    color: #eee;
+}
+
+.detailsHero {
+    position: relative;
+    height: 38vh;
+    min-height: 260px;
+    background: #0f0f0f;
+    background-size: cover;
+    background-position: center;
+}
+
+.detailsHeroOverlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.15) 0%,
+        rgba(0, 0, 0, 0.65) 55%,
+        rgba(0, 0, 0, 0.95) 100%
+    );
+}
+
+.detailsContainer {
+    position: relative;
+    margin-top: -120px;
+    padding: 1.25rem 1.5rem 2rem;
+}
+
+.detailsTop {
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    gap: 1rem;
+    align-items: start;
+}
+
+.detailsPoster {
+    width: 170px;
+    height: 255px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #1f1f1f, #2a2a2a);
+    background-size: cover;
+    background-position: center;
+    border: 1px solid #2a2a2a;
+}
+
+.detailsTitle {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 800;
+    line-height: 1.15;
+}
+
+.detailsBreadcrumbs {
+    margin-top: 0.35rem;
+    display: flex;
+    gap: 0.45rem;
+    align-items: center;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+    color: #b8b8b8;
+    font-size: 0.92rem;
+}
+
+.detailsBreadcrumbLink {
+    color: #d6d6d6;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.detailsBreadcrumbLink:hover {
+    text-decoration: underline;
+}
+
+.detailsBreadcrumbLink:focus-visible {
+    text-decoration: underline;
+}
+
+.detailsBreadcrumbText {
+    color: #b8b8b8;
+}
+
+.detailsBreadcrumbSep {
+    opacity: 0.7;
+}
+
+.detailsMeta {
+    margin-top: 0.4rem;
+    color: #b8b8b8;
+    font-size: 0.95rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.dot {
+    opacity: 0.6;
+}
+
+.detailsMetaInfo {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    align-items: center;
+}
+
+.detailsMetaPill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 999px;
+    background-color: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    color: #ddd;
+    font-size: 0.85rem;
+    line-height: 1.2;
+}
+
+.detailsOverview {
+    margin-top: 0.9rem;
+    margin-bottom: 1.25rem;
+    color: #d5d5d5;
+    max-width: 72ch;
+    line-height: 1.5;
+}
+
+.detailsActions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.detailsPrimaryActions {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.detailsFacts {
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.detailsFactRow {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 0.75rem;
+    align-items: start;
+}
+
+.detailsFactLabel {
+    color: #b8b8b8;
+    font-size: 0.9rem;
+}
+
+.detailsFactValue {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.55rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    color: #e6e6e6;
+    font-size: 0.85rem;
+    text-decoration: none;
+}
+
+.tag:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.detailsSection {
+    margin-top: 1.75rem;
+}
+
+.detailsSectionTitle {
+    margin: 0 0 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #f3f3f3;
+}
+
+.episodeList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.episodeRow {
+    display: grid;
+    grid-template-columns: 220px 1fr auto;
+    gap: 0.9rem;
+    align-items: start;
+    padding: 0.75rem;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    text-decoration: none;
+    color: inherit;
+}
+
+.episodeThumb {
+    position: relative;
+    width: 100%;
+}
+
+.episodeThumbImg {
+    width: 100%;
+    padding-top: 56.25%;
+    border-radius: 12px;
+    background-size: cover;
+    background-position: center;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.episodeThumbPlay {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #f3f3f3;
+    cursor: pointer;
+}
+
+.episodeThumbPlay:hover {
+    background: rgba(0, 0, 0, 0.70);
+}
+
+.episodeBody {
+    min-width: 0;
+}
+
+.episodeTitle {
+    font-weight: 900;
+    font-size: 1.02rem;
+    color: #f2f2f2;
+    line-height: 1.2;
+    margin-top: 0.05rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.episodeSubheads {
+    margin-top: 0.25rem;
+    display: flex;
+    gap: 0.45rem;
+    align-items: center;
+    flex-wrap: wrap;
+    color: #b8b8b8;
+    font-size: 0.9rem;
+}
+
+.episodeSubLink {
+    color: #d6d6d6;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.episodeSubLink:hover {
+    text-decoration: underline;
+}
+
+.episodeSubSep {
+    opacity: 0.7;
+}
+
+.episodeOverview {
+    margin-top: 0.45rem;
+    color: #d0d0d0;
+    font-size: 0.92rem;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.episodeActions {
+    display: flex;
+    gap: 0.45rem;
+    align-items: center;
+    padding-top: 0.1rem;
+}
+
+.episodeActionBtn {
+    // Layout-only; visual styling comes from `ExpIconButton` (`.expIconButton`)
+}
+
+@media (max-width: 820px) {
+    .episodeRow {
+        grid-template-columns: 1fr;
+    }
+    .episodeActions {
+        justify-content: flex-start;
+    }
+}
+.detailsPeople {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.6rem;
+}
+
+.detailsPerson {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.65rem 0.75rem;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    color: #e6e6e6;
+    text-decoration: none;
+}
+
+.detailsPerson:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.detailsPerson:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.35);
+    outline-offset: 2px;
+}
+
+.detailsPerson--static {
+    cursor: default;
+}
+
+.detailsPersonName {
+    font-weight: 800;
+}
+
+.detailsPersonRole {
+    color: #b8b8b8;
+    font-size: 0.9rem;
+}
+
+.detailsRow {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.detailsCardRow {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+}
+
+.detailsCard {
+    width: 140px;
+    flex: 0 0 auto;
+    text-decoration: none;
+    color: inherit;
+}
+
+.detailsCardImg {
+    position: relative;
+    width: 100%;
+    padding-top: 150%;
+    background-size: cover;
+    background-position: center;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    background-color: rgba(255, 255, 255, 0.04);
+}
+
+.detailsCountBadge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 0.18rem 0.45rem;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: #f3f3f3;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1;
+    pointer-events: none;
+    backdrop-filter: blur(6px);
+}
+
+.detailsCardTitle {
+    margin-top: 0.5rem;
+    font-weight: 800;
+    font-size: 0.92rem;
+    color: #eee;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.detailsRowItem {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.65rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    color: #eee;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.92rem;
+}
+
+.detailsRowItem:hover {
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+.person {
+    padding: 0.6rem 0.7rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.personName {
+    font-weight: 800;
+    color: #eee;
+    font-size: 0.95rem;
+    text-decoration: none;
+}
+
+.personName:hover {
+    text-decoration: underline;
+}
+
+.personRole {
+    margin-top: 0.15rem;
+    color: #b8b8b8;
+    font-size: 0.85rem;
+}
+
+@media (max-width: 600px) {
+    .detailsContainer {
+        margin-top: -90px;
+        padding: 1rem;
+    }
+
+    .detailsTop {
+        grid-template-columns: 120px 1fr;
+    }
+
+    .detailsPoster {
+        width: 120px;
+        height: 180px;
+    }
+
+    .detailsFactRow {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
+    }
+}
+
+
