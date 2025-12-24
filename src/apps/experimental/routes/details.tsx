@@ -53,8 +53,31 @@ export default function DetailsPage() {
     const { user, api, __legacyApiClient__ } = useApi();
     const { data: item, isLoading, error } = useItem(itemId);
 
-    const primaryUrl = useMemo(() => buildImageUrl(item, 'Primary', 600), [ item ]);
-    const backdropUrl = useMemo(() => buildImageUrl(item, 'Backdrop', 1400), [ item ]);
+    // For episodes/seasons, backdrops are often missing. Pull related items to use as fallbacks.
+    const seriesId = (item as any)?.SeriesId as string | undefined;
+    const seasonId = (item as any)?.SeasonId as string | undefined;
+    const { data: seriesItem } = useItem(seriesId);
+    const { data: seasonItem } = useItem(seasonId);
+
+    const primaryUrl = useMemo(() => {
+        return (
+            buildImageUrl(item, 'Primary', 600)
+            || buildImageUrl(seasonItem, 'Primary', 600)
+            || buildImageUrl(seriesItem, 'Primary', 600)
+        );
+    }, [ item, seasonItem, seriesItem ]);
+
+    const backdropUrl = useMemo(() => {
+        return (
+            buildImageUrl(item, 'Backdrop', 1400)
+            || buildImageUrl(seasonItem, 'Backdrop', 1400)
+            || buildImageUrl(seriesItem, 'Backdrop', 1400)
+            // Last-resort: use a wide primary so the hero isn't blank.
+            || buildImageUrl(item, 'Primary', 1400)
+            || buildImageUrl(seasonItem, 'Primary', 1400)
+            || buildImageUrl(seriesItem, 'Primary', 1400)
+        );
+    }, [ item, seasonItem, seriesItem ]);
 
     const queryKey = useMemo(() => {
         return user?.Id
@@ -168,9 +191,7 @@ export default function DetailsPage() {
     const cast = people.filter(p => p.Type === 'Actor' || p.Type === 'GuestStar'); // GuestStar for episodes
 
     // For episodes, show Series/Season info?
-    const seriesId = (item as any).SeriesId as string | undefined;
     const seriesName = (item as any).SeriesName as string | undefined;
-    const seasonId = (item as any).SeasonId as string | undefined;
     const seasonName = (item as any).SeasonName as string | undefined;
 
     // Derived "next up" logic (mocked/simplified for now or rely on cache)
