@@ -31,7 +31,8 @@ import iconInfo from './img/icons/info.svg';
 import iconPhoto from './img/icons/photo.svg';
 import iconQuickConnect from './img/icons/quick connect.svg';
 import iconSignOut from './img/icons/sign out.svg';
-import iconMacMini from './img/icons/mac mini.svg';
+import iconMacMini from './img/icons/macmini.fill.small.svg';
+import iconShuffle from './img/icons/shuffle.svg';
 
 import iconHomeRaw from './img/icons/home.svg?raw';
 import iconSearchRaw from './img/icons/search.svg?raw';
@@ -62,7 +63,8 @@ import iconInfoRaw from './img/icons/info.svg?raw';
 import iconPhotoRaw from './img/icons/photo.svg?raw';
 import iconQuickConnectRaw from './img/icons/quick connect.svg?raw';
 import iconSignOutRaw from './img/icons/sign out.svg?raw';
-import iconMacMiniRaw from './img/icons/mac mini.svg?raw';
+import iconMacMiniRaw from './img/icons/macmini.fill.small.svg?raw';
+import iconShuffleRaw from './img/icons/shuffle.svg?raw';
 
 export const Icons = {
     home: iconHome,
@@ -94,7 +96,8 @@ export const Icons = {
     photo: iconPhoto,
     quickConnect: iconQuickConnect,
     signOut: iconSignOut,
-    macMini: iconMacMini
+    macMini: iconMacMini,
+    shuffle: iconShuffle
 } as const;
 
 // Light normalization: ensure viewBox, strip width/height, tint to currentColor.
@@ -149,7 +152,8 @@ const BaseIconSvgs = {
     photo: toCurrentColorSvg(iconPhotoRaw),
     quickConnect: toCurrentColorSvg(iconQuickConnectRaw),
     signOut: toCurrentColorSvg(iconSignOutRaw),
-    macMini: toCurrentColorSvg(iconMacMiniRaw)
+    macMini: toCurrentColorSvg(iconMacMiniRaw),
+    shuffle: toCurrentColorSvg(iconShuffleRaw)
 };
 
 // Manual overrides for complex multi-path icons to avoid masking/clip issues.
@@ -214,6 +218,9 @@ export function getLegacyCommandIcon(name: string | undefined): string | undefin
             return IconSvgs.controls;
         case 'fiber_manual_record':
             return IconSvgs.liveTv;
+        case 'shuffle':
+        case 'shuffle_on':
+            return IconSvgs.shuffle;
         default:
             return undefined;
     }
