@@ -1,7 +1,4 @@
 import React, { FC, useCallback, useMemo } from 'react';
-import IconButton from '@mui/material/IconButton';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import ReplayIcon from '@mui/icons-material/Replay';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { ItemAction } from 'constants/itemAction';
@@ -12,6 +9,9 @@ import { playbackManager } from 'components/playback/playbackmanager';
 import type { ItemDto } from 'types/base/models/item-dto';
 import { ItemKind } from 'types/base/models/item-kind';
 import itemHelper from 'components/itemHelper';
+import SvgIcon from 'components/SvgIcon';
+import { IconSvgs } from '../../../../../../assets/icons';
+import { Button, IconButton } from '../../../../components/Elements/Button';
 
 interface PlayOrResumeButtonProps {
     item: ItemDto;
@@ -74,19 +74,41 @@ const PlayOrResumeButton: FC<PlayOrResumeButtonProps> = ({
         });
     }, [apiContext, item, playOptions, queryClient]);
 
+    const onRestartClick = useCallback(() => {
+        playbackManager.play({
+            items: [ item ],
+            startPositionTicks: 0,
+            mediaSourceId: selectedMediaSourceId,
+            audioStreamIndex: selectedAudioTrack || null,
+            subtitleStreamIndex: selectedSubtitleTrack
+        }).catch(err => {
+            console.error('[PlayOrResumeButton] failed to restart', err);
+        });
+    }, [ item, selectedAudioTrack, selectedMediaSourceId, selectedSubtitleTrack ]);
+
     return (
-        <IconButton
-            className='button-flat btnPlayOrResume'
-            data-action={isResumable ? ItemAction.Resume : ItemAction.Play}
-            title={
-                isResumable ?
-                    globalize.translate('ButtonResume') :
-                    globalize.translate('Play')
-            }
-            onClick={onPlayClick}
-        >
-            {isResumable ? <ReplayIcon /> : <PlayArrowIcon />}
-        </IconButton>
+        <div className='detailsPrimaryActions'>
+            <Button
+                data-action={isResumable ? ItemAction.Resume : ItemAction.Play}
+                title={
+                    isResumable ?
+                        globalize.translate('ButtonResume') :
+                        globalize.translate('Play')
+                }
+                onClick={onPlayClick}
+                icon={<SvgIcon svg={IconSvgs.play} size={18} />}
+            >
+                {isResumable ? globalize.translate('ButtonResume', 'Continue') : globalize.translate('Play')}
+            </Button>
+            {isResumable && (
+                <IconButton
+                    title={globalize.translate('Restart', 'Restart')}
+                    aria-label={globalize.translate('Restart', 'Restart')}
+                    onClick={onRestartClick}
+                    icon={<SvgIcon svg={IconSvgs.refresh} size={18} />}
+                />
+            )}
+        </div>
     );
 };
 

@@ -18,7 +18,7 @@ const ServerButton: FC = () => {
             aria-label={systemInfo?.ServerName || 'Jellyfin'}
         >
             <JfIcon svg={IconSvgs.macMini} />
-            {!isPending && (systemInfo?.ServerName || 'Jellyfin')}
+            desk
         </Link>
     );
 };

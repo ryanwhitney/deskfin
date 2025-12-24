@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 
-import JfIcon from 'components/JfIcon';
+import SvgIcon from 'components/SvgIcon';
 import { IconSvgs } from '../../../../assets/icons';
 import globalize from 'lib/globalize';
 
@@ -28,9 +28,8 @@ const ExperimentalUserMenuButton = () => {
                 onClick={onUserButtonClick}
                 className='expToolbarIconButton'
             >
-                <JfIcon svg={IconSvgs.avatar} />
+                <SvgIcon svg={IconSvgs.avatar} size={24} />
             </button>
-
             <ExperimentalUserMenu
                 open={isUserMenuOpen}
                 anchorEl={userMenuAnchorEl}

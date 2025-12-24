@@ -3,6 +3,8 @@ import classNames from 'classnames';
 import Box from '@mui/material/Box';
 import usePrimaryMediaInfo from './usePrimaryMediaInfo';
 
+import './mediainfo.scss';
+
 import MediaInfoItem from './MediaInfoItem';
 import StarIcons from './StarIcons';
 import CaptionMediaInfo from './CaptionMediaInfo';

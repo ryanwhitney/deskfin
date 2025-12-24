@@ -1,15 +1,15 @@
 import React, { type FC, useMemo } from 'react';
-import IconButton from '@mui/material/IconButton';
 
 import { playbackManager } from 'components/playback/playbackmanager';
 import { ServerConnections } from 'lib/jellyfin-apiclient';
-import FavoriteButton from 'elements/emby-ratingbutton/FavoriteButton';
-import PlayedButton from 'elements/emby-playstatebutton/PlayedButton';
 import globalize from 'lib/globalize';
 import type { ItemDto } from 'types/base/models/item-dto';
 import { DetailsMoreMenu } from './DetailsMoreMenu';
-import JfIcon from 'components/JfIcon';
+import SvgIcon from 'components/SvgIcon';
 import { IconSvgs } from '../../../../assets/icons';
+import { IconButton } from '../Elements/Button';
+import FavoriteButton from '../../features/userData/components/FavoriteButton';
+import PlayedButton from '../../features/userData/components/PlayedButton';
 
 interface EpisodeRowProps {
     episode: ItemDto;
@@ -76,7 +76,7 @@ export const EpisodeRow: FC<EpisodeRowProps> = ({ episode, queryKey, showSeriesA
                     title={t('Play', 'Play')}
                     onClick={onPlayClick}
                 >
-                    <JfIcon svg={IconSvgs.play} />
+                    <SvgIcon svg={IconSvgs.play} size={26} />
                 </button>
             </div>
 
@@ -109,26 +109,26 @@ export const EpisodeRow: FC<EpisodeRowProps> = ({ episode, queryKey, showSeriesA
             </div>
 
             <div className='episodeActions' onClick={(e) => e.preventDefault()}>
-                <IconButton className='episodeActionBtn' size='small' title={t('Play', 'Play')} onClick={onPlayClick}>
-                    <JfIcon svg={IconSvgs.play} />
-                </IconButton>
-                <PlayedButton
+                <IconButton
                     className='episodeActionBtn'
+                    title={t('Play', 'Play')}
+                    aria-label={t('Play', 'Play')}
+                    onClick={onPlayClick}
+                    icon={<SvgIcon svg={IconSvgs.play} size={18} />}
+                />
+                <PlayedButton
+                    className='expIconButton episodeActionBtn'
                     isPlayed={!!episode.UserData?.Played}
                     itemId={episode.Id}
                     itemType={episode.Type}
-                    queryKey={queryKey}
                 />
                 <FavoriteButton
-                    className='episodeActionBtn'
+                    className='expIconButton episodeActionBtn'
                     isFavorite={!!episode.UserData?.IsFavorite}
                     itemId={episode.Id}
-                    queryKey={queryKey}
                 />
-                <DetailsMoreMenu item={episode} queryKey={queryKey} className='episodeActionBtn' />
+                <DetailsMoreMenu item={episode} queryKey={queryKey} className='expIconButton episodeActionBtn' />
             </div>
         </a>
     );
 };
-
-

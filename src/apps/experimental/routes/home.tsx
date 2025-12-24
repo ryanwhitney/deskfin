@@ -21,8 +21,9 @@ import layoutManager from 'components/layoutManager';
 import { DEFAULT_SECTIONS, HomeSectionType } from 'types/homeSectionType';
 import type { ItemDto } from 'types/base/models/item-dto';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
-import JfIcon from 'components/JfIcon';
+import SvgIcon from 'components/SvgIcon';
 import { IconSvgs, getLegacyCommandIcon } from '../../../assets/icons';
+import { LinkButton } from '../components/Elements/Button';
 
 import './home.modern.scss';
 
@@ -137,7 +138,7 @@ const ItemMoreMenu: FC<{ item: ItemDto; user: any; onAfterAction: () => void }> 
                     setAnchorEl(e.currentTarget);
                 }}
             >
-                <JfIcon svg={IconSvgs.ellipsis} />
+                <SvgIcon svg={IconSvgs.ellipsis} size={18} />
             </IconButton>
             <Menu
                 anchorEl={anchorEl}
@@ -167,7 +168,7 @@ const ItemMoreMenu: FC<{ item: ItemDto; user: any; onAfterAction: () => void }> 
                             {cmd.icon ? (
                                 <ListItemIcon>
                                     {getLegacyCommandIcon(cmd.icon) ? (
-                                        <JfIcon svg={getLegacyCommandIcon(cmd.icon)!} />
+                                        <SvgIcon svg={getLegacyCommandIcon(cmd.icon)!} size={18} />
                                     ) : null}
                                 </ListItemIcon>
                             ) : null}
@@ -300,12 +301,12 @@ const HomeCard: FC<{
             <div className='homeCardActions'>
                 <IconButton className='homeIconBtn' size='small' title={isFavorite ? t('Favorite', 'Favorite') : t('AddToFavorites', 'Add to favorites')} onClick={() => onToggleFavorite(item)}>
                     <span style={{ color: isFavorite ? '#ff4d6d' : undefined }}>
-                        <JfIcon svg={IconSvgs.heart} />
+                        <SvgIcon svg={IconSvgs.heart} size={18} />
                     </span>
                 </IconButton>
                 <IconButton className='homeIconBtn' size='small' title={isPlayed ? t('Watched', 'Watched') : t('MarkPlayed', 'Mark played')} onClick={() => onTogglePlayed(item)}>
                     <span style={{ color: isPlayed ? '#4ade80' : undefined }}>
-                        <JfIcon svg={IconSvgs.checkmark} />
+                        <SvgIcon svg={IconSvgs.checkmark} size={18} />
                     </span>
                 </IconButton>
                 <ItemMoreMenu item={item} user={user} onAfterAction={onAfterAction} />
@@ -320,7 +321,7 @@ const HomeCard: FC<{
                         title={t('Play', 'Play')}
                         onClick={onCenterPlayClick}
                     >
-                        <JfIcon svg={IconSvgs.play} />
+                        <SvgIcon svg={IconSvgs.play} size={18} />
                     </button>
                 ) : null}
             </div>
@@ -673,7 +674,6 @@ const Home: FC = () => {
                     <>
                         <section className='homeSection'>
                             <h2 className='homeSectionTitle'>{t('Favorites', 'Favorites')}</h2>
-                            {loading ? <div className='homeMuted'>Loading…</div> : null}
                         </section>
 
                         <HomeRow
@@ -732,14 +732,14 @@ const Home: FC = () => {
                                     : `#/${base}?topParentId=${v.Id}`;
 
                                 return (
-                                <a
-                                    key={v.Id}
-                                    className='homeLibraryTile'
-                                    href={href}
-                                    aria-label={v.Name ?? t('HeaderMyMedia', 'Library')}
-                                >
-                                    <div className='homeLibraryTitle'>{v.Name ?? t('HeaderMyMedia', 'Library')}</div>
-                                </a>
+                                    <LinkButton
+                                        key={v.Id}
+                                        className='homeLibraryTile'
+                                        href={href}
+                                        aria-label={v.Name ?? t('HeaderMyMedia', 'Library')}
+                                    >
+                                        <div className='homeLibraryTitle'>{v.Name ?? t('HeaderMyMedia', 'Library')}</div>
+                                    </LinkButton>
                                 );
                             })}
                         </div>

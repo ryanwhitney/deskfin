@@ -7,7 +7,7 @@ import {
     useSearchParams
 } from 'react-router-dom';
 import globalize from 'lib/globalize';
-import JfIcon from 'components/JfIcon';
+import SvgIcon from 'components/SvgIcon';
 import { IconSvgs } from '../../../../assets/icons';
 
 const getUrlParams = (searchParams: URLSearchParams) => {
@@ -49,7 +49,7 @@ const SearchButton: FC = () => {
                 }
             }}
         >
-            <JfIcon svg={IconSvgs.search} />
+            <SvgIcon svg={IconSvgs.search} size={18} />
         </Link>
     );
 };

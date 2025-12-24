@@ -17,7 +17,7 @@ function CircularProgressWithLabel(
     props: CircularProgressProps & { value: number }
 ) {
     return (
-        <Box sx={{ position: 'relative', display: 'inline-flex' }}>
+        <Box sx={{ position: 'relative', display: 'inline-flex',borderColor: 'red' }}>
             <CircularProgress variant='determinate' {...props} />
             <Box
                 sx={{
@@ -90,7 +90,7 @@ const RefreshIndicator: FC<RefreshIndicatorProps> = ({ item, className }) => {
 
     return showProgressBar ? (
         <div className={progressringClass}>
-            <CircularProgressWithLabel value={Math.floor(progress)} />
+            <CircularProgressWithLabel  value={Math.floor(progress)} />
         </div>
     ) : null;
 };

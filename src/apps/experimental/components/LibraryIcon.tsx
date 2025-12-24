@@ -3,7 +3,7 @@ import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collec
 import React, { FC } from 'react';
 
 import { MetaView } from '../constants/metaView';
-import JfIcon from 'components/JfIcon';
+import SvgIcon from 'components/SvgIcon';
 import { IconSvgs } from '../../../assets/icons';
 
 interface LibraryIconProps {
@@ -14,35 +14,35 @@ const LibraryIcon: FC<LibraryIconProps> = ({
     item
 }) => {
     if (item.Id === MetaView.Favorites.Id) {
-        return <JfIcon svg={IconSvgs.heart} />;
+        return <SvgIcon svg={IconSvgs.heart} size={18} />;
     }
 
     switch (item.CollectionType) {
         case CollectionType.Movies:
-            return <JfIcon svg={IconSvgs.movie} />;
+            return <SvgIcon svg={IconSvgs.movie} size={18} />;
         case CollectionType.Music:
-            return <JfIcon svg={IconSvgs.playback} />;
+            return <SvgIcon svg={IconSvgs.playback} size={18} />;
         case CollectionType.Homevideos:
         case CollectionType.Photos:
-            return <JfIcon svg={IconSvgs.photo} />;
+            return <SvgIcon svg={IconSvgs.photo} size={18} />;
         case CollectionType.Livetv:
-            return <JfIcon svg={IconSvgs.liveTv} />;
+            return <SvgIcon svg={IconSvgs.liveTv} size={18} />;
         case CollectionType.Tvshows:
-            return <JfIcon svg={IconSvgs.tv} />;
+            return <SvgIcon svg={IconSvgs.tv} size={18} />;
         case CollectionType.Trailers:
-            return <JfIcon svg={IconSvgs.movie} />;
+            return <SvgIcon svg={IconSvgs.movie} size={18} />;
         case CollectionType.Musicvideos:
-            return <JfIcon svg={IconSvgs.playback} />;
+            return <SvgIcon svg={IconSvgs.playback} size={18} />;
         case CollectionType.Books:
-            return <JfIcon svg={IconSvgs.info} />;
+            return <SvgIcon svg={IconSvgs.info} size={18} />;
         case CollectionType.Boxsets:
-            return <JfIcon svg={IconSvgs.collection} />;
+            return <SvgIcon svg={IconSvgs.collection} size={18} />;
         case CollectionType.Playlists:
-            return <JfIcon svg={IconSvgs.addTo} />;
+            return <SvgIcon svg={IconSvgs.addTo} size={18} />;
         case undefined:
-            return <JfIcon svg={IconSvgs.info} />;
+            return <SvgIcon svg={IconSvgs.info} size={18} />;
         default:
-            return <JfIcon svg={IconSvgs.collection} />;
+            return <SvgIcon svg={IconSvgs.collection} size={18} />;
     }
 };
 

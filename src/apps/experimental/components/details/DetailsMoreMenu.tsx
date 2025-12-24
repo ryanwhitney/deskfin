@@ -1,6 +1,5 @@
 import React, { type FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -10,8 +9,9 @@ import globalize from 'lib/globalize';
 import { useApi } from 'hooks/useApi';
 import * as itemContextMenu from 'components/itemContextMenu';
 import type { ItemDto } from 'types/base/models/item-dto';
-import JfIcon from 'components/JfIcon';
+import SvgIcon from 'components/SvgIcon';
 import { IconSvgs, getLegacyCommandIcon } from '../../../../assets/icons';
+import { IconButton } from '../Elements/Button';
 
 interface DetailsMoreMenuProps {
     item: ItemDto;
@@ -115,9 +115,13 @@ export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({ item, queryKey, clas
 
     return (
         <>
-            <IconButton className={className ?? 'detailsIconBtn'} size='small' title={t('ButtonMore', 'More')} onClick={openMenu}>
-                <JfIcon svg={IconSvgs.ellipsis} />
-            </IconButton>
+            <IconButton
+                className={className}
+                title={t('ButtonMore', 'More')}
+                aria-label={t('ButtonMore', 'More')}
+                onClick={openMenu}
+                icon={<SvgIcon svg={IconSvgs.ellipsis} size={18} />}
+            />
 
             <Menu
                 anchorEl={anchorEl}
@@ -139,7 +143,7 @@ export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({ item, queryKey, clas
                             {cmd.icon ? (
                                 <ListItemIcon>
                                     {getLegacyCommandIcon(cmd.icon) ? (
-                                        <JfIcon svg={getLegacyCommandIcon(cmd.icon)!} />
+                                        <SvgIcon svg={getLegacyCommandIcon(cmd.icon)!} size={18} />
                                     ) : null}
                                 </ListItemIcon>
                             ) : null}
@@ -151,5 +155,3 @@ export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({ item, queryKey, clas
         </>
     );
 };
-
-

@@ -1,7 +1,6 @@
 import React, { type FC } from 'react';
 import classNames from 'classnames';
-import Box from '@mui/material/Box';
-import JfIcon from 'components/JfIcon';
+import SvgIcon from 'components/SvgIcon';
 import { IconSvgs } from '../../assets/icons';
 
 interface CaptionMediaInfoProps {
@@ -16,9 +15,9 @@ const CaptionMediaInfo: FC<CaptionMediaInfoProps> = ({ className }) => {
     );
 
     return (
-        <Box className={cssClass}>
-            <JfIcon svg={IconSvgs.closedCaptioning} />
-        </Box>
+        <div className={cssClass}>
+            <SvgIcon svg={IconSvgs.closedCaptioning} size={14} />
+        </div>
     );
 };
 

@@ -1,7 +1,7 @@
 import React, { type FC, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 
-import JfIcon from 'components/JfIcon';
+import SvgIcon from 'components/SvgIcon';
 import { appHost } from 'components/apphost';
 import { AppFeature } from 'constants/appFeature';
 import { IconSvgs } from '../../../../assets/icons';
@@ -65,7 +65,7 @@ const ExperimentalUserMenu: FC<ExperimentalUserMenuProps> = ({
                 onClick={onMenuClose}
                 role='menuitem'
             >
-                <span className='expMenuIcon'><JfIcon svg={IconSvgs.avatar} /></span>
+                <span className='expMenuIcon'><SvgIcon svg={IconSvgs.avatar} size={18} /></span>
                 {globalize.translate('Profile')}
             </Link>
             <Link
@@ -74,7 +74,7 @@ const ExperimentalUserMenu: FC<ExperimentalUserMenuProps> = ({
                 onClick={onMenuClose}
                 role='menuitem'
             >
-                <span className='expMenuIcon'><JfIcon svg={IconSvgs.settings} /></span>
+                <span className='expMenuIcon'><SvgIcon svg={IconSvgs.settings} size={18} /></span>
                 {globalize.translate('Settings')}
             </Link>
 
@@ -84,14 +84,14 @@ const ExperimentalUserMenu: FC<ExperimentalUserMenuProps> = ({
 
             {appHost.supports(AppFeature.DownloadManagement) && (
                 <button className='expDropdownItem' onClick={onDownloadManagerClick} role='menuitem'>
-                    <span className='expMenuIcon'><JfIcon svg={IconSvgs.download} /></span>
+                    <span className='expMenuIcon'><SvgIcon svg={IconSvgs.download} size={18} /></span>
                     {globalize.translate('DownloadManager')}
                 </button>
             )}
 
             {appHost.supports(AppFeature.ClientSettings) && (
                 <button className='expDropdownItem' onClick={onClientSettingsClick} role='menuitem'>
-                    <span className='expMenuIcon'><JfIcon svg={IconSvgs.controls} /></span>
+                    <span className='expMenuIcon'><SvgIcon svg={IconSvgs.controls} size={18} /></span>
                     {globalize.translate('ClientSettings')}
                 </button>
             )}
@@ -105,7 +105,7 @@ const ExperimentalUserMenu: FC<ExperimentalUserMenuProps> = ({
                         onClick={onMenuClose}
                         role='menuitem'
                     >
-                        <span className='expMenuIcon'><JfIcon svg={IconSvgs.dashboard} /></span>
+                        <span className='expMenuIcon'><SvgIcon svg={IconSvgs.dashboard} size={18} /></span>
                         {globalize.translate('TabDashboard')}
                     </Link>
                     <Link
@@ -114,7 +114,7 @@ const ExperimentalUserMenu: FC<ExperimentalUserMenuProps> = ({
                         onClick={onMenuClose}
                         role='menuitem'
                     >
-                        <span className='expMenuIcon'><JfIcon svg={IconSvgs.edit} /></span>
+                        <span className='expMenuIcon'><SvgIcon svg={IconSvgs.edit} size={18} /></span>
                         {globalize.translate('MetadataManager')}
                     </Link>
                 </>
@@ -128,20 +128,20 @@ const ExperimentalUserMenu: FC<ExperimentalUserMenuProps> = ({
                     onClick={onMenuClose}
                     role='menuitem'
                 >
-                    <span className='expMenuIcon'><JfIcon svg={IconSvgs.quickConnect} /></span>
+                    <span className='expMenuIcon'><SvgIcon svg={IconSvgs.quickConnect} size={18} /></span>
                     {globalize.translate('QuickConnect')}
                 </Link>
             )}
 
             {appHost.supports(AppFeature.MultiServer) && (
                 <button className='expDropdownItem' onClick={onSelectServerClick} role='menuitem'>
-                    <span className='expMenuIcon'><JfIcon svg={IconSvgs.refresh} /></span>
+                    <span className='expMenuIcon'><SvgIcon svg={IconSvgs.refresh} size={18} /></span>
                     {globalize.translate('SelectServer')}
                 </button>
             )}
 
             <button className='expDropdownItem' onClick={onLogoutClick} role='menuitem'>
-                <span className='expMenuIcon'><JfIcon svg={IconSvgs.signOut} /></span>
+                <span className='expMenuIcon'><SvgIcon svg={IconSvgs.signOut} size={18} /></span>
                 {globalize.translate('ButtonSignOut')}
             </button>
 
@@ -149,7 +149,7 @@ const ExperimentalUserMenu: FC<ExperimentalUserMenuProps> = ({
                 <>
                     <div className='expDropdownDivider' />
                     <button className='expDropdownItem' onClick={onExitAppClick} role='menuitem'>
-                        <span className='expMenuIcon'><JfIcon svg={IconSvgs.delete} /></span>
+                        <span className='expMenuIcon'><SvgIcon svg={IconSvgs.delete} size={18} /></span>
                         {globalize.translate('ButtonExitApp')}
                     </button>
                 </>

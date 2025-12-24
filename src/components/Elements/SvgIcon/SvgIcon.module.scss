@@ -1,0 +1,35 @@
+.svgIcon {
+    display: inline-flex;
+    vertical-align: middle;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.svgIcon > svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    fill: currentColor;
+}
+
+.svgIcon {
+    display: inline-flex;
+    vertical-align: middle;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    /* Default size, but allows overrides via style/className easily */
+    width: 1em;
+    height: 1em;
+    line-height: 1;
+}
+
+.svgIcon > svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    fill: currentColor;
+}
+
