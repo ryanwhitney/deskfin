@@ -1,8 +1,8 @@
-import icon from '@jellyfin/ux-web/icon-transparent.png';
-import Button from '@mui/material/Button/Button';
 import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
 
+import JfIcon from 'components/JfIcon';
+import { IconSvgs } from '../../assets/icons';
 import { useSystemInfo } from 'hooks/useSystemInfo';
 
 const ServerButton: FC = () => {
@@ -12,26 +12,14 @@ const ServerButton: FC = () => {
     } = useSystemInfo();
 
     return (
-        <Button
-            variant='text'
-            size='large'
-            color='inherit'
-            startIcon={
-                <img
-                    src={icon}
-                    alt=''
-                    aria-hidden
-                    style={{
-                        maxHeight: '1.25em',
-                        maxWidth: '1.25em'
-                    }}
-                />
-            }
-            component={Link}
+        <Link
             to='/'
+            className='expToolbarButton expToolbarBrand'
+            aria-label={systemInfo?.ServerName || 'Jellyfin'}
         >
-            {isPending ? '' : (systemInfo?.ServerName || 'Jellyfin')}
-        </Button>
+            <JfIcon svg={IconSvgs.macMini} />
+            {!isPending && (systemInfo?.ServerName || 'Jellyfin')}
+        </Link>
     );
 };
 

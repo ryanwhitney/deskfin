@@ -1,5 +1,3 @@
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
 import React, { useCallback, useState } from 'react';
 
 import JfIcon from 'components/JfIcon';
@@ -22,22 +20,16 @@ const ExperimentalUserMenuButton = () => {
 
     return (
         <>
-            <Tooltip title={globalize.translate('UserMenu')}>
-                <IconButton
-                    size='large'
-                    aria-label={globalize.translate('UserMenu')}
-                    aria-controls={EXP_USER_MENU_ID}
-                    aria-haspopup='true'
-                    onClick={onUserButtonClick}
-                    color='inherit'
-                    disableRipple
-                    disableFocusRipple
-                    disableTouchRipple
-                    sx={{ padding: 0 }}
-                >
-                    <JfIcon svg={IconSvgs.avatar} />
-                </IconButton>
-            </Tooltip>
+            <button
+                type='button'
+                aria-label={globalize.translate('UserMenu')}
+                aria-controls={EXP_USER_MENU_ID}
+                aria-haspopup='true'
+                onClick={onUserButtonClick}
+                className='expToolbarIconButton'
+            >
+                <JfIcon svg={IconSvgs.avatar} />
+            </button>
 
             <ExperimentalUserMenu
                 open={isUserMenuOpen}

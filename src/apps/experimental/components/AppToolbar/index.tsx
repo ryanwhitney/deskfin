@@ -10,6 +10,7 @@ import SyncPlayButton from './SyncPlayButton';
 import SearchButton from './SearchButton';
 import ExperimentalUserMenuButton from './ExperimentalUserMenuButton';
 import UserViewNav from './userViews/UserViewNav';
+import './appToolbar.custom.scss';
 
 interface AppToolbarProps {
     isDrawerAvailable: boolean

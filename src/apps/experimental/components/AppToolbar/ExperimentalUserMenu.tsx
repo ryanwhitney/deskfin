@@ -1,8 +1,3 @@
-import Divider from '@mui/material/Divider';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Menu, { type MenuProps } from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import React, { type FC, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -15,10 +10,13 @@ import { useQuickConnectEnabled } from 'hooks/useQuickConnect';
 import globalize from 'lib/globalize';
 import shell from 'scripts/shell';
 import Dashboard from 'utils/dashboard';
+import DropdownMenu from './DropdownMenu';
 
 export const EXP_USER_MENU_ID = 'experimental-user-menu';
 
-interface ExperimentalUserMenuProps extends MenuProps {
+interface ExperimentalUserMenuProps {
+    anchorEl: HTMLElement | null
+    open: boolean
     onMenuClose: () => void
 }
 
@@ -56,149 +54,107 @@ const ExperimentalUserMenu: FC<ExperimentalUserMenuProps> = ({
     }, [ onMenuClose ]);
 
     return (
-        <Menu
+        <DropdownMenu
             anchorEl={anchorEl}
-            anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'right'
-            }}
-            transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right'
-            }}
-            id={EXP_USER_MENU_ID}
-            keepMounted
             open={open}
             onClose={onMenuClose}
         >
-            <MenuItem
-                component={Link}
+            <Link
+                className='expDropdownItem'
                 to={`/userprofile?userId=${user?.Id}`}
                 onClick={onMenuClose}
+                role='menuitem'
             >
-                <ListItemIcon>
-                    <JfIcon svg={IconSvgs.avatar} />
-                </ListItemIcon>
-                <ListItemText>
-                    {globalize.translate('Profile')}
-                </ListItemText>
-            </MenuItem>
-            <MenuItem
-                component={Link}
+                <span className='expMenuIcon'><JfIcon svg={IconSvgs.avatar} /></span>
+                {globalize.translate('Profile')}
+            </Link>
+            <Link
+                className='expDropdownItem'
                 to='/mypreferencesmenu'
                 onClick={onMenuClose}
+                role='menuitem'
             >
-                <ListItemIcon>
-                    <JfIcon svg={IconSvgs.settings} />
-                </ListItemIcon>
-                <ListItemText>
-                    {globalize.translate('Settings')}
-                </ListItemText>
-            </MenuItem>
+                <span className='expMenuIcon'><JfIcon svg={IconSvgs.settings} /></span>
+                {globalize.translate('Settings')}
+            </Link>
 
             {(appHost.supports(AppFeature.DownloadManagement) || appHost.supports(AppFeature.ClientSettings)) && (
-                <Divider />
+                <div className='expDropdownDivider' />
             )}
 
             {appHost.supports(AppFeature.DownloadManagement) && (
-                <MenuItem onClick={onDownloadManagerClick}>
-                    <ListItemIcon>
-                        <JfIcon svg={IconSvgs.download} />
-                    </ListItemIcon>
-                    <ListItemText>
-                        {globalize.translate('DownloadManager')}
-                    </ListItemText>
-                </MenuItem>
+                <button className='expDropdownItem' onClick={onDownloadManagerClick} role='menuitem'>
+                    <span className='expMenuIcon'><JfIcon svg={IconSvgs.download} /></span>
+                    {globalize.translate('DownloadManager')}
+                </button>
             )}
 
             {appHost.supports(AppFeature.ClientSettings) && (
-                <MenuItem onClick={onClientSettingsClick}>
-                    <ListItemIcon>
-                        <JfIcon svg={IconSvgs.controls} />
-                    </ListItemIcon>
-                    <ListItemText>
-                        {globalize.translate('ClientSettings')}
-                    </ListItemText>
-                </MenuItem>
+                <button className='expDropdownItem' onClick={onClientSettingsClick} role='menuitem'>
+                    <span className='expMenuIcon'><JfIcon svg={IconSvgs.controls} /></span>
+                    {globalize.translate('ClientSettings')}
+                </button>
             )}
 
-            {user?.Policy?.IsAdministrator && ([
-                <Divider key='admin-links-divider' />,
-                <MenuItem
-                    key='admin-dashboard-link'
-                    component={Link}
-                    to='/dashboard'
-                    onClick={onMenuClose}
-                >
-                    <ListItemIcon>
-                        <JfIcon svg={IconSvgs.dashboard} />
-                    </ListItemIcon>
-                    <ListItemText primary={globalize.translate('TabDashboard')} />
-                </MenuItem>,
-                <MenuItem
-                    key='admin-metadata-link'
-                    component={Link}
-                    to='/metadata'
-                    onClick={onMenuClose}
-                >
-                    <ListItemIcon>
-                        <JfIcon svg={IconSvgs.edit} />
-                    </ListItemIcon>
-                    <ListItemText primary={globalize.translate('MetadataManager')} />
-                </MenuItem>
-            ])}
+            {user?.Policy?.IsAdministrator && (
+                <>
+                    <div className='expDropdownDivider' />
+                    <Link
+                        className='expDropdownItem'
+                        to='/dashboard'
+                        onClick={onMenuClose}
+                        role='menuitem'
+                    >
+                        <span className='expMenuIcon'><JfIcon svg={IconSvgs.dashboard} /></span>
+                        {globalize.translate('TabDashboard')}
+                    </Link>
+                    <Link
+                        className='expDropdownItem'
+                        to='/metadata'
+                        onClick={onMenuClose}
+                        role='menuitem'
+                    >
+                        <span className='expMenuIcon'><JfIcon svg={IconSvgs.edit} /></span>
+                        {globalize.translate('MetadataManager')}
+                    </Link>
+                </>
+            )}
 
-            <Divider />
+            <div className='expDropdownDivider' />
             {isQuickConnectEnabled && (
-                <MenuItem
-                    component={Link}
+                <Link
+                    className='expDropdownItem'
                     to='/quickconnect'
                     onClick={onMenuClose}
+                    role='menuitem'
                 >
-                    <ListItemIcon>
-                        <JfIcon svg={IconSvgs.quickConnect} />
-                    </ListItemIcon>
-                    <ListItemText>
-                        {globalize.translate('QuickConnect')}
-                    </ListItemText>
-                </MenuItem>
+                    <span className='expMenuIcon'><JfIcon svg={IconSvgs.quickConnect} /></span>
+                    {globalize.translate('QuickConnect')}
+                </Link>
             )}
 
             {appHost.supports(AppFeature.MultiServer) && (
-                <MenuItem onClick={onSelectServerClick}>
-                    <ListItemIcon>
-                        <JfIcon svg={IconSvgs.refresh} />
-                    </ListItemIcon>
-                    <ListItemText>
-                        {globalize.translate('SelectServer')}
-                    </ListItemText>
-                </MenuItem>
+                <button className='expDropdownItem' onClick={onSelectServerClick} role='menuitem'>
+                    <span className='expMenuIcon'><JfIcon svg={IconSvgs.refresh} /></span>
+                    {globalize.translate('SelectServer')}
+                </button>
             )}
 
-            <MenuItem onClick={onLogoutClick}>
-                <ListItemIcon>
-                    <JfIcon svg={IconSvgs.signOut} />
-                </ListItemIcon>
-                <ListItemText>
-                    {globalize.translate('ButtonSignOut')}
-                </ListItemText>
-            </MenuItem>
+            <button className='expDropdownItem' onClick={onLogoutClick} role='menuitem'>
+                <span className='expMenuIcon'><JfIcon svg={IconSvgs.signOut} /></span>
+                {globalize.translate('ButtonSignOut')}
+            </button>
 
-            {appHost.supports(AppFeature.ExitMenu) && ([
-                <Divider key='exit-menu-divider' />,
-                <MenuItem
-                    key='exit-menu-button'
-                    onClick={onExitAppClick}
-                >
-                    <ListItemIcon>
-                        <JfIcon svg={IconSvgs.delete} />
-                    </ListItemIcon>
-                    <ListItemText>
+            {appHost.supports(AppFeature.ExitMenu) && (
+                <>
+                    <div className='expDropdownDivider' />
+                    <button className='expDropdownItem' onClick={onExitAppClick} role='menuitem'>
+                        <span className='expMenuIcon'><JfIcon svg={IconSvgs.delete} /></span>
                         {globalize.translate('ButtonExitApp')}
-                    </ListItemText>
-                </MenuItem>
-            ])}
-        </Menu>
+                    </button>
+                </>
+            )}
+        </DropdownMenu>
     );
 };
 

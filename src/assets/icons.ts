@@ -31,6 +31,7 @@ import iconInfo from './img/icons/info.svg';
 import iconPhoto from './img/icons/photo.svg';
 import iconQuickConnect from './img/icons/quick connect.svg';
 import iconSignOut from './img/icons/sign out.svg';
+import iconMacMini from './img/icons/mac mini.svg';
 
 import iconHomeRaw from './img/icons/home.svg?raw';
 import iconSearchRaw from './img/icons/search.svg?raw';
@@ -61,6 +62,7 @@ import iconInfoRaw from './img/icons/info.svg?raw';
 import iconPhotoRaw from './img/icons/photo.svg?raw';
 import iconQuickConnectRaw from './img/icons/quick connect.svg?raw';
 import iconSignOutRaw from './img/icons/sign out.svg?raw';
+import iconMacMiniRaw from './img/icons/mac mini.svg?raw';
 
 export const Icons = {
     home: iconHome,
@@ -91,7 +93,8 @@ export const Icons = {
     info: iconInfo,
     photo: iconPhoto,
     quickConnect: iconQuickConnect,
-    signOut: iconSignOut
+    signOut: iconSignOut,
+    macMini: iconMacMini
 } as const;
 
 // Normalize SVG markup so it scales correctly (no hardcoded width/height) and tints via currentColor.
@@ -229,7 +232,8 @@ const BaseIconSvgs = {
     info: toCurrentColorSvg(iconInfoRaw),
     photo: toCurrentColorSvg(iconPhotoRaw),
     quickConnect: toCurrentColorSvg(iconQuickConnectRaw),
-    signOut: toCurrentColorSvg(iconSignOutRaw)
+    signOut: toCurrentColorSvg(iconSignOutRaw),
+    macMini: toCurrentColorSvg(iconMacMiniRaw)
 };
 
 // Manual overrides for complex multi-path icons to avoid masking/clip issues.

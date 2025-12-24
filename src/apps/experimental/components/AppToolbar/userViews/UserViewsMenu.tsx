@@ -1,50 +1,48 @@
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client';
-import ListItemIcon from '@mui/material/ListItemIcon/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText/ListItemText';
-import Menu, { type MenuProps } from '@mui/material/Menu/Menu';
-import MenuItem from '@mui/material/MenuItem/MenuItem';
 import React, { FC } from 'react';
 import { Link } from 'react-router-dom';
 
-import LibraryIcon from 'apps/experimental/components/LibraryIcon';
 import { appRouter } from 'components/router/appRouter';
+import DropdownMenu from '../DropdownMenu';
 
-interface UserViewsMenuProps extends MenuProps {
+interface UserViewsMenuProps {
     userViews: BaseItemDto[]
     selectedId?: string
-    includeGlobalViews?: boolean
     onMenuClose: () => void
+    anchorEl: HTMLElement | null
+    open: boolean
+    id?: string
 }
 
 const UserViewsMenu: FC<UserViewsMenuProps> = ({
     userViews,
     selectedId,
     onMenuClose,
-    ...props
+    anchorEl,
+    open,
+    id
 }) => {
     return (
-        <Menu
-            {...props}
-            keepMounted
+        <DropdownMenu
+            anchorEl={anchorEl}
+            open={open}
             onClose={onMenuClose}
+            id={id}
+            align='left'
         >
             {userViews.map(view => (
-                <MenuItem
+                <Link
                     key={view.Id}
-                    component={Link}
+                    className='expDropdownItem'
                     to={appRouter.getRouteUrl(view, { context: view.CollectionType }).substring(1)}
                     onClick={onMenuClose}
-                    selected={view.Id === selectedId}
+                    role='menuitem'
                 >
-                    <ListItemIcon>
-                        <LibraryIcon item={view} />
-                    </ListItemIcon>
-                    <ListItemText>
-                        {view.Name}
-                    </ListItemText>
-                </MenuItem>
+                    {view.Name}
+                    {view.Id === selectedId && <span style={{ marginLeft: 'auto', opacity: 0.7 }}>•</span>}
+                </Link>
             ))}
-        </Menu>
+        </DropdownMenu>
     );
 };
 

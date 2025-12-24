@@ -295,8 +295,22 @@ const HomeCard: FC<{
                     style={{
                         backgroundImage: img ? `url(${img})` : 'linear-gradient(135deg, #1f1f1f, #2a2a2a)'
                     }}
-                    aria-label={item.Name || t('LabelMediaDetails', 'Item')}
-                />
+                    aria-label={item.Name || t('LabelMediaDetails', 'Item')}>
+
+            <div className='homeCardActions'>
+                <IconButton className='homeIconBtn' size='small' title={isFavorite ? t('Favorite', 'Favorite') : t('AddToFavorites', 'Add to favorites')} onClick={() => onToggleFavorite(item)}>
+                    <span style={{ color: isFavorite ? '#ff4d6d' : undefined }}>
+                        <JfIcon svg={IconSvgs.heart} />
+                    </span>
+                </IconButton>
+                <IconButton className='homeIconBtn' size='small' title={isPlayed ? t('Watched', 'Watched') : t('MarkPlayed', 'Mark played')} onClick={() => onTogglePlayed(item)}>
+                    <span style={{ color: isPlayed ? '#4ade80' : undefined }}>
+                        <JfIcon svg={IconSvgs.checkmark} />
+                    </span>
+                </IconButton>
+                <ItemMoreMenu item={item} user={user} onAfterAction={onAfterAction} />
+            </div>
+                </div>
 
                 {playbackManager.canPlay(item) ? (
                     <button
@@ -334,19 +348,6 @@ const HomeCard: FC<{
                 ) : null}
             </div>
 
-            <div className='homeCardActions'>
-                <IconButton className='homeIconBtn' size='small' title={isFavorite ? t('Favorite', 'Favorite') : t('AddToFavorites', 'Add to favorites')} onClick={() => onToggleFavorite(item)}>
-                    <span style={{ color: isFavorite ? '#ff4d6d' : undefined }}>
-                        <JfIcon svg={IconSvgs.heart} />
-                    </span>
-                </IconButton>
-                <IconButton className='homeIconBtn' size='small' title={isPlayed ? t('Watched', 'Watched') : t('MarkPlayed', 'Mark played')} onClick={() => onTogglePlayed(item)}>
-                    <span style={{ color: isPlayed ? '#4ade80' : undefined }}>
-                        <JfIcon svg={IconSvgs.checkmark} />
-                    </span>
-                </IconButton>
-                <ItemMoreMenu item={item} user={user} onAfterAction={onAfterAction} />
-            </div>
         </div>
     );
 };

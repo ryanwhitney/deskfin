@@ -1,23 +1,16 @@
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
 import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
-import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
-import Button from '@mui/material/Button/Button';
-import { Theme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import React, { useCallback, useMemo, useState } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 
-import LibraryIcon from 'apps/experimental/components/LibraryIcon';
 import { MetaView } from 'apps/experimental/constants/metaView';
 import { isLibraryPath } from 'apps/experimental/features/libraries/utils/path';
 import { appRouter } from 'components/router/appRouter';
-import JfIcon from 'components/JfIcon';
 import { useApi } from 'hooks/useApi';
 import useCurrentTab from 'hooks/useCurrentTab';
 import { useUserViews } from 'hooks/useUserViews';
 import { useWebConfig } from 'hooks/useWebConfig';
 import globalize from 'lib/globalize';
-import { IconSvgs } from '../../../../../assets/icons';
 
 import UserViewsMenu from './UserViewsMenu';
 
@@ -61,17 +54,10 @@ const UserViewNav = () => {
     const { activeTab } = useCurrentTab();
     const webConfig = useWebConfig();
 
-    const isExtraLargeScreen = useMediaQuery((t: Theme) => t.breakpoints.up('xl'));
-    const isLargeScreen = useMediaQuery((t: Theme) => t.breakpoints.up('lg'));
     const maxViews = useMemo(() => {
-        let _maxViews = MAX_USER_VIEWS_MD;
-        if (isExtraLargeScreen) _maxViews = MAX_USER_VIEWS_XL;
-        else if (isLargeScreen) _maxViews = MAX_USER_VIEWS_LG;
-
         const customLinks = (webConfig.menuLinks || []).length;
-
-        return _maxViews - customLinks;
-    }, [ isExtraLargeScreen, isLargeScreen, webConfig.menuLinks ]);
+        return MAX_USER_VIEWS_MD - customLinks;
+    }, [ webConfig.menuLinks ]);
 
     const { user } = useApi();
     const {
@@ -102,71 +88,54 @@ const UserViewNav = () => {
         getCurrentUserView(userViews?.Items, location.pathname, libraryId, collectionType, activeTab)
     ), [ activeTab, collectionType, libraryId, location.pathname, userViews ]);
 
+    const isFavorites = currentUserView?.Id === MetaView.Favorites.Id;
+
     if (isPending) return null;
 
     return (
         <>
-            <Button
-                variant='text'
-                color={(currentUserView?.Id === MetaView.Favorites.Id) ? 'primary' : 'inherit'}
-                startIcon={<JfIcon svg={IconSvgs.heart} />}
-                component={Link}
+            <Link
+                className='expToolbarButton'
                 to='/home?tab=1'
-                disableRipple
-                disableFocusRipple
-                disableTouchRipple
+                aria-label={globalize.translate(MetaView.Favorites.Name)}
+                aria-current={isFavorites ? 'page' : undefined}
             >
                 {globalize.translate(MetaView.Favorites.Name)}
-            </Button>
+            </Link>
 
             {webConfig.menuLinks?.map(link => (
-                <Button
+                <a
                     key={link.name}
-                    variant='text'
-                    color='inherit'
-                    startIcon={<JfIcon svg={IconSvgs.info} />}
-                    component='a'
+                    className='expToolbarButton'
                     href={link.url}
                     target='_blank'
                     rel='noopener noreferrer'
-                    disableRipple
-                    disableFocusRipple
-                    disableTouchRipple
                 >
                     {link.name}
-                </Button>
+                </a>
             ))}
 
             {primaryViews?.map(view => (
-                <Button
+                <Link
                     key={view.Id}
-                    variant='text'
-                    color={(view.Id === currentUserView?.Id) ? 'primary' : 'inherit'}
-                    startIcon={<LibraryIcon item={view} />}
-                    component={Link}
+                    className='expToolbarButton'
                     to={appRouter.getRouteUrl(view, { context: view.CollectionType }).substring(1)}
-                    disableRipple
-                    disableFocusRipple
-                    disableTouchRipple
+                    aria-current={view.Id === currentUserView?.Id ? 'page' : undefined}
                 >
                     {view.Name}
-                </Button>
+                </Link>
             ))}
             {overflowViews && overflowViews.length > 0 && (
                 <>
-                    <Button
-                        variant='text'
-                        color='inherit'
-                        endIcon={<ArrowDropDown />}
+                    <button
+                        type='button'
+                        className='expToolbarButton'
                         aria-controls={OVERFLOW_MENU_ID}
                         aria-haspopup='true'
                         onClick={onOverflowButtonClick}
-                        disableRipple
-                        disableFocusRipple
-                        disableTouchRipple
                     >
                         {globalize.translate('ButtonMore')}
-                    </Button>
+                    </button>
 
                     <UserViewsMenu
                         anchorEl={overflowAnchorEl}
