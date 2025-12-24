@@ -20,7 +20,7 @@
     <meta name="msapplication-TileImage" content="/node_modules/@jellyfin/ux-web/favicons/touchicon144.png">
     <meta name="msapplication-TileColor" content="#333333">
 
-    <title>Jellyfin</title>
+    <title>desk</title>
 
     <style>
         .transparentDocument,
@@ -57,6 +57,17 @@
             background-color: #101010;
         }
 
+        @keyframes splashFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         /* Inline splash to avoid blank screen before JS/CSS bundles load */
         .splashLogo {
             display: flex;
@@ -67,28 +78,31 @@
             color: white;
             flex-direction: column;
             gap: 10px;
-            p{
-                font-family:
-                    -apple-system,
-                    BlinkMacSystemFont,
-                    "SF Pro Text",
-                    "SF Pro Display",
-                    "Helvetica Neue",
-                    Helvetica,
-                    Arial,
-                    "Apple Color Emoji",
-                    sans-serif;
-                text-size-adjust: 100%;
-                -webkit-font-smoothing: antialiased;
-                text-rendering: optimizeLegibility;
-                font-size: 12px;
-                font-weight: 640;
-                font-variation-settings: "wdth" 115;
-            }
+            opacity: 0;
+            animation: splashFadeIn 500ms ease-out 500ms forwards;
+        }
 
-            svg{
-                width: 40px;
-            }
+        .splashLogo p {
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "SF Pro Text",
+                "SF Pro Display",
+                "Helvetica Neue",
+                Helvetica,
+                Arial,
+                "Apple Color Emoji",
+                sans-serif;
+            text-size-adjust: 100%;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+            font-size: 12px;
+            font-weight: 640;
+            font-variation-settings: "wdth" 115;
+        }
+
+        .splashLogo svg {
+            width: 40px;
         }
 
         .hide,

@@ -3,11 +3,24 @@
     width: 1.95em;
     height: 1.95em;
     display: none;
+    opacity: 0;
 }
 
 .mdlSpinnerActive {
     display: inline-block;
-    animation: mdl-spinner__container-rotate 1568.23529412ms linear infinite;
+    opacity: 1;
+    animation:
+        mdl-spinner__container-rotate 1568.23529412ms linear infinite,
+        jf-spinner__fade-in 220ms ease-out 1;
+}
+
+@keyframes jf-spinner__fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes mdl-spinner__container-rotate {
@@ -24,7 +37,7 @@
 }
 
 .mdl-spinner__layer-1 {
-    border-color: #00a4dc;
+    border-color: #b8b8b8;
 }
 
 .mdlSpinnerActive .mdl-spinner__layer-1 {
@@ -32,7 +45,7 @@
 }
 
 .mdl-spinner__layer-2 {
-    border-color: #00a4dc;
+    border-color: #b8b8b8;
 }
 
 .mdlSpinnerActive .mdl-spinner__layer-2 {
@@ -40,7 +53,7 @@
 }
 
 .mdl-spinner__layer-3 {
-    border-color: #00a4dc;
+    border-color: #b8b8b8;
 }
 
 .mdlSpinnerActive .mdl-spinner__layer-3 {
@@ -48,7 +61,7 @@
 }
 
 .mdl-spinner__layer-4 {
-    border-color: #00a4dc;
+    border-color: #b8b8b8;
 }
 
 .mdlSpinnerActive .mdl-spinner__layer-4 {
