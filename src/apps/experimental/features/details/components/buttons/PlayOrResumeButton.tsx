@@ -11,7 +11,7 @@ import { ItemKind } from 'types/base/models/item-kind';
 import itemHelper from 'components/itemHelper';
 import SvgIcon from 'components/SvgIcon';
 import { IconSvgs } from 'assets/icons';
-import { Button, IconButton } from 'apps/experimental/components/shared';
+import { Button, IconButton } from 'apps/experimental/components';
 
 interface PlayOrResumeButtonProps {
     item: ItemDto;

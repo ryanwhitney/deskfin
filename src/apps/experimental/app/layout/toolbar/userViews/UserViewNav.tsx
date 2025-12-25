@@ -13,8 +13,8 @@ import { useUserViews } from 'hooks/useUserViews';
 import { useWebConfig } from 'hooks/useWebConfig';
 import globalize from 'lib/globalize';
 
-import { ActionMenuStyles, ToolbarAnchor, ToolbarLink } from 'apps/experimental/components/shared';
-import toolbarLinkStyles from 'apps/experimental/components/shared/toolbar/ToolbarLink.module.scss';
+import { ActionMenuStyles, ToolbarAnchor, ToolbarLink } from 'apps/experimental/components';
+import toolbarLinkStyles from 'apps/experimental/components/toolbar/ToolbarLink.module.scss';
 
 const MAX_USER_VIEWS_MD = 3;
 const MAX_USER_VIEWS_LG = 5;

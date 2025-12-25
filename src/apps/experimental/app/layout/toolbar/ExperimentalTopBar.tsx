@@ -9,7 +9,7 @@ import SyncPlayButton from './SyncPlayButton';
 import SearchButton from './SearchButton';
 import ExperimentalUserMenuButton from './ExperimentalUserMenuButton';
 import UserViewNav from './userViews/UserViewNav';
-import { ToolbarIconButton, ToolbarIconLink } from 'apps/experimental/components/shared';
+import { ToolbarIconButton, ToolbarIconLink } from 'apps/experimental/components';
 
 import styles from './ExperimentalTopBar.module.scss';
 

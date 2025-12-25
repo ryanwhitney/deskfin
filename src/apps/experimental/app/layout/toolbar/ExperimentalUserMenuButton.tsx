@@ -7,13 +7,13 @@ import { appHost } from 'components/apphost';
 import { AppFeature } from 'constants/appFeature';
 import { IconSvgs } from 'assets/icons';
 import globalize from 'lib/globalize';
-import { ActionMenuStyles } from 'apps/experimental/components/shared';
+import { ActionMenuStyles } from 'apps/experimental/components';
 import { useApi } from 'hooks/useApi';
 import { useQuickConnectEnabled } from 'hooks/useQuickConnect';
 import shell from 'scripts/shell';
 import Dashboard from 'utils/dashboard';
 
-import toolbarIconStyles from 'apps/experimental/components/shared/toolbar/ToolbarIconButton.module.scss';
+import toolbarIconStyles from 'apps/experimental/components/toolbar/ToolbarIconButton.module.scss';
 
 const ExperimentalUserMenuButton = () => {
     const navigate = useNavigate();

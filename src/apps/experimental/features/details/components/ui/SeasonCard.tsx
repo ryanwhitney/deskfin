@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type { ItemDto } from 'types/base/models/item-dto';
-import { ItemCard } from 'apps/experimental/components/shared';
+import { ItemCard } from 'apps/experimental/components';
 
 import styles from './SeasonCard.module.scss';
 
