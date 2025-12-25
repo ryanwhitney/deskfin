@@ -1,0 +1,42 @@
+// Experimental theme tokens (keep minimal; add only when used).
+
+// Spacing
+$space-1: 6px;
+$space-2: 8px;
+$space-3: 10px;
+$space-4: 14px;
+
+// Radii
+$radius-sm: 8px;
+$radius-md: 10px;
+$radius-lg: 12px;
+$radius-pill: 999px;
+
+// Sizes
+$topbar-height: 52px;
+$toolbar-link-height: 34px;
+$toolbar-icon-size: 38px;
+
+// Colors
+$surface-topbar: rgba(18, 18, 18, 0.86);
+$surface-menu: #1c1c1c;
+$surface-raised: rgba(255, 255, 255, 0.04);
+$border-subtle: rgba(255, 255, 255, 0.08);
+$border-muted: rgba(255, 255, 255, 0.10);
+$text-muted: rgba(255, 255, 255, 0.65);
+
+// Interaction
+$hover-bg: rgba(255, 255, 255, 0.06);
+$hover-bg-strong: rgba(255, 255, 255, 0.08);
+$hover-bg-stronger: rgba(255, 255, 255, 0.12);
+$focus-ring: rgba(59, 130, 246, 0.75);
+
+// Controls (used by shared button primitives)
+$border-control: rgba(255, 255, 255, 0.12);
+$border-control-hover: rgba(255, 255, 255, 0.18);
+
+// Effects
+$blur-strong: blur(14px);
+$menu-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+
+

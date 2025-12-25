@@ -7,9 +7,11 @@ import type { ItemDto } from 'types/base/models/item-dto';
 import { DetailsMoreMenu } from './DetailsMoreMenu';
 import SvgIcon from 'components/SvgIcon';
 import { IconSvgs } from 'assets/icons';
-import { IconButton } from 'apps/experimental/shared/ui/button';
+import { IconButton } from 'apps/experimental/components/shared';
 import FavoriteButton from 'apps/experimental/features/userData/components/FavoriteButton';
 import PlayedButton from 'apps/experimental/features/userData/components/PlayedButton';
+
+import styles from './EpisodeRow.module.scss';
 
 interface EpisodeRowProps {
     episode: ItemDto;
@@ -61,17 +63,17 @@ export const EpisodeRow: FC<EpisodeRowProps> = ({ episode, queryKey, showSeriesA
     };
 
     return (
-        <a className='episodeRow' href={href}>
-            <div className='episodeThumb'>
+        <a className={styles.row} href={href}>
+            <div className={styles.thumb}>
                 <div
-                    className='episodeThumbImg'
+                    className={styles.thumbImg}
                     style={{
                         backgroundImage: img ? `url(${img})` : 'linear-gradient(135deg, #1f1f1f, #2a2a2a)'
                     }}
                 />
                 <button
                     type='button'
-                    className='episodeThumbPlay'
+                    className={styles.thumbPlay}
                     aria-label={t('Play', 'Play')}
                     title={t('Play', 'Play')}
                     onClick={onPlayClick}
@@ -80,21 +82,21 @@ export const EpisodeRow: FC<EpisodeRowProps> = ({ episode, queryKey, showSeriesA
                 </button>
             </div>
 
-            <div className='episodeBody'>
-                <div className='episodeTitle' title={formatEpisodeLabel(episode)}>
+            <div className={styles.body}>
+                <div className={styles.title} title={formatEpisodeLabel(episode)}>
                     {formatEpisodeLabel(episode)}
                 </div>
 
                 {showSeriesAndSeason && (seriesName || seasonName) ? (
-                    <div className='episodeSubheads'>
+                    <div className={styles.subheads}>
                         {seriesId && seriesName ? (
-                            <a className='episodeSubLink' href={`#/details?id=${seriesId}`} onClick={(e) => e.stopPropagation()}>
+                            <a className={styles.subLink} href={`#/details?id=${seriesId}`} onClick={(e) => e.stopPropagation()}>
                                 {seriesName}
                             </a>
                         ) : seriesName ? <span className='episodeSubText'>{seriesName}</span> : null}
-                        {seriesName && seasonName ? <span className='episodeSubSep'>›</span> : null}
+                        {seriesName && seasonName ? <span className={styles.subSep}>›</span> : null}
                         {seasonId && seasonName ? (
-                            <a className='episodeSubLink' href={`#/details?id=${seasonId}`} onClick={(e) => e.stopPropagation()}>
+                            <a className={styles.subLink} href={`#/details?id=${seasonId}`} onClick={(e) => e.stopPropagation()}>
                                 {seasonName}
                             </a>
                         ) : seasonName ? <span className='episodeSubText'>{seasonName}</span> : null}
@@ -102,32 +104,32 @@ export const EpisodeRow: FC<EpisodeRowProps> = ({ episode, queryKey, showSeriesA
                 ) : null}
 
                 {episode.Overview ? (
-                    <div className='episodeOverview'>
+                    <div className={styles.overview}>
                         {episode.Overview}
                     </div>
                 ) : null}
             </div>
 
-            <div className='episodeActions' onClick={(e) => e.preventDefault()}>
+            <div className={styles.actions} onClick={(e) => e.preventDefault()}>
                 <IconButton
-                    className='episodeActionBtn'
+                    className={styles.actionBtn}
                     title={t('Play', 'Play')}
                     aria-label={t('Play', 'Play')}
                     onClick={onPlayClick}
                     icon={<SvgIcon svg={IconSvgs.play} size={18} />}
                 />
                 <PlayedButton
-                    className='expIconButton episodeActionBtn'
+                    className={`expIconButton ${styles.actionBtn}`}
                     isPlayed={!!episode.UserData?.Played}
                     itemId={episode.Id}
                     itemType={episode.Type}
                 />
                 <FavoriteButton
-                    className='expIconButton episodeActionBtn'
+                    className={`expIconButton ${styles.actionBtn}`}
                     isFavorite={!!episode.UserData?.IsFavorite}
                     itemId={episode.Id}
                 />
-                <DetailsMoreMenu item={episode} queryKey={queryKey} className='expIconButton episodeActionBtn' />
+                <DetailsMoreMenu item={episode} queryKey={queryKey} className={`expIconButton ${styles.actionBtn}`} />
             </div>
         </a>
     );

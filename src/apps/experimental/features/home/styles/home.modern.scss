@@ -1,3 +1,5 @@
+@import '../../../styles/theme';
+
 .homeModern {
     display: flex;
     flex-direction: column;
@@ -45,8 +47,8 @@
     flex: 0 0 auto;
     scroll-snap-align: start;
     border-radius: 14px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: $surface-raised;
+    border: 1px solid $border-subtle;
     overflow: hidden;
     cursor: pointer;
     transition: all 200ms ease;
@@ -61,7 +63,7 @@
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        background-color: #1c1c1c;
+        background-color: $surface-menu;
 
         transition: all 200ms ease;
     }
@@ -137,6 +139,15 @@
         .homePlayOverlay {
             opacity: 1;
         }
+    }
+}
+
+// Landscape variant: keep everything identical to `.homeCard` except the thumb aspect ratio and card width.
+.homeCard--landscape {
+    width: 280px;
+
+    .homeThumb {
+        padding-top: 56.25%;
     }
 }
 

@@ -23,8 +23,7 @@ import type { ItemDto } from 'types/base/models/item-dto';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
 import SvgIcon from 'components/SvgIcon';
 import { IconSvgs, getLegacyCommandIcon } from 'assets/icons';
-import { LinkButton } from 'apps/experimental/shared/ui/button';
-
+import { LinkButton } from 'apps/experimental/components/shared';
 import '../styles/home.modern.scss';
 
 let ignoreHomeCardNavigateUntil = 0;
@@ -187,8 +186,9 @@ const HomeCard: FC<{
     onAfterAction: () => void;
     onToggleFavorite: (item: ItemDto) => void;
     onTogglePlayed: (item: ItemDto) => void;
-}> = ({ item, user, onAfterAction, onToggleFavorite, onTogglePlayed }) => {
-    const img = buildPrimaryImageUrl(item, 420);
+    variant?: 'portrait' | 'landscape';
+}> = ({ item, user, onAfterAction, onToggleFavorite, onTogglePlayed, variant = 'portrait' }) => {
+    const img = buildPrimaryImageUrl(item, variant === 'landscape' ? 720 : 420);
     const isFavorite = !!item.UserData?.IsFavorite;
     const isPlayed = !!item.UserData?.Played;
     const isResumable = !!item.UserData?.PlaybackPositionTicks && item.UserData.PlaybackPositionTicks > 0;
@@ -305,7 +305,7 @@ const HomeCard: FC<{
     };
 
     return (
-        <div className='homeCard' onClick={onCardClick}>
+        <div className={variant === 'landscape' ? 'homeCard homeCard--landscape' : 'homeCard'} onClick={onCardClick}>
             <div className='homeThumbWrap'>
                 <div
                     className='homeThumb'
@@ -381,7 +381,8 @@ const HomeRow: FC<{
     onAfterAction: () => void;
     onToggleFavorite: (item: ItemDto) => void;
     onTogglePlayed: (item: ItemDto) => void;
-}> = ({ title, items, user, onAfterAction, onToggleFavorite, onTogglePlayed }) => {
+    cardVariant?: 'portrait' | 'landscape';
+}> = ({ title, items, user, onAfterAction, onToggleFavorite, onTogglePlayed, cardVariant = 'portrait' }) => {
     if (!items.length) return null;
     return (
         <section className='homeSection'>
@@ -395,6 +396,7 @@ const HomeRow: FC<{
                         onAfterAction={onAfterAction}
                         onToggleFavorite={onToggleFavorite}
                         onTogglePlayed={onTogglePlayed}
+                        variant={cardVariant}
                     />
                 ))}
             </div>
@@ -786,6 +788,7 @@ const Home: FC = () => {
                         onAfterAction={onAfterAction}
                         onToggleFavorite={onToggleFavorite}
                         onTogglePlayed={onTogglePlayed}
+                        cardVariant='landscape'
                     />
                 ) : null}
 
@@ -797,6 +800,7 @@ const Home: FC = () => {
                         onAfterAction={onAfterAction}
                         onToggleFavorite={onToggleFavorite}
                         onTogglePlayed={onTogglePlayed}
+                        cardVariant='landscape'
                     />
                 ) : null}
 
@@ -808,6 +812,7 @@ const Home: FC = () => {
                         onAfterAction={onAfterAction}
                         onToggleFavorite={onToggleFavorite}
                         onTogglePlayed={onTogglePlayed}
+                        cardVariant='landscape'
                     />
                 ) : null}
 
@@ -844,6 +849,7 @@ const Home: FC = () => {
                         onAfterAction={onAfterAction}
                         onToggleFavorite={onToggleFavorite}
                         onTogglePlayed={onTogglePlayed}
+                        cardVariant='landscape'
                     />
                 ) : null}
 

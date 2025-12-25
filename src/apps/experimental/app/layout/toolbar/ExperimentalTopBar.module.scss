@@ -1,0 +1,83 @@
+@import '../../../styles/theme';
+
+.root {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1200;
+    height: $topbar-height;
+    display: flex;
+    align-items: center;
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+    background: $surface-topbar;
+    border-bottom: 1px solid $border-subtle;
+    backdrop-filter: $blur-strong;
+}
+
+.left {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    min-width: 0;
+}
+
+.center {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    // Keep nav links visually aligned with the brand title.
+    padding-top: 1px;
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-3;
+    text-decoration: none;
+    color: inherit;
+    min-width: 0;
+}
+
+.brandImg {
+    height: 28px;
+    width: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.brandText {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.brandTitle {
+    font-weight: 900;
+    font-size: 0.95rem;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.brandSub {
+    font-size: 0.78rem;
+    color: $text-muted;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+

@@ -1,3 +1,5 @@
+@import '../../../styles/theme';
+
 .detailsPage {
     color: #eee;
 }
@@ -112,8 +114,8 @@
     gap: 0.35rem;
     padding: 0.25rem 0.5rem;
     border-radius: 999px;
-    background-color: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.10);
+    background-color: $hover-bg;
+    border: 1px solid $border-muted;
     color: #ddd;
     font-size: 0.85rem;
     line-height: 1.2;
@@ -171,15 +173,15 @@
     align-items: center;
     padding: 0.25rem 0.55rem;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.10);
+    background: $hover-bg;
+    border: 1px solid $border-muted;
     color: #e6e6e6;
     font-size: 0.85rem;
     text-decoration: none;
 }
 
 .tag:hover {
-    border-color: rgba(255, 255, 255, 0.18);
+    border-color: $border-control-hover;
 }
 
 .detailsSection {
@@ -206,8 +208,8 @@
     align-items: start;
     padding: 0.75rem;
     border-radius: 16px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: $surface-raised;
+    border: 1px solid $border-subtle;
     text-decoration: none;
     color: inherit;
 }
@@ -223,7 +225,7 @@
     border-radius: 12px;
     background-size: cover;
     background-position: center;
-    border: 1px solid rgba(255, 255, 255, 0.10);
+    border: 1px solid $border-muted;
 }
 
 .episodeThumbPlay {

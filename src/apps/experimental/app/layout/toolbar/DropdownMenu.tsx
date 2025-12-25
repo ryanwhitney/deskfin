@@ -1,6 +1,8 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
+import styles from './DropdownMenu.module.scss';
+
 interface DropdownMenuProps {
     anchorEl: HTMLElement | null
     open: boolean
@@ -8,6 +10,7 @@ interface DropdownMenuProps {
     children: React.ReactNode
     align?: 'right' | 'left'
     id?: string
+    className?: string
 }
 
 const DropdownMenu = ({
@@ -16,7 +19,8 @@ const DropdownMenu = ({
     onClose,
     children,
     align = 'right',
-    id
+    id,
+    className
 }: DropdownMenuProps) => {
     const [ style, setStyle ] = useState<React.CSSProperties>({});
     const menuRef = useRef<HTMLDivElement | null>(null);
@@ -64,10 +68,11 @@ const DropdownMenu = ({
 
     const content = useMemo(() => {
         if (!open) return null;
+        const classes = [ styles.menu, className ?? '' ].filter(Boolean).join(' ');
         return (
             <div
                 ref={menuRef}
-                className='expDropdownMenu'
+                className={classes}
                 id={id}
                 style={style}
                 role='menu'
@@ -75,7 +80,7 @@ const DropdownMenu = ({
                 {children}
             </div>
         );
-    }, [ children, open, style ]);
+    }, [ children, open, style, id, className ]);
 
     return content ? ReactDOM.createPortal(content, document.body) : null;
 };

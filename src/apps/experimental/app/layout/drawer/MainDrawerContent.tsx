@@ -1,25 +1,19 @@
-import Favorite from '@mui/icons-material/Favorite';
-import Home from '@mui/icons-material/Home';
-import Divider from '@mui/material/Divider';
-import Icon from '@mui/material/Icon';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import ListSubheader from '@mui/material/ListSubheader';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 
-import ListItemLink from 'components/ListItemLink';
+import { Link } from 'react-router-dom';
 import { appRouter } from 'components/router/appRouter';
 import { useApi } from 'hooks/useApi';
 import { useUserViews } from 'hooks/useUserViews';
 import { useWebConfig } from 'hooks/useWebConfig';
 import globalize from 'lib/globalize';
 
-import LibraryIcon from 'apps/experimental/shared/ui/icons/LibraryIcon';
-import DrawerHeaderLink from './DrawerHeaderLink';
+import { LibraryIcon } from 'apps/experimental/components/shared';
+import SvgIcon from 'components/SvgIcon';
+import { IconSvgs } from 'assets/icons';
+import { ExperimentalDrawerHeader } from './ExperimentalDrawerHeader';
+
+import styles from './MainDrawerContent.module.scss';
 
 const MainDrawerContent = () => {
     const { user } = useApi();
@@ -29,84 +23,79 @@ const MainDrawerContent = () => {
     const webConfig = useWebConfig();
 
     const isHomeSelected = location.pathname === '/home' && (!location.search || location.search === '?tab=0');
+    const isFavoritesSelected = location.pathname === '/home' && location.search === '?tab=1';
 
     return (
         <>
             {/* MAIN LINKS */}
-            <List sx={{ paddingTop: 0 }}>
-                <ListItem disablePadding>
-                    <DrawerHeaderLink />
-                </ListItem>
-                <ListItem disablePadding>
-                    <ListItemLink to='/home' selected={isHomeSelected}>
-                        <ListItemIcon>
-                            <Home />
-                        </ListItemIcon>
-                        <ListItemText primary={globalize.translate('Home')} />
-                    </ListItemLink>
-                </ListItem>
-                <ListItem disablePadding>
-                    <ListItemLink to='/home?tab=1'>
-                        <ListItemIcon>
-                            <Favorite />
-                        </ListItemIcon>
-                        <ListItemText primary={globalize.translate('Favorites')} />
-                    </ListItemLink>
-                </ListItem>
-            </List>
+            <div className={styles.section}>
+                <ExperimentalDrawerHeader />
+
+                <Link
+                    className={`${styles.link} ${isHomeSelected ? styles.linkActive : ''}`}
+                    to="/home"
+                >
+                    <span className={styles.icon}>
+                        <SvgIcon svg={IconSvgs.home} size={20} />
+                    </span>
+                    <span className={styles.label}>{globalize.translate('Home')}</span>
+                </Link>
+
+                <Link
+                    className={`${styles.link} ${isFavoritesSelected ? styles.linkActive : ''}`}
+                    to="/home?tab=1"
+                >
+                    <span className={styles.icon}>
+                        <SvgIcon svg={IconSvgs.heart} size={20} />
+                    </span>
+                    <span className={styles.label}>{globalize.translate('Favorites')}</span>
+                </Link>
+            </div>
 
             {/* CUSTOM LINKS */}
             {(!!webConfig.menuLinks && webConfig.menuLinks.length > 0) && (
                 <>
-                    <Divider />
-                    <List>
+                    <div className={styles.divider} />
+                    <div className={styles.section}>
                         {webConfig.menuLinks.map(menuLink => (
-                            <ListItem
+                            <a
                                 key={`${menuLink.name}_${menuLink.url}`}
-                                disablePadding
+                                className={styles.link}
+                                href={menuLink.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
                             >
-                                <ListItemButton
-                                    component='a'
-                                    href={menuLink.url}
-                                    target='_blank'
-                                    rel='noopener noreferrer'
-                                >
-                                    <ListItemIcon>
-                                        <Icon>{menuLink.icon ?? 'link'}</Icon>
-                                    </ListItemIcon>
-                                    <ListItemText primary={menuLink.name} />
-                                </ListItemButton>
-                            </ListItem>
+                                <span className={styles.icon}>
+                                    <span className={styles.materialIcon}>{menuLink.icon ?? 'link'}</span>
+                                </span>
+                                <span className={styles.label}>{menuLink.name}</span>
+                            </a>
                         ))}
-                    </List>
+                    </div>
                 </>
             )}
 
             {/* LIBRARY LINKS */}
             {userViews.length > 0 && (
                 <>
-                    <Divider />
-                    <List
-                        aria-labelledby='libraries-subheader'
-                        subheader={
-                            <ListSubheader component='div' id='libraries-subheader'>
-                                {globalize.translate('HeaderLibraries')}
-                            </ListSubheader>
-                        }
-                    >
+                    <div className={styles.divider} />
+                    <div className={styles.heading} id="libraries-subheader">
+                        {globalize.translate('HeaderLibraries')}
+                    </div>
+                    <div className={styles.section} aria-labelledby="libraries-subheader">
                         {userViews.map(view => (
-                            <ListItem key={view.Id} disablePadding>
-                                <ListItemLink
-                                    to={appRouter.getRouteUrl(view, { context: view.CollectionType }).substring(1)}
-                                >
-                                    <ListItemIcon>
-                                        <LibraryIcon item={view} />
-                                    </ListItemIcon>
-                                    <ListItemText primary={view.Name} />
-                                </ListItemLink>
-                            </ListItem>
+                            <Link
+                                key={view.Id}
+                                className={styles.link}
+                                to={appRouter.getRouteUrl(view, { context: view.CollectionType }).substring(1)}
+                            >
+                                <span className={styles.icon}>
+                                    <LibraryIcon item={view} />
+                                </span>
+                                <span className={styles.label}>{view.Name}</span>
+                            </Link>
                         ))}
-                    </List>
+                    </div>
                 </>
             )}
         </>

@@ -1,4 +1,3 @@
-export * from './Button';
-export * from './LinkButton';
-export * from './IconButton';
+export * from '../../../components/shared/button';
+
 

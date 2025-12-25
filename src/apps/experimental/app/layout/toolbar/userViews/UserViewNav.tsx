@@ -12,6 +12,7 @@ import { useUserViews } from 'hooks/useUserViews';
 import { useWebConfig } from 'hooks/useWebConfig';
 import globalize from 'lib/globalize';
 
+import { ToolbarAnchor, ToolbarLink, ToolbarTextButton } from 'apps/experimental/components/shared';
 import UserViewsMenu from './UserViewsMenu';
 
 const MAX_USER_VIEWS_MD = 3;
@@ -94,48 +95,43 @@ const UserViewNav = () => {
 
     return (
         <>
-            <Link
-                className='expToolbarButton'
-                to='/home?tab=1'
+            <ToolbarLink
+                to="/home?tab=1"
                 aria-label={globalize.translate(MetaView.Favorites.Name)}
-                aria-current={isFavorites ? 'page' : undefined}
+                isActive={isFavorites}
             >
                 {globalize.translate(MetaView.Favorites.Name)}
-            </Link>
+            </ToolbarLink>
 
             {webConfig.menuLinks?.map(link => (
-                <a
+                <ToolbarAnchor
                     key={link.name}
-                    className='expToolbarButton'
                     href={link.url}
                     target='_blank'
                     rel='noopener noreferrer'
                 >
                     {link.name}
-                </a>
+                </ToolbarAnchor>
             ))}
 
             {primaryViews?.map(view => (
-                <Link
+                <ToolbarLink
                     key={view.Id}
-                    className='expToolbarButton'
                     to={appRouter.getRouteUrl(view, { context: view.CollectionType }).substring(1)}
-                    aria-current={view.Id === currentUserView?.Id ? 'page' : undefined}
+                    isActive={view.Id === currentUserView?.Id}
                 >
                     {view.Name}
-                </Link>
+                </ToolbarLink>
             ))}
             {overflowViews && overflowViews.length > 0 && (
                 <>
-                    <button
-                        type='button'
-                        className='expToolbarButton'
+                    <ToolbarTextButton
                         aria-controls={OVERFLOW_MENU_ID}
-                        aria-haspopup='true'
+                        aria-haspopup="true"
                         onClick={onOverflowButtonClick}
                     >
                         {globalize.translate('ButtonMore')}
-                    </button>
+                    </ToolbarTextButton>
 
                     <UserViewsMenu
                         anchorEl={overflowAnchorEl}

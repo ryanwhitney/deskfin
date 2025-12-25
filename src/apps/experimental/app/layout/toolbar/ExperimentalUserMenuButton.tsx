@@ -3,6 +3,7 @@ import React, { useCallback, useState } from 'react';
 import SvgIcon from 'components/SvgIcon';
 import { IconSvgs } from 'assets/icons';
 import globalize from 'lib/globalize';
+import { ToolbarIconButton } from 'apps/experimental/components/shared';
 
 import ExperimentalUserMenu, { EXP_USER_MENU_ID } from './ExperimentalUserMenu';
 
@@ -20,16 +21,14 @@ const ExperimentalUserMenuButton = () => {
 
     return (
         <>
-            <button
-                type='button'
+            <ToolbarIconButton
                 aria-label={globalize.translate('UserMenu')}
                 aria-controls={EXP_USER_MENU_ID}
                 aria-haspopup='true'
                 onClick={onUserButtonClick}
-                className='expToolbarIconButton'
             >
                 <SvgIcon svg={IconSvgs.avatar} size={24} />
-            </button>
+            </ToolbarIconButton>
             <ExperimentalUserMenu
                 open={isUserMenuOpen}
                 anchorEl={userMenuAnchorEl}

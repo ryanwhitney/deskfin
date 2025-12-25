@@ -1,0 +1,12 @@
+@import '../../../styles/theme';
+
+.menu {
+    min-width: 220px;
+    background: $surface-menu;
+    border: 1px solid $border-subtle;
+    border-radius: $radius-sm;
+    box-shadow: $menu-shadow;
+    padding: $space-1 0;
+}
+
+

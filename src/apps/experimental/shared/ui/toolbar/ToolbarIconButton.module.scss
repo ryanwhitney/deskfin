@@ -1,0 +1,38 @@
+@import "../../../components/shared/toolbar/ToolbarIconButton.module.scss";
+
+@import '../../styles/theme';
+
+.button {
+    height: $toolbar-icon-size;
+    width: $toolbar-icon-size;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    padding: 0;
+    border-radius: $radius-lg;
+    transition: background 160ms ease, transform 80ms ease;
+}
+
+.button:hover {
+    background: $hover-bg;
+}
+
+.button:active {
+    transform: translateY(0.5px);
+}
+
+.button:focus-visible {
+    outline: 2px solid $focus-ring;
+    outline-offset: 2px;
+}
+
+/* Slightly larger hit-area for the hamburger without adding visible chrome */
+.hamburger {
+    width: 40px;
+}
+
+

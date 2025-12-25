@@ -1,18 +1,14 @@
 import React, { StrictMode, useCallback, useState } from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import { type Theme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
 import { Outlet, useLocation } from 'react-router-dom';
 
 import AppBody from 'components/AppBody';
 import CustomCss from 'components/CustomCss';
-import ElevationScroll from 'components/ElevationScroll';
 import ThemeCss from 'components/ThemeCss';
 import { useApi } from 'hooks/useApi';
 
 import AppToolbar from './toolbar';
 import AppDrawer, { isDrawerPath } from './drawer/AppDrawer';
+import { useMatchMedia } from 'apps/experimental/utils/useMatchMedia';
 
 import '../styles/AppOverrides.scss';
 
@@ -21,7 +17,7 @@ export const Component = () => {
     const { user } = useApi();
     const location = useLocation();
 
-    const isMediumScreen = useMediaQuery((t: Theme) => t.breakpoints.up('md'));
+    const isMediumScreen = useMatchMedia('(min-width: 900px)');
     const isDrawerAvailable = isDrawerPath(location.pathname) && Boolean(user) && !isMediumScreen;
     const isDrawerOpen = isDrawerActive && isDrawerAvailable;
 
@@ -31,47 +27,29 @@ export const Component = () => {
 
     return (
         <>
-            <Box sx={{ position: 'relative', display: 'flex', height: '100%' }}>
+            <div style={{ position: 'relative', display: 'flex', height: '100%' }}>
                 <StrictMode>
-                    <ElevationScroll elevate={false}>
-                        <AppBar
-                            position='fixed'
-                            sx={{
-                                width: '100%',
-                                ml: 0
-                            }}
-                        >
-                            <AppToolbar
-                                isDrawerAvailable={!isMediumScreen && isDrawerAvailable}
-                                isDrawerOpen={isDrawerOpen}
-                                onDrawerButtonClick={onToggleDrawer}
-                            />
-                        </AppBar>
-                    </ElevationScroll>
+                    <AppToolbar
+                        isDrawerAvailable={!isMediumScreen && isDrawerAvailable}
+                        isDrawerOpen={isDrawerOpen}
+                        onDrawerButtonClick={onToggleDrawer}
+                    />
 
-                    {
-                        isDrawerAvailable && (
-                            <AppDrawer
-                                open={isDrawerOpen}
-                                onClose={onToggleDrawer}
-                                onOpen={onToggleDrawer}
-                            />
-                        )
-                    }
+                    {isDrawerAvailable ? (
+                        <AppDrawer
+                            open={isDrawerOpen}
+                            onClose={onToggleDrawer}
+                            onOpen={onToggleDrawer}
+                        />
+                    ) : null}
                 </StrictMode>
 
-                <Box
-                    component='main'
-                    sx={{
-                        width: '100%',
-                        flexGrow: 1
-                    }}
-                >
+                <main style={{ width: '100%', flexGrow: 1 }}>
                     <AppBody>
                         <Outlet />
                     </AppBody>
-                </Box>
-            </Box>
+                </main>
+            </div>
             <ThemeCss />
             <CustomCss />
         </>

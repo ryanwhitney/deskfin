@@ -1,0 +1,54 @@
+@import '../../../styles/theme';
+
+.backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(6px);
+    z-index: 1300;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 160ms ease;
+}
+
+.backdropOpen {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: min(320px, calc(100% - 56px));
+    background: rgba(16, 16, 16, 0.95);
+    border-right: 1px solid $border-muted;
+    z-index: 1301;
+    transform: translateX(-105%);
+    transition: transform 200ms ease;
+    padding-bottom: 4.2rem; // leave room for now playing bar
+    overflow: auto;
+}
+
+.panelOpen {
+    transform: translateX(0);
+}
+
+@media (min-width: 900px) {
+    .backdrop,
+    .backdropOpen {
+        display: none;
+    }
+
+    .panel {
+        position: sticky;
+        transform: none;
+        width: 260px;
+        z-index: 1;
+        height: calc(100vh - $topbar-height);
+        top: $topbar-height;
+    }
+}
+
+

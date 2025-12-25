@@ -1,6 +1,5 @@
 import React, { type FC } from 'react';
 import {
-    Link,
     URLSearchParamsInit,
     createSearchParams,
     useLocation,
@@ -9,6 +8,7 @@ import {
 import globalize from 'lib/globalize';
 import SvgIcon from 'components/SvgIcon';
 import { IconSvgs } from 'assets/icons';
+import { ToolbarIconLink } from 'apps/experimental/components/shared';
 
 const getUrlParams = (searchParams: URLSearchParams) => {
     const parentId =
@@ -39,10 +39,9 @@ const SearchButton: FC = () => {
         };
 
     return (
-        <Link
+        <ToolbarIconLink
             aria-label={globalize.translate('Search')}
             to={createSearchLink}
-            className='expToolbarIconButton'
             onClick={e => {
                 if (isSearchPath) {
                     e.preventDefault();
@@ -50,7 +49,7 @@ const SearchButton: FC = () => {
             }}
         >
             <SvgIcon svg={IconSvgs.search} size={18} />
-        </Link>
+        </ToolbarIconLink>
     );
 };
 

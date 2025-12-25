@@ -1,0 +1,41 @@
+@import '../../../../styles/theme';
+
+.root {
+    width: 140px;
+    flex: 0 0 auto;
+}
+
+.image {
+    width: 100%;
+    padding-top: 150%;
+    border-radius: 12px;
+    border: 1px solid $border-muted;
+    background-color: $surface-raised;
+}
+
+.title {
+    font-weight: 800;
+    font-size: 0.92rem;
+    color: #eee;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 0.18rem 0.45rem;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid $border-control-hover;
+    color: #f3f3f3;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1;
+    pointer-events: none;
+    backdrop-filter: blur(6px);
+}
+
+

@@ -1,0 +1,79 @@
+@import '../../../styles/theme';
+
+.section {
+    padding: $space-3 $space-2;
+}
+
+.divider {
+    height: 1px;
+    background: $border-muted;
+    margin: $space-2 $space-2;
+}
+
+.heading {
+    margin: 8px 10px;
+    font-size: 0.8rem;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.70);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 10px;
+    border-radius: 12px;
+    text-decoration: none;
+    color: inherit;
+}
+
+.link:hover {
+    background: $hover-bg;
+}
+
+.linkActive {
+    background: rgba(59, 130, 246, 0.18);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+}
+
+.linkActive:hover {
+    background: rgba(59, 130, 246, 0.22);
+}
+
+.icon {
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.label {
+    font-weight: 800;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.materialIcon {
+    font-family: "Material Icons";
+    font-weight: normal;
+    font-style: normal;
+    font-size: 20px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+}
+
+

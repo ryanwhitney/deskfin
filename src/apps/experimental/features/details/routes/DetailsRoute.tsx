@@ -21,6 +21,7 @@ import { useGetItems } from 'hooks/useFetchItems';
 import FavoriteButton from 'apps/experimental/features/userData/components/FavoriteButton';
 import PlayedButton from 'apps/experimental/features/userData/components/PlayedButton';
 import PlayOrResumeButton from 'apps/experimental/features/details/components/buttons/PlayOrResumeButton';
+import { SeasonCard } from '../components/ui/SeasonCard';
 import type { ItemDto } from 'types/base/models/item-dto';
 import { ItemKind } from 'types/base/models/item-kind';
 import { DetailsMoreMenu } from '../components/ui/DetailsMoreMenu';
@@ -375,17 +376,12 @@ export default function DetailsPage() {
                                     const sCountRaw = (s as any).ChildCount ?? (s as any).EpisodeCount;
                                     const sCount = typeof sCountRaw === 'number' ? sCountRaw : (typeof sCountRaw === 'string' ? parseInt(sCountRaw, 10) : 0);
                                     return (
-                                        <a key={s.Id} className='detailsCard' href={`#/details?id=${s.Id}`}>
-                                            <div
-                                                className='detailsCardImg'
-                                                style={{ backgroundImage: sImg ? `url(${sImg})` : 'rgba(255,255,255,0.1)' }}
-                                            >
-                                                {Number.isFinite(sCount) && sCount > 0 ? (
-                                                    <div className='detailsCountBadge' aria-hidden='true'>{sCount}</div>
-                                                ) : null}
-                                            </div>
-                                            <div className='detailsCardTitle'>{s.Name}</div>
-                                        </a>
+                                        <SeasonCard
+                                            key={s.Id}
+                                            imageUrl={sImg}
+                                            season={s}
+                                            episodeCount={Number.isFinite(sCount) ? sCount : undefined}
+                                        />
                                     );
                                 })}
                             </div>

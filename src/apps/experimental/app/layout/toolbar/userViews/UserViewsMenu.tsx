@@ -1,9 +1,9 @@
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client';
 import React, { FC } from 'react';
-import { Link } from 'react-router-dom';
 
 import { appRouter } from 'components/router/appRouter';
 import DropdownMenu from '../DropdownMenu';
+import { ToolbarMenuItem } from 'apps/experimental/components/shared';
 
 interface UserViewsMenuProps {
     userViews: BaseItemDto[]
@@ -31,16 +31,16 @@ const UserViewsMenu: FC<UserViewsMenuProps> = ({
             align='left'
         >
             {userViews.map(view => (
-                <Link
+                <ToolbarMenuItem
                     key={view.Id}
-                    className='expDropdownItem'
+                    as="link"
                     to={appRouter.getRouteUrl(view, { context: view.CollectionType }).substring(1)}
                     onClick={onMenuClose}
                     role='menuitem'
                 >
                     {view.Name}
                     {view.Id === selectedId && <span style={{ marginLeft: 'auto', opacity: 0.7 }}>•</span>}
-                </Link>
+                </ToolbarMenuItem>
             ))}
         </DropdownMenu>
     );

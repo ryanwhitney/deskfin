@@ -1,5 +1,4 @@
 import React, { type FC, useCallback } from 'react';
-import { Link } from 'react-router-dom';
 
 import SvgIcon from 'components/SvgIcon';
 import { appHost } from 'components/apphost';
@@ -11,6 +10,7 @@ import globalize from 'lib/globalize';
 import shell from 'scripts/shell';
 import Dashboard from 'utils/dashboard';
 import DropdownMenu from './DropdownMenu';
+import { ToolbarMenuDivider, ToolbarMenuIcon, ToolbarMenuItem } from 'apps/experimental/components/shared';
 
 export const EXP_USER_MENU_ID = 'experimental-user-menu';
 
@@ -59,99 +59,99 @@ const ExperimentalUserMenu: FC<ExperimentalUserMenuProps> = ({
             open={open}
             onClose={onMenuClose}
         >
-            <Link
-                className='expDropdownItem'
+            <ToolbarMenuItem
+                as="link"
                 to={`/userprofile?userId=${user?.Id}`}
                 onClick={onMenuClose}
-                role='menuitem'
+                role="menuitem"
             >
-                <span className='expMenuIcon'><SvgIcon svg={IconSvgs.avatar} size={18} /></span>
+                <ToolbarMenuIcon><SvgIcon svg={IconSvgs.avatar} size={18} /></ToolbarMenuIcon>
                 {globalize.translate('Profile')}
-            </Link>
-            <Link
-                className='expDropdownItem'
-                to='/mypreferencesmenu'
+            </ToolbarMenuItem>
+            <ToolbarMenuItem
+                as="link"
+                to="/mypreferencesmenu"
                 onClick={onMenuClose}
-                role='menuitem'
+                role="menuitem"
             >
-                <span className='expMenuIcon'><SvgIcon svg={IconSvgs.settings} size={18} /></span>
+                <ToolbarMenuIcon><SvgIcon svg={IconSvgs.settings} size={18} /></ToolbarMenuIcon>
                 {globalize.translate('Settings')}
-            </Link>
+            </ToolbarMenuItem>
 
             {(appHost.supports(AppFeature.DownloadManagement) || appHost.supports(AppFeature.ClientSettings)) && (
-                <div className='expDropdownDivider' />
+                <ToolbarMenuDivider />
             )}
 
             {appHost.supports(AppFeature.DownloadManagement) && (
-                <button className='expDropdownItem' onClick={onDownloadManagerClick} role='menuitem'>
-                    <span className='expMenuIcon'><SvgIcon svg={IconSvgs.download} size={18} /></span>
+                <ToolbarMenuItem as="button" onClick={onDownloadManagerClick} role="menuitem">
+                    <ToolbarMenuIcon><SvgIcon svg={IconSvgs.download} size={18} /></ToolbarMenuIcon>
                     {globalize.translate('DownloadManager')}
-                </button>
+                </ToolbarMenuItem>
             )}
 
             {appHost.supports(AppFeature.ClientSettings) && (
-                <button className='expDropdownItem' onClick={onClientSettingsClick} role='menuitem'>
-                    <span className='expMenuIcon'><SvgIcon svg={IconSvgs.controls} size={18} /></span>
+                <ToolbarMenuItem as="button" onClick={onClientSettingsClick} role="menuitem">
+                    <ToolbarMenuIcon><SvgIcon svg={IconSvgs.controls} size={18} /></ToolbarMenuIcon>
                     {globalize.translate('ClientSettings')}
-                </button>
+                </ToolbarMenuItem>
             )}
 
             {user?.Policy?.IsAdministrator && (
                 <>
-                    <div className='expDropdownDivider' />
-                    <Link
-                        className='expDropdownItem'
-                        to='/dashboard'
+                    <ToolbarMenuDivider />
+                    <ToolbarMenuItem
+                        as="link"
+                        to="/dashboard"
                         onClick={onMenuClose}
-                        role='menuitem'
+                        role="menuitem"
                     >
-                        <span className='expMenuIcon'><SvgIcon svg={IconSvgs.dashboard} size={18} /></span>
+                        <ToolbarMenuIcon><SvgIcon svg={IconSvgs.dashboard} size={18} /></ToolbarMenuIcon>
                         {globalize.translate('TabDashboard')}
-                    </Link>
-                    <Link
-                        className='expDropdownItem'
-                        to='/metadata'
+                    </ToolbarMenuItem>
+                    <ToolbarMenuItem
+                        as="link"
+                        to="/metadata"
                         onClick={onMenuClose}
-                        role='menuitem'
+                        role="menuitem"
                     >
-                        <span className='expMenuIcon'><SvgIcon svg={IconSvgs.edit} size={18} /></span>
+                        <ToolbarMenuIcon><SvgIcon svg={IconSvgs.edit} size={18} /></ToolbarMenuIcon>
                         {globalize.translate('MetadataManager')}
-                    </Link>
+                    </ToolbarMenuItem>
                 </>
             )}
 
-            <div className='expDropdownDivider' />
+            <ToolbarMenuDivider />
             {isQuickConnectEnabled && (
-                <Link
-                    className='expDropdownItem'
-                    to='/quickconnect'
+                <ToolbarMenuItem
+                    as="link"
+                    to="/quickconnect"
                     onClick={onMenuClose}
-                    role='menuitem'
+                    role="menuitem"
                 >
-                    <span className='expMenuIcon'><SvgIcon svg={IconSvgs.quickConnect} size={18} /></span>
+                    <ToolbarMenuIcon><SvgIcon svg={IconSvgs.quickConnect} size={18} /></ToolbarMenuIcon>
                     {globalize.translate('QuickConnect')}
-                </Link>
+                </ToolbarMenuItem>
             )}
 
             {appHost.supports(AppFeature.MultiServer) && (
-                <button className='expDropdownItem' onClick={onSelectServerClick} role='menuitem'>
-                    <span className='expMenuIcon'><SvgIcon svg={IconSvgs.refresh} size={18} /></span>
+                <ToolbarMenuItem as="button" onClick={onSelectServerClick} role="menuitem">
+                    <ToolbarMenuIcon><SvgIcon svg={IconSvgs.refresh} size={18} /></ToolbarMenuIcon>
                     {globalize.translate('SelectServer')}
-                </button>
+                </ToolbarMenuItem>
             )}
 
-            <button className='expDropdownItem' onClick={onLogoutClick} role='menuitem'>
-                <span className='expMenuIcon'><SvgIcon svg={IconSvgs.signOut} size={18} /></span>
+            <ToolbarMenuItem as="button" onClick={onLogoutClick} role="menuitem">
+                <ToolbarMenuIcon><SvgIcon svg={IconSvgs.signOut} size={18} /></ToolbarMenuIcon>
                 {globalize.translate('ButtonSignOut')}
-            </button>
+            </ToolbarMenuItem>
 
             {appHost.supports(AppFeature.ExitMenu) && (
                 <>
-                    <div className='expDropdownDivider' />
-                    <button className='expDropdownItem' onClick={onExitAppClick} role='menuitem'>
-                        <span className='expMenuIcon'><SvgIcon svg={IconSvgs.delete} size={18} /></span>
+                    <ToolbarMenuDivider />
+                    <ToolbarMenuItem as="button" onClick={onExitAppClick} role="menuitem">
+                        <ToolbarMenuIcon><SvgIcon svg={IconSvgs.delete} size={18} /></ToolbarMenuIcon>
                         {globalize.translate('ButtonExitApp')}
-                    </button>
+                    </ToolbarMenuItem>
                 </>
             )}
         </DropdownMenu>

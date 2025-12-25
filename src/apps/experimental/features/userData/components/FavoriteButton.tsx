@@ -6,7 +6,7 @@ import { useApi } from 'hooks/useApi';
 import { useToggleFavoriteMutation } from 'hooks/useFetchItems';
 import SvgIcon from 'components/SvgIcon';
 import { IconSvgs } from '../../../../../assets/icons';
-import { IconButton } from '../../../components/Elements/Button';
+import { IconButton } from 'apps/experimental/components/shared';
 import { updateItemUserDataCache } from '../utils/updateItemUserDataCache';
 
 interface FavoriteButtonProps {
