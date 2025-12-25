@@ -7,6 +7,7 @@ import { ItemSortBy } from '@jellyfin/sdk/lib/generated-client/models/item-sort-
 import { SortOrder } from '@jellyfin/sdk/lib/generated-client/models/sort-order';
 import { getTvShowsApi } from '@jellyfin/sdk/lib/utils/api/tv-shows-api';
 import { useQuery } from '@tanstack/react-query';
+import { GridList, GridListItem } from 'react-aria-components';
 
 import globalize from 'lib/globalize';
 import { ServerConnections } from 'lib/jellyfin-apiclient';
@@ -288,7 +289,7 @@ export default function DetailsPage() {
                                     isFavorite={isFavorite}
                                     itemId={item.Id}
                                 />
-                                <DetailsMoreMenu item={item} queryKey={queryKey} />
+                                <DetailsMoreMenu item={item} queryKey={queryKey} className='expIconButton detailsIconBtn' />
                             </div>
 
                             {(item.GenreItems?.length || item.Genres?.length || directors.length || writers.length) ? (
@@ -349,20 +350,57 @@ export default function DetailsPage() {
                     {isSeries && (nextUpEpisode as ItemDto | undefined)?.Id ? (
                         <div className='detailsSection'>
                             <h2 className='detailsSectionTitle'>{globalize.translate('NextUp')}</h2>
-                            <div className='episodeList'>
-                                <EpisodeRow episode={nextUpEpisode!} queryKey={[ ...queryKey, 'NextUp' ]} />
-                            </div>
+                            <GridList
+                                className="episodeList"
+                                aria-label={globalize.translate('NextUp')}
+                                selectionMode="none"
+                                onAction={(key) => { window.location.href = `#/details?id=${String(key)}`; }}
+                            >
+                                <GridListItem
+                                    id={nextUpEpisode!.Id ?? 'nextup'}
+                                    textValue={nextUpEpisode!.Name ?? ''}
+                                    className="episodeGridItem"
+                                >
+                                    {({ isFocused }) => (
+                                        <EpisodeRow
+                                            episode={nextUpEpisode!}
+                                            queryKey={[ ...queryKey, 'NextUp' ]}
+                                            isRovingFocused={isFocused}
+                                            className="expEpisodeRow"
+                                        />
+                                    )}
+                                </GridListItem>
+                            </GridList>
                         </div>
                     ) : null}
 
                     {isSeries && seriesEpisodes.length ? (
                         <div className='detailsSection'>
                             <h2 className='detailsSectionTitle'>{globalize.translate('Episodes')}</h2>
-                            <div className='episodeList'>
-                                {seriesEpisodes.slice(0, 12).map(ep => (
-                                    <EpisodeRow key={ep.Id} episode={ep} queryKey={[ ...queryKey, 'SeriesEpisodes' ]} />
+                            <GridList
+                                className="episodeList"
+                                aria-label={globalize.translate('Episodes')}
+                                selectionMode="none"
+                                onAction={(key) => { window.location.href = `#/details?id=${String(key)}`; }}
+                            >
+                                {seriesEpisodes.slice(0, 12).filter(ep => !!ep.Id).map(ep => (
+                                    <GridListItem
+                                        key={ep.Id!}
+                                        id={ep.Id!}
+                                        textValue={ep.Name ?? ''}
+                                        className="episodeGridItem"
+                                    >
+                                        {({ isFocused }) => (
+                                            <EpisodeRow
+                                                episode={ep}
+                                                queryKey={[ ...queryKey, 'SeriesEpisodes' ]}
+                                                isRovingFocused={isFocused}
+                                                className="expEpisodeRow"
+                                            />
+                                        )}
+                                    </GridListItem>
                                 ))}
-                            </div>
+                            </GridList>
                         </div>
                     ) : null}
 
@@ -391,11 +429,31 @@ export default function DetailsPage() {
                     {isSeason && episodes.length ? (
                         <div className='detailsSection'>
                             <h2 className='detailsSectionTitle'>{globalize.translate('Episodes')}</h2>
-                            <div className='episodeList'>
-                                {episodes.map(ep => (
-                                    <EpisodeRow key={ep.Id} episode={ep} queryKey={[ ...queryKey, 'SeasonEpisodes' ]} showSeriesAndSeason={false} />
+                            <GridList
+                                className="episodeList"
+                                aria-label={globalize.translate('Episodes')}
+                                selectionMode="none"
+                                onAction={(key) => { window.location.href = `#/details?id=${String(key)}`; }}
+                            >
+                                {episodes.filter(ep => !!ep.Id).map(ep => (
+                                    <GridListItem
+                                        key={ep.Id!}
+                                        id={ep.Id!}
+                                        textValue={ep.Name ?? ''}
+                                        className="episodeGridItem"
+                                    >
+                                        {({ isFocused }) => (
+                                            <EpisodeRow
+                                                episode={ep}
+                                                queryKey={[ ...queryKey, 'SeasonEpisodes' ]}
+                                                showSeriesAndSeason={false}
+                                                isRovingFocused={isFocused}
+                                                className="expEpisodeRow"
+                                            />
+                                        )}
+                                    </GridListItem>
                                 ))}
-                            </div>
+                            </GridList>
                         </div>
                     ) : null}
 

@@ -6,6 +6,9 @@
     height: $toolbar-link-height;
     padding: 0 $space-3;
     border-radius: $radius-md;
+    border: none;
+    background: transparent;
+    font: inherit;
     text-decoration: none;
     color: inherit;
     font-weight: 700;
@@ -13,6 +16,8 @@
     line-height: 1;
     white-space: nowrap;
     user-select: none;
+    cursor: pointer;
+    appearance: none;
     transition: background 160ms ease, box-shadow 160ms ease;
 }
 

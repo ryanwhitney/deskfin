@@ -1,3 +1,4 @@
-export { default } from '../../../app/layout/toolbar/userViews/UserViewsMenu';
+// Legacy compat shim (navbar overflow menu is now implemented inside `UserViewNav` using React Aria menus).
+export {};
 
 

@@ -1,7 +1,8 @@
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
 import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
-import React, { useCallback, useMemo, useState } from 'react';
-import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import React, { useMemo } from 'react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { Button, Menu, MenuItem, MenuTrigger, Popover } from 'react-aria-components';
 
 import { MetaView } from 'apps/experimental/constants/metaView';
 import { isLibraryPath } from 'apps/experimental/features/libraries/utils/path';
@@ -12,14 +13,12 @@ import { useUserViews } from 'hooks/useUserViews';
 import { useWebConfig } from 'hooks/useWebConfig';
 import globalize from 'lib/globalize';
 
-import { ToolbarAnchor, ToolbarLink, ToolbarTextButton } from 'apps/experimental/components/shared';
-import UserViewsMenu from './UserViewsMenu';
+import { ActionMenuStyles, ToolbarAnchor, ToolbarLink } from 'apps/experimental/components/shared';
+import toolbarLinkStyles from 'apps/experimental/components/shared/toolbar/ToolbarLink.module.scss';
 
 const MAX_USER_VIEWS_MD = 3;
 const MAX_USER_VIEWS_LG = 5;
 const MAX_USER_VIEWS_XL = 8;
-
-const OVERFLOW_MENU_ID = 'user-view-overflow-menu';
 
 const HOME_PATH = '/home';
 const LIST_PATH = '/list';
@@ -49,6 +48,7 @@ const getCurrentUserView = (
 
 const UserViewNav = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const [ searchParams ] = useSearchParams();
     const libraryId = searchParams.get('topParentId') || searchParams.get('parentId');
     const collectionType = searchParams.get('collectionType');
@@ -73,17 +73,6 @@ const UserViewNav = () => {
     const overflowViews = useMemo(() => (
         userViews?.Items?.slice(maxViews)
     ), [ maxViews, userViews ]);
-
-    const [ overflowAnchorEl, setOverflowAnchorEl ] = useState<null | HTMLElement>(null);
-    const isOverflowMenuOpen = Boolean(overflowAnchorEl);
-
-    const onOverflowButtonClick = useCallback((event: React.MouseEvent<HTMLElement>) => {
-        setOverflowAnchorEl(event.currentTarget);
-    }, []);
-
-    const onOverflowMenuClose = useCallback(() => {
-        setOverflowAnchorEl(null);
-    }, []);
 
     const currentUserView = useMemo(() => (
         getCurrentUserView(userViews?.Items, location.pathname, libraryId, collectionType, activeTab)
@@ -124,24 +113,31 @@ const UserViewNav = () => {
                 </ToolbarLink>
             ))}
             {overflowViews && overflowViews.length > 0 && (
-                <>
-                    <ToolbarTextButton
-                        aria-controls={OVERFLOW_MENU_ID}
-                        aria-haspopup="true"
-                        onClick={onOverflowButtonClick}
-                    >
+                <MenuTrigger>
+                    <Button className={toolbarLinkStyles.link}>
                         {globalize.translate('ButtonMore')}
-                    </ToolbarTextButton>
-
-                    <UserViewsMenu
-                        anchorEl={overflowAnchorEl}
-                        id={OVERFLOW_MENU_ID}
-                        open={isOverflowMenuOpen}
-                        onMenuClose={onOverflowMenuClose}
-                        userViews={overflowViews}
-                        selectedId={currentUserView?.Id}
-                    />
-                </>
+                    </Button>
+                    <Popover className={ActionMenuStyles.popover}>
+                        <Menu className={ActionMenuStyles.menu} aria-label={globalize.translate('ButtonMore')}>
+                            {overflowViews.map(view => {
+                                const to = appRouter.getRouteUrl(view, { context: view.CollectionType }).substring(1);
+                                return (
+                                    <MenuItem
+                                        key={view.Id}
+                                        className={ActionMenuStyles.item}
+                                        textValue={view.Name ?? ''}
+                                        onAction={() => navigate(to)}
+                                    >
+                                        <span className={ActionMenuStyles.text}>{view.Name}</span>
+                                        {view.Id === currentUserView?.Id ? (
+                                            <span className={ActionMenuStyles.endAdornment} aria-hidden="true">•</span>
+                                        ) : null}
+                                    </MenuItem>
+                                );
+                            })}
+                        </Menu>
+                    </Popover>
+                </MenuTrigger>
             )}
         </>
     );

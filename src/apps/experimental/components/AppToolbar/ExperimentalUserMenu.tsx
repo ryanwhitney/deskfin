@@ -1,3 +1,4 @@
-export { default } from '../../app/layout/toolbar/ExperimentalUserMenu';
+// Legacy compat shim (the user menu is now implemented inside `ExperimentalUserMenuButton` using React Aria menus).
+export {};
 
 

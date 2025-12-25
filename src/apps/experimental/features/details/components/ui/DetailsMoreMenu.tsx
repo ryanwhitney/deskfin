@@ -1,9 +1,6 @@
-import React, { type FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { type FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
+import { Button, Menu, MenuItem, MenuTrigger, Popover, Separator } from 'react-aria-components';
 
 import globalize from 'lib/globalize';
 import { useApi } from 'hooks/useApi';
@@ -11,7 +8,8 @@ import * as itemContextMenu from 'components/itemContextMenu';
 import type { ItemDto } from 'types/base/models/item-dto';
 import SvgIcon from 'components/SvgIcon';
 import { IconSvgs, getLegacyCommandIcon } from 'assets/icons';
-import { IconButton } from 'apps/experimental/components/shared';
+import { ActionMenuStyles } from 'apps/experimental/components/shared';
+import iconButtonStyles from 'apps/experimental/components/shared/button/Button.module.scss';
 
 interface DetailsMoreMenuProps {
     item: ItemDto;
@@ -33,17 +31,7 @@ const t = (key: string, fallback: string) => {
 export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({ item, queryKey, className }) => {
     const queryClient = useQueryClient();
     const { user } = useApi();
-    const [ anchorEl, setAnchorEl ] = useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl);
     const [ commands, setCommands ] = useState<Command[]>([]);
-    const menuPaperRef = useRef<HTMLDivElement | null>(null);
-
-    const close = useCallback(() => setAnchorEl(null), []);
-    const openMenu = useCallback((e: React.MouseEvent<HTMLElement>) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setAnchorEl(e.currentTarget);
-    }, []);
 
     const menuOptions = useMemo(() => {
         return {
@@ -59,9 +47,9 @@ export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({ item, queryKey, clas
             editSubtitles: true,
             deleteItem: true,
             // We don't show multiselect here (details page), but keep a positionTo for parity.
-            positionTo: anchorEl
+            positionTo: null
         };
-    }, [anchorEl, item, user]);
+    }, [item, user]);
 
     useEffect(() => {
         const load = async () => {
@@ -74,35 +62,10 @@ export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({ item, queryKey, clas
                 setCommands([]);
             }
         };
-        if (open) void load();
-    }, [menuOptions, open, user]);
-
-    // Prevent "click-through" when dismissing the menu by capturing outside click events.
-    // IMPORTANT: do NOT close on pointerdown; that can remove the listener before the actual click fires.
-    useEffect(() => {
-        if (!open) return;
-
-        const onWindowEvent = (e: Event) => {
-            const target = e.target as Node | null;
-            if (!target) return;
-
-            // Allow clicks inside the menu and on the anchor button itself.
-            if (menuPaperRef.current?.contains(target)) return;
-            if (anchorEl?.contains(target)) return;
-
-            e.preventDefault();
-            e.stopPropagation();
-            close();
-        };
-
-        window.addEventListener('click', onWindowEvent, true);
-        return () => {
-            window.removeEventListener('click', onWindowEvent, true);
-        };
-    }, [anchorEl, close, open]);
+        void load();
+    }, [menuOptions, user]);
 
     const onCommandClick = useCallback(async (commandId: string) => {
-        close();
         try {
             const result = await itemContextMenu.executeCommand(item, commandId, menuOptions);
             if (result?.updated || result?.deleted) {
@@ -111,47 +74,50 @@ export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({ item, queryKey, clas
         } catch (e) {
             console.error('[DetailsMoreMenu] command failed', commandId, e);
         }
-    }, [close, item, menuOptions, queryClient, queryKey]);
+    }, [item, menuOptions, queryClient, queryKey]);
 
     return (
-        <>
-            <IconButton
-                className={className}
-                title={t('ButtonMore', 'More')}
+        <MenuTrigger>
+            <Button
+                className={[ iconButtonStyles.iconButton, className ?? '' ].filter(Boolean).join(' ')}
                 aria-label={t('ButtonMore', 'More')}
-                onClick={openMenu}
-                icon={<SvgIcon svg={IconSvgs.ellipsis} size={18} />}
-            />
-
-            <Menu
-                anchorEl={anchorEl}
-                open={open}
-                onClose={close}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                slotProps={{ paper: { ref: menuPaperRef } }}
+                onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }}
             >
-                {commands.map((cmd, idx) => {
-                    if (cmd.divider) {
-                        // eslint-disable-next-line react/no-array-index-key
-                        return <div key={`div-${idx}`} style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: '6px 0' }} />;
-                    }
-                    if (!cmd.id) return null;
-                    return (
-                        // eslint-disable-next-line react/no-array-index-key
-                        <MenuItem key={cmd.id ?? idx} onClick={() => onCommandClick(cmd.id!)}>
-                            {cmd.icon ? (
-                                <ListItemIcon>
-                                    {getLegacyCommandIcon(cmd.icon) ? (
-                                        <SvgIcon svg={getLegacyCommandIcon(cmd.icon)!} size={18} />
-                                    ) : null}
-                                </ListItemIcon>
-                            ) : null}
-                            <ListItemText primary={cmd.name ?? cmd.id} />
-                        </MenuItem>
-                    );
-                })}
-            </Menu>
-        </>
+                <SvgIcon svg={IconSvgs.ellipsis} size={18} />
+            </Button>
+
+            <Popover className={ActionMenuStyles.popover} placement="bottom end" offset={6}>
+                <Menu className={ActionMenuStyles.menu} aria-label={t('ButtonMore', 'More')}>
+                    {commands.map((cmd, idx) => {
+                        if (cmd.divider) {
+                            // eslint-disable-next-line react/no-array-index-key
+                            return <Separator key={`div-${idx}`} className={ActionMenuStyles.divider} />;
+                        }
+                        if (!cmd.id) return null;
+                        const icon = cmd.icon ? getLegacyCommandIcon(cmd.icon) : undefined;
+                        return (
+                            <MenuItem
+                                key={cmd.id}
+                                className={ActionMenuStyles.item}
+                                textValue={cmd.name ?? cmd.id}
+                                onAction={() => { void onCommandClick(cmd.id!); }}
+                            >
+                                {icon ? (
+                                    <span className={ActionMenuStyles.icon} aria-hidden="true">
+                                        <SvgIcon svg={icon} size={18} />
+                                    </span>
+                                ) : (
+                                    <span className={ActionMenuStyles.icon} aria-hidden="true" />
+                                )}
+                                <span className={ActionMenuStyles.text}>{cmd.name ?? cmd.id}</span>
+                            </MenuItem>
+                        );
+                    })}
+                </Menu>
+            </Popover>
+        </MenuTrigger>
     );
 };

@@ -1,12 +1,6 @@
 import React, { type FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-
 import { ServerConnections } from 'lib/jellyfin-apiclient';
 import { useApi } from 'hooks/useApi';
 import { useUserViews } from 'hooks/useUserViews';
@@ -16,14 +10,14 @@ import globalize from 'lib/globalize';
 import { clearBackdrop } from 'components/backdrop/backdrop';
 import Page from 'components/Page';
 import { playbackManager } from 'components/playback/playbackmanager';
-import * as itemContextMenu from 'components/itemContextMenu';
 import layoutManager from 'components/layoutManager';
 import { DEFAULT_SECTIONS, HomeSectionType } from 'types/homeSectionType';
 import type { ItemDto } from 'types/base/models/item-dto';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
 import SvgIcon from 'components/SvgIcon';
-import { IconSvgs, getLegacyCommandIcon } from 'assets/icons';
-import { LinkButton } from 'apps/experimental/components/shared';
+import { IconSvgs } from 'assets/icons';
+import { LinkButton, MediaCard, MediaCardStyles } from 'apps/experimental/components/shared';
+import { GridList, GridListItem } from 'react-aria-components';
 import '../styles/home.modern.scss';
 
 let ignoreHomeCardNavigateUntil = 0;
@@ -110,334 +104,70 @@ const buildCardImageUrl = (
     return apiClient.getImageUrl(chosen.itemId, { type: chosen.type, tag: chosen.tag, maxWidth });
 };
 
-type Command = { name?: string; id?: string; icon?: string; divider?: boolean };
-
-const ItemMoreMenu: FC<{ item: ItemDto; user: any; onAfterAction: () => void }> = ({ item, user, onAfterAction }) => {
-    const [ anchorEl, setAnchorEl ] = useState<HTMLElement | null>(null);
-    const open = Boolean(anchorEl);
-    const [ commands, setCommands ] = useState<Command[]>([]);
-    const menuPaperRef = useRef<HTMLDivElement | null>(null);
-
-    const menuOptions = useMemo(() => ({
-        item,
-        user,
-        play: true,
-        queue: true,
-        shuffle: true,
-        instantMix: true,
-        playlist: true,
-        edit: true,
-        editImages: true,
-        editSubtitles: true,
-        deleteItem: true,
-        positionTo: anchorEl
-    }), [anchorEl, item, user]);
-
-    useEffect(() => {
-        const load = async () => {
-            if (!open) return;
-            try {
-                const cmds = await itemContextMenu.getCommands(menuOptions);
-                setCommands(cmds as Command[]);
-            } catch (e) {
-                console.error('[Home] failed to get commands', e);
-                setCommands([]);
-            }
-        };
-        void load();
-    }, [menuOptions, open]);
-
-    // Prevent "click-through" when dismissing the menu by capturing outside click events.
-    useEffect(() => {
-        if (!open) return;
-
-        const onWindowEvent = (e: Event) => {
-            const target = e.target as Node | null;
-            if (!target) return;
-
-            // Allow clicks inside the menu and on the anchor button itself.
-            if (menuPaperRef.current?.contains(target)) return;
-            if (anchorEl?.contains(target)) return;
-
-            // Swallow the click and also suppress any imminent "ghost click" navigation on the card.
-            suppressHomeCardNavigate();
-            e.preventDefault();
-            e.stopPropagation();
-            close();
-        };
-
-        window.addEventListener('click', onWindowEvent, true);
-        return () => {
-            window.removeEventListener('click', onWindowEvent, true);
-        };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [open, anchorEl]);
-
-    const close = () => {
-        suppressHomeCardNavigate();
-        setAnchorEl(null);
-    };
-
-    const onCommand = async (id: string) => {
-        close();
-        try {
-            const result = await itemContextMenu.executeCommand(item, id, menuOptions);
-            if (result?.updated || result?.deleted) {
-                onAfterAction();
-            }
-        } catch (e) {
-            console.error('[Home] command failed', id, e);
-        }
-    };
-
-    return (
-        <>
-            <IconButton
-                className='homeIconBtn'
-                size='small'
-                title={t('ButtonMore', 'More')}
-                onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    suppressHomeCardNavigate();
-                    setAnchorEl(e.currentTarget);
-                }}
-            >
-                <SvgIcon svg={IconSvgs.ellipsis} size={18} />
-            </IconButton>
-            <Menu
-                anchorEl={anchorEl}
-                open={open}
-                onClose={close}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-                slotProps={{ paper: { ref: menuPaperRef } }}
-            >
-                {commands.map((cmd, idx) => {
-                    if (cmd.divider) {
-                        // eslint-disable-next-line react/no-array-index-key
-                        return <div key={`div-${idx}`} className='homeMenuDivider' />;
-                    }
-                    if (!cmd.id) return null;
-                    return (
-                        <MenuItem
-                            key={cmd.id}
-                            onClick={(e) => {
-                                // Ensure menu interactions never trigger the underlying card click.
-                                e.preventDefault();
-                                e.stopPropagation();
-                                suppressHomeCardNavigate();
-                                void onCommand(cmd.id!);
-                            }}
-                        >
-                            {cmd.icon ? (
-                                <ListItemIcon>
-                                    {getLegacyCommandIcon(cmd.icon) ? (
-                                        <SvgIcon svg={getLegacyCommandIcon(cmd.icon)!} size={18} />
-                                    ) : null}
-                                </ListItemIcon>
-                            ) : null}
-                            <ListItemText primary={cmd.name ?? cmd.id} />
-                        </MenuItem>
-                    );
-                })}
-            </Menu>
-        </>
-    );
-};
-
-const HomeCard: FC<{
-    item: ItemDto;
-    user: any;
-    onAfterAction: () => void;
-    onToggleFavorite: (item: ItemDto) => void;
-    onTogglePlayed: (item: ItemDto) => void;
-    variant?: 'portrait' | 'landscape';
-}> = ({ item, user, onAfterAction, onToggleFavorite, onTogglePlayed, variant = 'portrait' }) => {
-    const img = buildCardImageUrl(item, { variant, maxWidth: variant === 'landscape' ? 720 : 420 });
-    const isFavorite = !!item.UserData?.IsFavorite;
-    const isPlayed = !!item.UserData?.Played;
-    const isResumable = !!item.UserData?.PlaybackPositionTicks && item.UserData.PlaybackPositionTicks > 0;
-
+const getCardMeta = (item: ItemDto) => {
     const detailsHref = `#/details?id=${item.Id}`;
-    const meta = useMemo(() => {
-        const type = item.Type as string | undefined;
+    const type = item.Type as string | undefined;
 
-        const year = item.ProductionYear ?? (item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : undefined);
-        const endYear = item.EndDate ? new Date(item.EndDate).getFullYear() : undefined;
+    const year = item.ProductionYear ?? (item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : undefined);
+    const endYear = item.EndDate ? new Date(item.EndDate).getFullYear() : undefined;
 
-        if (type === 'Movie') {
-            return {
-                title: item.Name || '',
-                titleHref: detailsHref,
-                subtitle: year ? `${year}` : '',
-                subtitleHref: undefined
-            };
-        }
+    if (type === 'Movie') {
+        return { title: item.Name || '', titleHref: detailsHref, subtitle: year ? `${year}` : '', subtitleHref: undefined };
+    }
 
-        if (type === 'Series') {
-            const start = year;
-            const subtitle = start
-                ? (endYear ? (endYear === start ? `${start}` : `${start}–${endYear}`) : `${start}–present`)
-                : '';
-            return {
-                title: item.Name || '',
-                titleHref: detailsHref,
-                subtitle,
-                subtitleHref: undefined
-            };
-        }
+    if (type === 'Series') {
+        const start = year;
+        const subtitle = start ? (endYear ? (endYear === start ? `${start}` : `${start}–${endYear}`) : `${start}–present`) : '';
+        return { title: item.Name || '', titleHref: detailsHref, subtitle, subtitleHref: undefined };
+    }
 
-        if (type === 'Episode') {
-            const seriesId = (item as any).SeriesId as string | undefined;
-            const seriesName = item.SeriesName as string | undefined;
-            const parentIndex = (item as any).ParentIndexNumber as number | undefined;
-            const index = (item as any).IndexNumber as number | undefined;
-            const s = parentIndex != null ? `S${parentIndex}` : '';
-            const e = index != null ? `E${index}` : '';
-            const prefix = (s || e) ? `${s}${s && e ? ':' : ''}${e}` : '';
-            const epTitle = item.Name || '';
-            const subtitle = prefix ? `${prefix}: ${epTitle}` : epTitle;
-
-            return {
-                title: seriesName || item.Name || '',
-                titleHref: seriesId ? `#/details?id=${seriesId}` : detailsHref,
-                subtitle,
-                subtitleHref: detailsHref
-            };
-        }
-
-        // Generic fallback: title is item name; subtitle is best-effort (series/artist)
-        const artistItems = (item as any).ArtistItems as Array<{ Id?: string; Name?: string }> | undefined;
-        const firstArtist = artistItems?.[0];
-        const subtitleText = (item.SeriesName || item.AlbumArtist || item.Artists?.[0] || firstArtist?.Name || '') as string;
-        const subtitleHref = firstArtist?.Id ? `#/person?id=${firstArtist.Id}` : detailsHref;
+    if (type === 'Episode') {
+        const seriesId = (item as any).SeriesId as string | undefined;
+        const seriesName = item.SeriesName as string | undefined;
+        const parentIndex = (item as any).ParentIndexNumber as number | undefined;
+        const index = (item as any).IndexNumber as number | undefined;
+        const s = parentIndex != null ? `S${parentIndex}` : '';
+        const e = index != null ? `E${index}` : '';
+        const prefix = (s || e) ? `${s}${s && e ? ':' : ''}${e}` : '';
+        const epTitle = item.Name || '';
+        const subtitle = prefix ? `${prefix}: ${epTitle}` : epTitle;
 
         return {
-            title: item.Name || '',
-            titleHref: detailsHref,
-            subtitle: subtitleText,
-            subtitleHref
+            title: seriesName || item.Name || '',
+            titleHref: seriesId ? `#/details?id=${seriesId}` : detailsHref,
+            subtitle,
+            subtitleHref: detailsHref
         };
-    }, [detailsHref, item ]);
+    }
 
-    const progressPct = (() => {
-        const pos = item.UserData?.PlaybackPositionTicks ?? 0;
-        const rt = item.RunTimeTicks ?? 0;
-        if (!pos || !rt) return 0;
-        return Math.max(0, Math.min(100, Math.round((pos / rt) * 100)));
-    })();
+    const artistItems = (item as any).ArtistItems as Array<{ Id?: string; Name?: string }> | undefined;
+    const firstArtist = artistItems?.[0];
+    const subtitleText = (item.SeriesName || item.AlbumArtist || item.Artists?.[0] || firstArtist?.Name || '') as string;
+    const subtitleHref = firstArtist?.Id ? `#/person?id=${firstArtist.Id}` : detailsHref;
 
-    const overlayCount = (() => {
-        // Best-effort: Jellyfin commonly uses `ChildCount` (e.g. BoxSet items, Series seasons, etc).
-        const raw =
-            (item as any).ChildCount
-            ?? (item as any).RecursiveItemCount
-            ?? (item as any).SeriesCount
-            ?? (item as any).EpisodeCount;
+    return { title: item.Name || '', titleHref: detailsHref, subtitle: subtitleText, subtitleHref };
+};
 
-        const n = typeof raw === 'number' ? raw : (typeof raw === 'string' ? parseInt(raw, 10) : 0);
-        if (!Number.isFinite(n) || n <= 0) return undefined;
+const getProgressPct = (item: ItemDto) => {
+    const pos = item.UserData?.PlaybackPositionTicks ?? 0;
+    const rt = item.RunTimeTicks ?? 0;
+    if (!pos || !rt) return 0;
+    return Math.max(0, Math.min(100, Math.round((pos / rt) * 100)));
+};
 
-        const t = item.Type;
-        if (t === 'BoxSet' || t === 'Series' || t === 'Season') return n;
-        return undefined;
-    })();
+const getOverlayCount = (item: ItemDto) => {
+    const raw =
+        (item as any).ChildCount
+        ?? (item as any).RecursiveItemCount
+        ?? (item as any).SeriesCount
+        ?? (item as any).EpisodeCount;
 
-    const onPlay = async (resume?: boolean) => {
-        try {
-            await playbackManager.play({
-                items: [ item ],
-                startPositionTicks: resume ? (item.UserData?.PlaybackPositionTicks || 0) : 0
-            });
-        } catch (e) {
-            console.error('[Home] failed to play', e);
-        }
-    };
+    const n = typeof raw === 'number' ? raw : (typeof raw === 'string' ? parseInt(raw, 10) : 0);
+    if (!Number.isFinite(n) || n <= 0) return undefined;
 
-    const onCenterPlayClick: React.MouseEventHandler = (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        void onPlay(isResumable);
-    };
-
-    const onCardClick: React.MouseEventHandler = (e) => {
-        if (nowMs() < ignoreHomeCardNavigateUntil) return;
-        const el = e.target as HTMLElement | null;
-        if (el?.closest('a,button,.homeCardActions')) {
-            return;
-        }
-        window.location.href = detailsHref;
-    };
-
-    return (
-        <div className={variant === 'landscape' ? 'homeCard homeCard--landscape' : 'homeCard'} onClick={onCardClick}>
-            <div className='homeThumbWrap'>
-                <div
-                    className='homeThumb'
-                    style={{
-                        backgroundImage: img ? `url(${img})` : 'linear-gradient(135deg, #1f1f1f, #2a2a2a)'
-                    }}
-                    aria-label={item.Name || t('LabelMediaDetails', 'Item')}>
-                    {overlayCount != null ? (
-                        <div className='homeCountBadge' aria-hidden='true'>
-                            {overlayCount}
-                        </div>
-                    ) : null}
-
-            <div className='homeCardActions'>
-                <IconButton className='homeIconBtn' size='small' title={isFavorite ? t('Favorite', 'Favorite') : t('AddToFavorites', 'Add to favorites')} onClick={() => onToggleFavorite(item)}>
-                    <span style={{ color: isFavorite ? '#ff4d6d' : undefined }}>
-                        <SvgIcon svg={IconSvgs.heart} size={18} />
-                    </span>
-                </IconButton>
-                <IconButton className='homeIconBtn' size='small' title={isPlayed ? t('Watched', 'Watched') : t('MarkPlayed', 'Mark played')} onClick={() => onTogglePlayed(item)}>
-                    <span style={{ color: isPlayed ? '#4ade80' : undefined }}>
-                        <SvgIcon svg={IconSvgs.checkmark} size={18} />
-                    </span>
-                </IconButton>
-                <ItemMoreMenu item={item} user={user} onAfterAction={onAfterAction} />
-            </div>
-                </div>
-
-                {playbackManager.canPlay(item) ? (
-                    <button
-                        type='button'
-                        className='homePlayOverlay'
-                        aria-label={t('Play', 'Play')}
-                        title={t('Play', 'Play')}
-                        onClick={onCenterPlayClick}
-                    >
-                        <SvgIcon svg={IconSvgs.play} size={18} />
-                    </button>
-                ) : null}
-            </div>
-
-            {progressPct > 0 ? (
-                <div className='homeProgress'>
-                    <div className='homeProgressBar' style={{ width: `${progressPct}%` }} />
-                </div>
-            ) : null}
-
-            <div className='homeCardMeta'>
-                <a className='homeCardTitle' href={meta.titleHref} title={meta.title}>
-                    {meta.title}
-                </a>
-                {meta.subtitle ? (
-                    meta.subtitleHref ? (
-                        <a className='homeCardSub' href={meta.subtitleHref} title={meta.subtitle}>
-                            {meta.subtitle}
-                        </a>
-                    ) : (
-                        <div className='homeCardSub' title={meta.subtitle}>
-                            {meta.subtitle}
-                        </div>
-                    )
-                ) : null}
-            </div>
-
-        </div>
-    );
+    const t = item.Type;
+    if (t === 'BoxSet' || t === 'Series' || t === 'Season') return n;
+    return undefined;
 };
 
 const HomeRow: FC<{
@@ -450,22 +180,56 @@ const HomeRow: FC<{
     cardVariant?: 'portrait' | 'landscape';
 }> = ({ title, items, user, onAfterAction, onToggleFavorite, onTogglePlayed, cardVariant = 'portrait' }) => {
     if (!items.length) return null;
+
+    const openDetailsById = (id: string) => {
+        // Protect against "ghost clicks" after closing menus.
+        if (nowMs() < ignoreHomeCardNavigateUntil) return;
+        window.location.href = `#/details?id=${id}`;
+    };
+
     return (
         <section className='homeSection'>
             <h2 className='homeSectionTitle'>{title}</h2>
-            <div className='homeRow'>
-                {items.map(it => (
-                    <HomeCard
-                        key={it.Id}
-                        item={it}
-                        user={user}
-                        onAfterAction={onAfterAction}
-                        onToggleFavorite={onToggleFavorite}
-                        onTogglePlayed={onTogglePlayed}
-                        variant={cardVariant}
-                    />
-                ))}
-            </div>
+            <GridList
+                aria-label={title}
+                className="homeRow"
+                selectionMode="none"
+                // ONE default action per card: open details.
+                onAction={(key) => openDetailsById(String(key))}
+            >
+                {items.map(it => {
+                    const id = it.Id ?? `${title}-${it.Name ?? 'item'}`;
+                    const meta = getCardMeta(it);
+                    const img = buildCardImageUrl(it, { variant: cardVariant, maxWidth: cardVariant === 'landscape' ? 720 : 420 });
+                    return (
+                        <GridListItem
+                            key={id}
+                            id={id}
+                            textValue={it.Name ?? ''}
+                            className={MediaCardStyles.gridItem}
+                        >
+                            {({ isFocused }) => (
+                                <MediaCard
+                                    item={it}
+                                    user={user}
+                                    variant={cardVariant}
+                                    imageUrl={img}
+                                    overlayCount={getOverlayCount(it)}
+                                    progressPct={getProgressPct(it)}
+                                    title={meta.title}
+                                    titleHref={meta.titleHref}
+                                    subtitle={meta.subtitle}
+                                    subtitleHref={meta.subtitleHref}
+                                    isRovingFocused={isFocused}
+                                    onAfterAction={onAfterAction}
+                                    onToggleFavorite={onToggleFavorite}
+                                    onTogglePlayed={onTogglePlayed}
+                                />
+                            )}
+                        </GridListItem>
+                    );
+                })}
+            </GridList>
         </section>
     );
 };
