@@ -8,7 +8,7 @@ import { useUserViews } from 'hooks/useUserViews';
 import { useWebConfig } from 'hooks/useWebConfig';
 import globalize from 'lib/globalize';
 
-import { LibraryIcon } from 'apps/experimental/components';
+import LibraryIcon from 'apps/experimental/components/icons/LibraryIcon';
 import SvgIcon from 'components/SvgIcon';
 import { IconSvgs } from 'assets/icons';
 import { ExperimentalDrawerHeader } from './ExperimentalDrawerHeader';

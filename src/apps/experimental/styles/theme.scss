@@ -1,10 +1,13 @@
 // Experimental theme tokens (keep minimal; add only when used).
 
-// Spacing
-$space-1: 6px;
+// Spacing (8px scale)
+$space-1: 4px;
 $space-2: 8px;
-$space-3: 10px;
-$space-4: 14px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 20px;
+$space-6: 24px;
+$space-8: 32px;
 
 // Radii
 $radius-sm: 8px;
@@ -18,6 +21,7 @@ $toolbar-link-height: 34px;
 $toolbar-icon-size: 38px;
 
 // Colors
+$app-ackground: rgba(7, 5, 18, 0.86);
 $surface-topbar: rgba(18, 18, 18, 0.86);
 $surface-menu: #1c1c1c;
 $surface-raised: rgba(255, 255, 255, 0.04);

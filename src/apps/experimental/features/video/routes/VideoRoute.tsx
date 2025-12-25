@@ -2,8 +2,6 @@ import Box from '@mui/material/Box/Box';
 import Fade from '@mui/material/Fade/Fade';
 import React, { useRef, type FC, useEffect, useState } from 'react';
 
-import RemotePlayButton from 'apps/experimental/app/layout/toolbar/RemotePlayButton';
-import SyncPlayButton from 'apps/experimental/app/layout/toolbar/SyncPlayButton';
 import AppToolbar from 'components/toolbar/AppToolbar';
 import ViewManagerPage from 'components/viewManager/ViewManagerPage';
 import { EventType } from 'constants/eventType';
@@ -48,12 +46,6 @@ const VideoPage: FC = () => {
                         isDrawerOpen={false}
                         isBackButtonAvailable
                         isUserMenuAvailable={false}
-                        buttons={
-                            <>
-                                <SyncPlayButton />
-                                <RemotePlayButton />
-                            </>
-                        }
                     />
                 </Box>
             </Fade>

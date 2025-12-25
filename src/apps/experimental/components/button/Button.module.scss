@@ -1,6 +1,6 @@
 // Scoped styles for `Button` components (CSS modules).
 
-@import '../../styles/theme';
+@use '../../styles/theme' as *;
 
 .button {
     display: inline-flex;

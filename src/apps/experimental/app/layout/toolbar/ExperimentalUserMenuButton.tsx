@@ -7,7 +7,7 @@ import { appHost } from 'components/apphost';
 import { AppFeature } from 'constants/appFeature';
 import { IconSvgs } from 'assets/icons';
 import globalize from 'lib/globalize';
-import { ActionMenuStyles } from 'apps/experimental/components';
+import { ActionMenuStyles } from 'apps/experimental/components/menu/ActionMenu';
 import { useApi } from 'hooks/useApi';
 import { useQuickConnectEnabled } from 'hooks/useQuickConnect';
 import shell from 'scripts/shell';

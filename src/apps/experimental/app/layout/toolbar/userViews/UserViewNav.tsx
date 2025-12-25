@@ -13,7 +13,9 @@ import { useUserViews } from 'hooks/useUserViews';
 import { useWebConfig } from 'hooks/useWebConfig';
 import globalize from 'lib/globalize';
 
-import { ActionMenuStyles, ToolbarAnchor, ToolbarLink } from 'apps/experimental/components';
+import { ActionMenuStyles } from 'apps/experimental/components/menu/ActionMenu';
+import { ToolbarAnchor } from 'apps/experimental/components/toolbar/ToolbarAnchor';
+import { ToolbarLink } from 'apps/experimental/components/toolbar/ToolbarLink';
 import toolbarLinkStyles from 'apps/experimental/components/toolbar/ToolbarLink.module.scss';
 
 const MAX_USER_VIEWS_MD = 3;

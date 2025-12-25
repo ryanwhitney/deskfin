@@ -1,18 +1,34 @@
-import React, { type FC } from 'react';
+import React, { type FC, useCallback } from 'react';
 
-import { useApi } from 'hooks/useApi';
-import { useGetGroupsUpcomingEpisodes } from 'hooks/useFetchItems';
+import { useGetGroupsUpcomingEpisodes, useToggleFavoriteMutation, useTogglePlayedMutation } from 'hooks/useFetchItems';
 import Loading from 'components/loading/LoadingComponent';
 import NoItemsMessage from 'components/common/NoItemsMessage';
-import SectionContainer from 'components/common/SectionContainer';
-import { CardShape } from 'utils/card';
 import type { LibraryViewProps } from 'types/library';
+import type { ItemDto } from 'types/base/models/item-dto';
 
-// eslint-disable-next-line sonarjs/function-return-type
+import { Section } from 'apps/experimental/components/media/Section';
+import { ItemGrid } from 'apps/experimental/components/media/ItemGrid';
+
 const UpcomingView: FC<LibraryViewProps> = ({ parentId }) => {
-    const { __legacyApiClient__ } = useApi();
-    const { isLoading, data: groupsUpcomingEpisodes } =
+    const { isLoading, data: groupsUpcomingEpisodes, refetch } =
         useGetGroupsUpcomingEpisodes(parentId);
+
+    const { mutateAsync: toggleFavorite } = useToggleFavoriteMutation();
+    const { mutateAsync: togglePlayed } = useTogglePlayedMutation();
+
+    const onAfterAction = useCallback(() => {
+        void refetch();
+    }, [refetch]);
+
+    const onToggleFavorite = useCallback(async (item: ItemDto) => {
+        await toggleFavorite({ itemId: item.Id!, isFavorite: !!item.UserData?.IsFavorite });
+        onAfterAction();
+    }, [onAfterAction, toggleFavorite]);
+
+    const onTogglePlayed = useCallback(async (item: ItemDto) => {
+        await togglePlayed({ itemId: item.Id!, isPlayed: !!item.UserData?.Played });
+        onAfterAction();
+    }, [onAfterAction, togglePlayed]);
 
     if (isLoading) return <Loading />;
 
@@ -20,30 +36,21 @@ const UpcomingView: FC<LibraryViewProps> = ({ parentId }) => {
         return <NoItemsMessage message='MessagePleaseEnsureInternetMetadata' />;
     }
 
-    return groupsUpcomingEpisodes?.map((group) => (
-        <SectionContainer
-            key={group.name}
-            sectionHeaderProps={{
-                title: group.name
-            }}
-            itemsContainerProps={{
-                queryKey: ['GroupsUpcomingEpisodes']
-            }}
-            items={group.items}
-            cardOptions={{
-                shape: CardShape.BackdropOverflow,
-                showLocationTypeIndicator: false,
-                showParentTitle: true,
-                preferThumb: true,
-                lazy: true,
-                showDetailsMenu: true,
-                missingIndicator: false,
-                cardLayout: false,
-                queryKey: ['GroupsUpcomingEpisodes'],
-                serverId: __legacyApiClient__?.serverId()
-            }}
-        />
-    ));
+    return (
+        <>
+            {groupsUpcomingEpisodes.map((group) => (
+                <Section key={group.name} title={group.name}>
+                    <ItemGrid
+                        items={group.items}
+                        variant="landscape"
+                        onToggleFavorite={onToggleFavorite}
+                        onTogglePlayed={onTogglePlayed}
+                        onAfterAction={onAfterAction}
+                    />
+                </Section>
+            ))}
+        </>
+    );
 };
 
 export default UpcomingView;

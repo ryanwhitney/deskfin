@@ -14,10 +14,17 @@ import { useItem } from 'hooks/useItem';
 export default function ListRoute() {
     const [ params ] = useSearchParams();
     const parentId = params.get('topParentId') || params.get('parentId') || '';
+    const genreId = params.get('genreId') || '';
+    const musicGenreId = params.get('musicGenreId') || '';
+    const studioId = params.get('studioId') || '';
+
+    // If we have a genreId/studioId/musicGenreId, we need to redirect to the legacy list
+    // controller which handles these special item types properly
+    const hasSpecialFilter = genreId || musicGenreId || studioId;
 
     const { data: parent, isLoading } = useItem(parentId || undefined);
 
-    if (!parentId) {
+    if (!parentId && !hasSpecialFilter) {
         return (
             <Page id='listPage' className='mainAnimatedPage libraryPage'>
                 <div className='padded-left padded-right padded-top'>
@@ -25,6 +32,24 @@ export default function ListRoute() {
                 </div>
             </Page>
         );
+    }
+
+    // For genre/studio links, redirect to legacy list which handles them properly
+    if (hasSpecialFilter) {
+        const serverId = params.get('serverId') || ServerConnections.currentApiClient()?.serverId() || '';
+        const serverIdParam = serverId ? `&serverId=${encodeURIComponent(serverId)}` : '';
+        const parentIdParam = parentId ? `&parentId=${encodeURIComponent(parentId)}` : '';
+        const genreParam = genreId ? `&genreId=${encodeURIComponent(genreId)}` : '';
+        const musicGenreParam = musicGenreId ? `&musicGenreId=${encodeURIComponent(musicGenreId)}` : '';
+        const studioParam = studioId ? `&studioId=${encodeURIComponent(studioId)}` : '';
+
+        // Build URL without leading &
+        const queryParams = [parentIdParam, genreParam, musicGenreParam, studioParam, serverIdParam]
+            .filter(Boolean)
+            .join('')
+            .replace(/^&/, '');
+
+        return <Navigate replace to={`/legacylist?${queryParams}`} />;
     }
 
     if (isLoading) {

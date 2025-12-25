@@ -1,4 +1,4 @@
-@import '../../../styles/theme';
+@use '../../../styles/theme' as *;
 
 .page {
     display: flex;
@@ -8,15 +8,13 @@
     color: #eee;
 }
 
-.section {
-    // Section wrapper
-}
-
 .sectionTitle {
     margin: 0 0 0.65rem;
     font-size: 1.1rem;
-    font-weight: 800;
+    font-weight: 640;
+    font-variation-settings: "wdth" 105;
     color: #f5f5f5;
+    margin-top: 20px;
 }
 
 .row {

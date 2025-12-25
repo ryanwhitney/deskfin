@@ -45,7 +45,10 @@ const THEME_INPUTS = Object.fromEntries(
 export default defineConfig({
     assetsInclude: ['**/controllers/**/*.html', '**/apps/**/*.html'],
     plugins: [
-        react(),
+        react({
+            // Enable Fast Refresh for better HMR
+            fastRefresh: true
+        }),
         tsconfigPaths(),
         viteStaticCopy({
             targets: [
@@ -129,7 +132,13 @@ export default defineConfig({
     server: {
         port: 8080,
         host: true,
-        open: true
+        open: true,
+        hmr: {
+            overlay: true
+        }
+    },
+    css: {
+        devSourcemap: true
     },
     preview: {
         port: 8080,

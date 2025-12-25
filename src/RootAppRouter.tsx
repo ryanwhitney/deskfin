@@ -1,5 +1,5 @@
 import { ThemeProvider } from '@mui/material/styles';
-import React from 'react';
+import React, { Suspense } from 'react';
 import {
     RouterProvider,
     createHashRouter,
@@ -11,8 +11,10 @@ import { DASHBOARD_APP_PATHS, DASHBOARD_APP_ROUTES } from 'apps/dashboard/routes
 import { EXPERIMENTAL_APP_ROUTES } from 'apps/experimental/routes/routes';
 import { STABLE_APP_ROUTES } from 'apps/stable/routes/routes';
 import { WIZARD_APP_ROUTES } from 'apps/wizard/routes/routes';
-import AppHeader from 'components/AppHeader';
 import Backdrop from 'components/Backdrop';
+
+// Lazy load to break circular import (AppHeader → libraryMenu → pluginManager → appRouter → RootAppRouter)
+const AppHeader = React.lazy(() => import('components/AppHeader'));
 import { SETTING_KEY as LAYOUT_SETTING_KEY } from 'components/layoutManager';
 import BangRedirect from 'components/router/BangRedirect';
 import { createRouterHistory } from 'components/router/routerHistory';
@@ -61,7 +63,9 @@ function RootAppLayout() {
             storageManager={ThemeStorageManager}
         >
             <Backdrop />
-            <AppHeader isHidden={isExperimentalLayout || isNewLayoutPath} />
+            <Suspense fallback={null}>
+                <AppHeader isHidden={isExperimentalLayout || isNewLayoutPath} />
+            </Suspense>
 
             <Outlet />
         </ThemeProvider>

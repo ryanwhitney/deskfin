@@ -1,4 +1,3 @@
-import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
 import { ItemFields } from '@jellyfin/sdk/lib/generated-client/models/item-fields';
 import { ImageType } from '@jellyfin/sdk/lib/generated-client/models/image-type';
 import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
@@ -14,18 +13,16 @@ import type { ItemDto } from 'types/base/models/item-dto';
 import { Section } from 'apps/experimental/components/media/Section';
 import { ItemGrid } from 'apps/experimental/components/media/ItemGrid';
 
-interface GenresSectionContainerProps {
+interface NetworksSectionContainerProps {
     parentId: ParentId;
-    collectionType: CollectionType | undefined;
     itemType: BaseItemKind[];
-    genre: ItemDto;
+    studio: ItemDto;
 }
 
-const GenresSectionContainer: FC<GenresSectionContainerProps> = ({
+const NetworksSectionContainer: FC<NetworksSectionContainerProps> = ({
     parentId,
-    collectionType,
     itemType,
-    genre
+    studio
 }) => {
     const getParametersOptions = () => {
         return {
@@ -40,7 +37,7 @@ const GenresSectionContainer: FC<GenresSectionContainerProps> = ({
             imageTypeLimit: 1,
             enableImageTypes: [ImageType.Primary],
             limit: 25,
-            genreIds: genre.Id ? [genre.Id] : undefined,
+            studioIds: studio.Id ? [studio.Id] : undefined,
             enableTotalRecordCount: false,
             parentId: parentId ?? undefined
         };
@@ -65,29 +62,24 @@ const GenresSectionContainer: FC<GenresSectionContainerProps> = ({
         onAfterAction();
     }, [onAfterAction, togglePlayed]);
 
-    const getGenreUrl = () => {
+    const getStudioUrl = () => {
         const serverId = window.ApiClient?.serverId?.() || '';
-        const isMusic = collectionType === CollectionType.Music;
-        const genreParam = isMusic ? 'musicGenreId' : 'genreId';
         const parentParam = parentId ? `&parentId=${parentId}` : '';
-        return `#/list?${genreParam}=${genre.Id}${parentParam}&serverId=${serverId}`;
+        return `#/list?studioId=${studio.Id}${parentParam}&serverId=${serverId}`;
     };
 
     if (isLoading) {
         return <Loading />;
     }
 
-    // Determine variant based on collection type
-    const variant = collectionType === CollectionType.Music ? 'square' : 'portrait';
-
     return (
         <Section
-            title={genre.Name || ''}
-            titleHref={getGenreUrl()}
+            title={studio.Name || ''}
+            titleHref={getStudioUrl()}
         >
             <ItemGrid
                 items={itemsResult?.Items || []}
-                variant={variant}
+                variant="portrait"
                 onToggleFavorite={onToggleFavorite}
                 onTogglePlayed={onTogglePlayed}
                 onAfterAction={onAfterAction}
@@ -96,4 +88,4 @@ const GenresSectionContainer: FC<GenresSectionContainerProps> = ({
     );
 };
 
-export default GenresSectionContainer;
+export default NetworksSectionContainer;

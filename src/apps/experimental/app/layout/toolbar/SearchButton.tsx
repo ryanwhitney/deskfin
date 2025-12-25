@@ -8,7 +8,7 @@ import {
 import globalize from 'lib/globalize';
 import SvgIcon from 'components/SvgIcon';
 import { IconSvgs } from 'assets/icons';
-import { ToolbarIconLink } from 'apps/experimental/components';
+import { ToolbarIconLink } from 'apps/experimental/components/toolbar/ToolbarIconLink';
 
 const getUrlParams = (searchParams: URLSearchParams) => {
     const parentId =

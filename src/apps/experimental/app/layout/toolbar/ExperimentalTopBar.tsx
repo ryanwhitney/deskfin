@@ -4,12 +4,11 @@ import { Link, useLocation } from 'react-router-dom';
 import SvgIcon from 'components/SvgIcon';
 import { IconSvgs } from 'assets/icons';
 
-import RemotePlayButton from './RemotePlayButton';
-import SyncPlayButton from './SyncPlayButton';
 import SearchButton from './SearchButton';
 import ExperimentalUserMenuButton from './ExperimentalUserMenuButton';
 import UserViewNav from './userViews/UserViewNav';
-import { ToolbarIconButton, ToolbarIconLink } from 'apps/experimental/components';
+import { ToolbarIconButton } from 'apps/experimental/components/toolbar/ToolbarIconButton';
+import { ToolbarIconLink } from 'apps/experimental/components/toolbar/ToolbarIconLink';
 
 import styles from './ExperimentalTopBar.module.scss';
 
@@ -83,8 +82,6 @@ export const ExperimentalTopBar: FC<ExperimentalTopBarProps> = ({
             <div className={styles.right}>
                 {!isPublicPath ? (
                     <>
-                        <SyncPlayButton />
-                        <RemotePlayButton />
                         <SearchButton />
                         <ExperimentalUserMenuButton />
                     </>
@@ -97,5 +94,3 @@ export const ExperimentalTopBar: FC<ExperimentalTopBarProps> = ({
         </header>
     );
 };
-
-

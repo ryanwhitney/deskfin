@@ -7,7 +7,7 @@ import type { ItemDto } from 'types/base/models/item-dto';
 import { DetailsMoreMenu } from './DetailsMoreMenu';
 import SvgIcon from 'components/SvgIcon';
 import { IconSvgs } from 'assets/icons';
-import { IconButton } from 'apps/experimental/components';
+import { IconButton } from 'apps/experimental/components/button/IconButton';
 import FavoriteButton from 'apps/experimental/features/userData/components/FavoriteButton';
 import PlayedButton from 'apps/experimental/features/userData/components/PlayedButton';
 

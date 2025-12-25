@@ -1,4 +1,4 @@
-@import '../../../styles/theme';
+@use '../../../styles/theme' as *;
 
 .section {
     padding: $space-3 $space-2;
@@ -53,7 +53,7 @@
 }
 
 .label {
-    font-weight: 800;
+    font-weight: 700;
     font-size: 0.95rem;
     white-space: nowrap;
     overflow: hidden;

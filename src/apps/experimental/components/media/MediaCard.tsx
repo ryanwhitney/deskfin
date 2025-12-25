@@ -1,7 +1,5 @@
 import React, { type FC, useMemo, useState } from 'react';
 
-import IconButton from '@mui/material/IconButton';
-
 import SvgIcon from 'components/SvgIcon';
 import { IconSvgs, getLegacyCommandIcon } from 'assets/icons';
 import type { ItemDto } from 'types/base/models/item-dto';
@@ -10,7 +8,7 @@ import { playbackManager } from 'components/playback/playbackmanager';
 import { Button as RacButton, Menu, MenuItem, MenuTrigger, Popover, Separator } from 'react-aria-components';
 
 import * as itemContextMenu from 'components/itemContextMenu';
-import { ActionMenuStyles } from 'apps/experimental/components';
+import { ActionMenuStyles } from 'apps/experimental/components/menu/ActionMenu';
 
 import styles from './MediaCard.module.scss';
 
@@ -139,9 +137,9 @@ export const MediaCard: FC<MediaCardProps> = ({
                     ) : null}
 
                     <div className={styles.actions} onClick={(e) => e.stopPropagation()}>
-                        <IconButton
+                        <button
+                            type="button"
                             className={styles.iconBtn}
-                            size="small"
                             tabIndex={isActive ? 0 : -1}
                             title={isFavorite ? 'Favorite' : 'Add to favorites'}
                             onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFavorite(item); }}
@@ -149,11 +147,11 @@ export const MediaCard: FC<MediaCardProps> = ({
                             <span style={{ color: isFavorite ? '#ff4d6d' : undefined }}>
                                 <SvgIcon svg={IconSvgs.heart} size={18} />
                             </span>
-                        </IconButton>
+                        </button>
 
-                        <IconButton
+                        <button
+                            type="button"
                             className={styles.iconBtn}
-                            size="small"
                             tabIndex={isActive ? 0 : -1}
                             title={isPlayed ? 'Watched' : 'Mark played'}
                             onClick={(e) => { e.preventDefault(); e.stopPropagation(); onTogglePlayed(item); }}
@@ -161,7 +159,7 @@ export const MediaCard: FC<MediaCardProps> = ({
                             <span style={{ color: isPlayed ? '#4ade80' : undefined }}>
                                 <SvgIcon svg={IconSvgs.checkmark} size={18} />
                             </span>
-                        </IconButton>
+                        </button>
 
                         <MenuTrigger isOpen={isMoreOpen} onOpenChange={onOpenChange}>
                             <RacButton

@@ -12,7 +12,7 @@ import Page from 'components/Page';
 import layoutManager from 'components/layoutManager';
 import { DEFAULT_SECTIONS, HomeSectionType } from 'types/homeSectionType';
 import type { ItemDto } from 'types/base/models/item-dto';
-import { LinkButton } from 'apps/experimental/components';
+import { LinkButton } from 'apps/experimental/components/button/LinkButton';
 
 import { HomeRow } from '../components/HomeRow';
 import styles from './HomeRoute.module.scss';
@@ -241,7 +241,7 @@ const Home: FC = () => {
                 ) : (
                     <>
                         {/* Library tiles */}
-                        {sectionOrder.includes(HomeSectionType.SmallLibraryTiles) && userViews.length > 0 && (
+                        {!sectionOrder.includes(HomeSectionType.SmallLibraryTiles) && userViews.length > 0 && (
                             <section className={styles.section}>
                                 <h2 className={styles.sectionTitle}>{t('HeaderMyMedia', 'My Media')}</h2>
                                 <div className={styles.row}>

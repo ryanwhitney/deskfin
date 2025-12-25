@@ -1,21 +1,21 @@
 import type { RecommendationDto } from '@jellyfin/sdk/lib/generated-client/models/recommendation-dto';
 import { RecommendationType } from '@jellyfin/sdk/lib/generated-client/models/recommendation-type';
-import React, { type FC } from 'react';
+import React, { type FC, useCallback } from 'react';
 
-import { useApi } from 'hooks/useApi';
 import {
     useGetMovieRecommendations,
     useGetSuggestionSectionsWithItems
 } from 'hooks/useFetchItems';
-import { appRouter } from 'components/router/appRouter';
+import { useToggleFavoriteMutation, useTogglePlayedMutation } from 'hooks/useFetchItems';
 import globalize from 'lib/globalize';
 import Loading from 'components/loading/LoadingComponent';
 import NoItemsMessage from 'components/common/NoItemsMessage';
-import SectionContainer from 'components/common/SectionContainer';
-import { CardShape } from 'utils/card';
 import type { ParentId } from 'types/library';
-import type { Section, SectionType } from 'types/sections';
+import { type Section as SectionData, type SectionType, SectionType as SectionTypeEnum } from 'types/sections';
 import type { ItemDto } from 'types/base/models/item-dto';
+
+import { Section } from 'apps/experimental/components/media/Section';
+import { ItemGrid } from 'apps/experimental/components/media/ItemGrid';
 
 interface SuggestionsSectionViewProps {
     parentId: ParentId;
@@ -28,14 +28,32 @@ const SuggestionsSectionView: FC<SuggestionsSectionViewProps> = ({
     sectionType,
     isMovieRecommendationEnabled = false
 }) => {
-    const { __legacyApiClient__ } = useApi();
-    const { isLoading, data: sectionsWithItems } =
+    const { isLoading, data: sectionsWithItems, refetch } =
         useGetSuggestionSectionsWithItems(parentId, sectionType);
 
     const {
         isLoading: isRecommendationsLoading,
-        data: movieRecommendationsItems
+        data: movieRecommendationsItems,
+        refetch: refetchRecommendations
     } = useGetMovieRecommendations(isMovieRecommendationEnabled, parentId);
+
+    const { mutateAsync: toggleFavorite } = useToggleFavoriteMutation();
+    const { mutateAsync: togglePlayed } = useTogglePlayedMutation();
+
+    const onAfterAction = useCallback(() => {
+        void refetch();
+        void refetchRecommendations();
+    }, [refetch, refetchRecommendations]);
+
+    const onToggleFavorite = useCallback(async (item: ItemDto) => {
+        await toggleFavorite({ itemId: item.Id!, isFavorite: !!item.UserData?.IsFavorite });
+        onAfterAction();
+    }, [onAfterAction, toggleFavorite]);
+
+    const onTogglePlayed = useCallback(async (item: ItemDto) => {
+        await togglePlayed({ itemId: item.Id!, isPlayed: !!item.UserData?.Played });
+        onAfterAction();
+    }, [onAfterAction, togglePlayed]);
 
     if (isLoading || isRecommendationsLoading) {
         return <Loading />;
@@ -45,15 +63,7 @@ const SuggestionsSectionView: FC<SuggestionsSectionViewProps> = ({
         return <NoItemsMessage />;
     }
 
-    const getRouteUrl = (section: Section) => {
-        return appRouter.getRouteUrl('list', {
-            serverId: window.ApiClient.serverId(),
-            itemTypes: section.itemTypes,
-            parentId: parentId
-        });
-    };
-
-    const getRecommendationTittle = (recommendation: RecommendationDto) => {
+    const getRecommendationTitle = (recommendation: RecommendationDto) => {
         let title = '';
 
         switch (recommendation.RecommendationType) {
@@ -90,54 +100,48 @@ const SuggestionsSectionView: FC<SuggestionsSectionViewProps> = ({
         return title;
     };
 
+    // Determine card variant based on section type
+    const getVariantForSection = (section: SectionData): 'portrait' | 'landscape' => {
+        // Resumable sections typically show landscape/thumb images
+        if (section.type === SectionTypeEnum.ContinueWatchingMovies ||
+            section.type === SectionTypeEnum.ContinueWatchingEpisode ||
+            section.type === SectionTypeEnum.RecentlyPlayedMusic) {
+            return 'landscape';
+        }
+        return 'portrait';
+    };
+
     return (
         <>
             {sectionsWithItems?.map(({ section, items }) => (
-                <SectionContainer
+                <Section
                     key={section.type}
-                    sectionHeaderProps={{
-                        title: globalize.translate(section.name),
-                        url: getRouteUrl(section)
-                    }}
-                    itemsContainerProps={{
-                        queryKey: ['SuggestionSectionWithItems']
-                    }}
-                    items={items}
-                    cardOptions={{
-                        ...section.cardOptions,
-                        queryKey: ['SuggestionSectionWithItems'],
-                        showTitle: true,
-                        centerText: true,
-                        cardLayout: false,
-                        overlayText: false,
-                        serverId: __legacyApiClient__?.serverId()
-                    }}
-                />
+                    title={globalize.translate(section.name)}
+                >
+                    <ItemGrid
+                        items={items}
+                        variant={getVariantForSection(section)}
+                        onToggleFavorite={onToggleFavorite}
+                        onTogglePlayed={onTogglePlayed}
+                        onAfterAction={onAfterAction}
+                    />
+                </Section>
             ))}
 
             {movieRecommendationsItems?.map((recommendation, index) => (
-                <SectionContainer
-                    // eslint-disable-next-line react/no-array-index-key
-                    key={`${recommendation.CategoryId}-${index}`} // use a unique id return value may have duplicate id
-                    sectionHeaderProps={{
-                        title: getRecommendationTittle(recommendation)
-                    }}
-                    itemsContainerProps={{
-                        queryKey: ['MovieRecommendations']
-                    }}
-                    items={recommendation.Items as ItemDto[]}
-                    cardOptions={{
-                        queryKey: ['MovieRecommendations'],
-                        shape: CardShape.PortraitOverflow,
-                        showYear: true,
-                        scalable: true,
-                        overlayPlayButton: true,
-                        showTitle: true,
-                        centerText: true,
-                        cardLayout: false,
-                        serverId: __legacyApiClient__?.serverId()
-                    }}
-                />
+                <Section
+                    key={`${recommendation.CategoryId}-${index}`}
+                    title={getRecommendationTitle(recommendation)}
+                    titleHref={undefined}
+                >
+                    <ItemGrid
+                        items={recommendation.Items as ItemDto[]}
+                        variant="portrait"
+                        onToggleFavorite={onToggleFavorite}
+                        onTogglePlayed={onTogglePlayed}
+                        onAfterAction={onAfterAction}
+                    />
+                </Section>
             ))}
         </>
     );

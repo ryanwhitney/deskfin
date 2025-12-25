@@ -1,4 +1,4 @@
-@import '../../../styles/theme';
+@use '../../../styles/theme' as *;
 
 .root {
     position: fixed;
@@ -21,6 +21,7 @@
     align-items: center;
     gap: $space-3;
     min-width: 0;
+    color: white;
 }
 
 .center {
@@ -28,7 +29,7 @@
     min-width: 0;
     display: flex;
     align-items: center;
-    gap: $space-3;
+    margin-left: 10px;
     // Keep nav links visually aligned with the brand title.
     padding-top: 1px;
 }
@@ -44,7 +45,7 @@
     align-items: center;
     gap: $space-3;
     text-decoration: none;
-    color: inherit;
+    color: white;
     min-width: 0;
 }
 
@@ -64,8 +65,9 @@
 }
 
 .brandTitle {
-    font-weight: 900;
-    font-size: 0.95rem;
+    font-weight: 540;
+    font-variation-settings: "wdth" 105;
+    font-size: 14px;
     line-height: 1.1;
     white-space: nowrap;
     overflow: hidden;

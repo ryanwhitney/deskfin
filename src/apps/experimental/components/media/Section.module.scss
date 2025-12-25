@@ -1,0 +1,77 @@
+@use '../../styles/theme' as *;
+
+.section {
+    margin-bottom: $space-6;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-3;
+    margin-bottom: $space-3;
+    padding: 0 $space-4;
+}
+
+.titleLink {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2;
+    text-decoration: none;
+    color: inherit;
+    transition: color 120ms ease;
+}
+
+.titleLink:hover {
+    color: $text-muted;
+}
+
+.titleLink:hover .chevron {
+    opacity: 1;
+    transform: rotate(-90deg) translateY(2px);
+}
+
+.title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.chevron {
+    opacity: 0.5;
+    transform: rotate(-90deg);
+    transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.titleStatic {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+}
+
+.content {
+    padding: 0 $space-4;
+}
+
+// Padded variant for when section is standalone
+.section[data-padded="true"] .content {
+    padding: 0;
+}
+
+// Compact header variant
+.section[data-compact="true"] .header {
+    margin-bottom: $space-2;
+}
+
+.section[data-compact="true"] .title,
+.section[data-compact="true"] .titleStatic {
+    font-size: 1.1rem;
+}

@@ -1,4 +1,4 @@
-@import '../../../styles/theme';
+@use '../../../styles/theme' as *;
 
 .page {
     color: #eee;
@@ -68,7 +68,7 @@
 .breadcrumbLink {
     color: #d6d6d6;
     text-decoration: none;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .breadcrumbLink:hover,

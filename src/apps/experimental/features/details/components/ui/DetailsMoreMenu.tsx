@@ -8,7 +8,7 @@ import * as itemContextMenu from 'components/itemContextMenu';
 import type { ItemDto } from 'types/base/models/item-dto';
 import SvgIcon from 'components/SvgIcon';
 import { IconSvgs, getLegacyCommandIcon } from 'assets/icons';
-import { ActionMenuStyles } from 'apps/experimental/components';
+import { ActionMenuStyles } from 'apps/experimental/components/menu/ActionMenu';
 import iconButtonStyles from 'apps/experimental/components/button/Button.module.scss';
 
 interface DetailsMoreMenuProps {

@@ -1,4 +1,4 @@
-import React, { StrictMode, useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
 import AppBody from 'components/AppBody';
@@ -6,11 +6,9 @@ import CustomCss from 'components/CustomCss';
 import ThemeCss from 'components/ThemeCss';
 import { useApi } from 'hooks/useApi';
 
-import AppToolbar from './toolbar';
+import { ExperimentalTopBar } from './toolbar/ExperimentalTopBar';
 import AppDrawer, { isDrawerPath } from './drawer/AppDrawer';
 import { useMatchMedia } from 'apps/experimental/utils/useMatchMedia';
-
-import '../styles/AppOverrides.scss';
 
 export const Component = () => {
     const [ isDrawerActive, setIsDrawerActive ] = useState(false);
@@ -28,21 +26,19 @@ export const Component = () => {
     return (
         <>
             <div style={{ position: 'relative', display: 'flex', height: '100%' }}>
-                <StrictMode>
-                    <AppToolbar
-                        isDrawerAvailable={!isMediumScreen && isDrawerAvailable}
-                        isDrawerOpen={isDrawerOpen}
-                        onDrawerButtonClick={onToggleDrawer}
-                    />
+                <ExperimentalTopBar
+                    isDrawerAvailable={!isMediumScreen && isDrawerAvailable}
+                    isDrawerOpen={isDrawerOpen}
+                    onDrawerButtonClick={onToggleDrawer}
+                />
 
-                    {isDrawerAvailable ? (
-                        <AppDrawer
-                            open={isDrawerOpen}
-                            onClose={onToggleDrawer}
-                            onOpen={onToggleDrawer}
-                        />
-                    ) : null}
-                </StrictMode>
+                {isDrawerAvailable ? (
+                    <AppDrawer
+                        open={isDrawerOpen}
+                        onClose={onToggleDrawer}
+                        onOpen={onToggleDrawer}
+                    />
+                ) : null}
 
                 <main style={{ width: '100%', flexGrow: 1 }}>
                     <AppBody>

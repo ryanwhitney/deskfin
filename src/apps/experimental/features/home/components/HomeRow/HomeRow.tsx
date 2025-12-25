@@ -1,6 +1,6 @@
 import React, { type FC } from 'react';
 import { GridList, GridListItem } from 'react-aria-components';
-import { MediaCard, MediaCardStyles } from 'apps/experimental/components';
+import { MediaCard, MediaCardStyles } from 'apps/experimental/components/media/MediaCard';
 import type { ItemDto } from 'types/base/models/item-dto';
 import {
     buildCardImageUrl,

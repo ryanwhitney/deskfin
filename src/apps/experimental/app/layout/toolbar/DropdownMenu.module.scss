@@ -1,4 +1,4 @@
-@import '../../../styles/theme';
+@use '../../../styles/theme' as *;
 
 .menu {
     min-width: 220px;

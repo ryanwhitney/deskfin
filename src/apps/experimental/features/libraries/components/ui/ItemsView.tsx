@@ -1,42 +1,30 @@
 import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
-import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
-import { ImageType } from '@jellyfin/sdk/lib/generated-client/models/image-type';
+import type { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
 import { ItemSortBy } from '@jellyfin/sdk/lib/generated-client/models/item-sort-by';
-import Box from '@mui/material/Box';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import type { Theme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import classNames from 'classnames';
 import React, { type FC, useCallback } from 'react';
 
-import { ItemAction } from 'constants/itemAction';
-import { useApi } from 'hooks/useApi';
 import { useLocalStorage } from 'hooks/useLocalStorage';
 import { useGetItemsViewByType } from 'hooks/useFetchItems';
+import { useToggleFavoriteMutation, useTogglePlayedMutation } from 'hooks/useFetchItems';
 import { getDefaultLibraryViewSettings, getSettingsKey } from 'utils/items';
-import { CardShape } from 'utils/card';
 import Loading from 'components/loading/LoadingComponent';
-import { playbackManager } from 'components/playback/playbackmanager';
 import ItemsContainer from 'elements/emby-itemscontainer/ItemsContainer';
 import NoItemsMessage from 'components/common/NoItemsMessage';
-import Lists from 'components/listview/List/Lists';
-import Cards from 'components/cardbuilder/Card/Cards';
 import { LibraryTab } from 'types/libraryTab';
-import { type LibraryViewSettings, type ParentId, ViewMode } from 'types/library';
-import type { CardOptions } from 'types/cardOptions';
-import type { ListOptions } from 'types/listOptions';
+import { type LibraryViewSettings, type ParentId } from 'types/library';
 import { useItem } from 'hooks/useItem';
+import type { ItemDto } from 'types/base/models/item-dto';
+
+import { LibraryViewMenu } from 'apps/experimental/components/library/LibraryViewMenu';
+import { SortMenu } from 'apps/experimental/components/library/SortMenu';
+import { FilterMenu } from 'apps/experimental/components/library/FilterMenu';
+import { Pagination } from 'apps/experimental/components/library/Pagination';
+import { PlayAllButton, ShuffleButton, NewCollectionButton } from 'apps/experimental/components/library/ActionButtons';
+import styles from 'apps/experimental/components/library/LibraryToolbar.module.scss';
+
+import { ItemGrid } from 'apps/experimental/components/media/ItemGrid';
 
 import AlphabetPicker from './AlphabetPicker';
-import FilterButton from './filter/FilterButton';
-import NewCollectionButton from './NewCollectionButton';
-import Pagination from './Pagination';
-import PlayAllButton from './PlayAllButton';
-import QueueButton from './QueueButton';
-import ShuffleButton from './ShuffleButton';
-import SortButton from './SortButton';
-import LibraryViewMenu from './LibraryViewMenu';
-import ViewSettingsButton from './ViewSettingsButton';
 
 interface ItemsViewProps {
     viewType: LibraryTab;
@@ -50,7 +38,6 @@ interface ItemsViewProps {
     isBtnSortEnabled?: boolean;
     isBtnFilterEnabled?: boolean;
     isBtnNewCollectionEnabled?: boolean;
-    isBtnGridListEnabled?: boolean;
     isAlphabetPickerEnabled?: boolean;
     noItemsMessage: string;
 }
@@ -61,12 +48,10 @@ const ItemsView: FC<ItemsViewProps> = ({
     collectionType,
     isPaginationEnabled = true,
     isBtnPlayAllEnabled = false,
-    isBtnQueueEnabled = false,
     isBtnShuffleEnabled = false,
     isBtnSortEnabled = true,
     isBtnFilterEnabled = true,
     isBtnNewCollectionEnabled = false,
-    isBtnGridListEnabled = true,
     isAlphabetPickerEnabled = true,
     itemType,
     noItemsMessage
@@ -76,9 +61,7 @@ const ItemsView: FC<ItemsViewProps> = ({
             getSettingsKey(viewType, parentId),
             getDefaultLibraryViewSettings(viewType)
         );
-    const isSmallScreen = useMediaQuery((t: Theme) => t.breakpoints.up('sm'));
 
-    const { __legacyApiClient__ } = useApi();
     const {
         isPending,
         data: itemsResult,
@@ -92,286 +75,111 @@ const ItemsView: FC<ItemsViewProps> = ({
     );
     const { data: item } = useItem(parentId || undefined);
 
-    const getListOptions = useCallback(() => {
-        const listOptions: ListOptions = {
-            items: itemsResult?.Items ?? [],
-            context: collectionType
-        };
+    const { mutateAsync: toggleFavorite } = useToggleFavoriteMutation();
+    const { mutateAsync: togglePlayed } = useTogglePlayedMutation();
 
-        if (viewType === LibraryTab.Songs) {
-            listOptions.showParentTitle = true;
-            listOptions.action = ItemAction.PlayAllFromHere;
-            listOptions.smallIcon = true;
-            listOptions.showArtist = true;
-            listOptions.addToListButton = true;
-        } else if (viewType === LibraryTab.Albums) {
-            listOptions.sortBy = libraryViewSettings.SortBy;
-            listOptions.addToListButton = true;
-        } else if (viewType === LibraryTab.Episodes) {
-            listOptions.showParentTitle = true;
-        }
+    const onAfterAction = useCallback(() => {
+        void refetch();
+    }, [refetch]);
 
-        return listOptions;
-    }, [itemsResult?.Items, collectionType, viewType, libraryViewSettings.SortBy]);
+    const onToggleFavorite = useCallback(async (cardItem: ItemDto) => {
+        await toggleFavorite({ itemId: cardItem.Id!, isFavorite: !!cardItem.UserData?.IsFavorite });
+        onAfterAction();
+    }, [onAfterAction, toggleFavorite]);
 
-    const getCardOptions = useCallback(() => {
-        let shape;
-        let preferThumb;
-        let preferDisc;
-        let preferLogo;
-
-        if (libraryViewSettings.ImageType === ImageType.Banner) {
-            shape = CardShape.Banner;
-        } else if (libraryViewSettings.ImageType === ImageType.Disc) {
-            shape = CardShape.Square;
-            preferDisc = true;
-        } else if (libraryViewSettings.ImageType === ImageType.Logo) {
-            shape = CardShape.Backdrop;
-            preferLogo = true;
-        } else if (libraryViewSettings.ImageType === ImageType.Thumb) {
-            shape = CardShape.Backdrop;
-            preferThumb = true;
-        } else {
-            shape = CardShape.Auto;
-        }
-
-        const cardOptions: CardOptions = {
-            shape: shape,
-            showTitle: libraryViewSettings.ShowTitle,
-            showYear: libraryViewSettings.ShowYear,
-            cardLayout: libraryViewSettings.CardLayout,
-            centerText: true,
-            context: collectionType,
-            coverImage: true,
-            preferThumb: preferThumb,
-            preferDisc: preferDisc,
-            preferLogo: preferLogo,
-            overlayText: !libraryViewSettings.ShowTitle,
-            imageType: libraryViewSettings.ImageType,
-            queryKey: ['ItemsViewByType'],
-            serverId: __legacyApiClient__?.serverId()
-        };
-
-        if (
-            viewType === LibraryTab.Songs
-            || viewType === LibraryTab.Albums
-            || viewType === LibraryTab.Episodes
-        ) {
-            cardOptions.showParentTitle = libraryViewSettings.ShowTitle;
-            cardOptions.overlayPlayButton = true;
-        } else if (viewType === LibraryTab.Artists) {
-            cardOptions.lines = 1;
-            cardOptions.showYear = false;
-            cardOptions.overlayPlayButton = true;
-        } else if (viewType === LibraryTab.Channels) {
-            cardOptions.shape = CardShape.Square;
-            cardOptions.showDetailsMenu = true;
-            cardOptions.showCurrentProgram = true;
-            cardOptions.showCurrentProgramTime = true;
-        } else if (viewType === LibraryTab.SeriesTimers) {
-            cardOptions.shape = CardShape.Backdrop;
-            cardOptions.showSeriesTimerTime = true;
-            cardOptions.showSeriesTimerChannel = true;
-            cardOptions.overlayMoreButton = true;
-            cardOptions.lines = 3;
-        } else if (viewType === LibraryTab.Movies) {
-            cardOptions.overlayPlayButton = true;
-        } else if (viewType === LibraryTab.Series || viewType === LibraryTab.Networks) {
-            cardOptions.overlayMoreButton = true;
-        }
-
-        return cardOptions;
-    }, [
-        libraryViewSettings.ShowTitle,
-        libraryViewSettings.ImageType,
-        libraryViewSettings.ShowYear,
-        libraryViewSettings.CardLayout,
-        collectionType,
-        viewType
-    ]);
-
-    const getItems = useCallback(() => {
-        if (!itemsResult?.Items?.length) {
-            return <NoItemsMessage message={noItemsMessage} />;
-        }
-
-        if (libraryViewSettings.ViewMode === ViewMode.ListView) {
-            return (
-                <Lists
-                    items={itemsResult?.Items ?? []}
-                    listOptions={getListOptions()}
-                />
-            );
-        }
-        return (
-            <Cards
-                items={itemsResult?.Items ?? []}
-                cardOptions={getCardOptions()}
-            />
-        );
-    }, [
-        libraryViewSettings.ViewMode,
-        itemsResult?.Items,
-        getListOptions,
-        getCardOptions,
-        noItemsMessage
-    ]);
+    const onTogglePlayed = useCallback(async (cardItem: ItemDto) => {
+        await togglePlayed({ itemId: cardItem.Id!, isPlayed: !!cardItem.UserData?.Played });
+        onAfterAction();
+    }, [onAfterAction, togglePlayed]);
 
     const totalRecordCount = itemsResult?.TotalRecordCount ?? 0;
     const items = itemsResult?.Items ?? [];
     const hasFilters = Object.values(libraryViewSettings.Filters ?? {}).some(
         (filter) => !!filter
     );
-    const hasSortName = libraryViewSettings.SortBy.includes(
-        ItemSortBy.SortName
-    );
+    const hasSortName = libraryViewSettings.SortBy.includes(ItemSortBy.SortName);
 
-    const itemsContainerClass = classNames(
-        'centered padded-left padded-right padded-right-withalphapicker',
-        libraryViewSettings.ViewMode === ViewMode.ListView ?
-            'vertical-list' :
-            'vertical-wrap'
-    );
+    // Determine card variant based on content type
+    const getCardVariant = () => {
+        if ([LibraryTab.Episodes].includes(viewType)) {
+            return 'landscape';
+        }
+        return 'portrait';
+    };
+
+    const cardVariant = getCardVariant();
 
     return (
-        <Box className='padded-bottom-page'>
-            <Box
-                className={classNames(
-                    'padded-top padded-left padded-right',
-                    { 'padded-right-withalphapicker': isAlphabetPickerEnabled }
-                )}
-                sx={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    alignItems: 'center'
-                }}
-            >
-                <Box
-                    sx={{ marginRight: 1 }}
-                >
+        <div className="padded-bottom-page">
+            {/* Toolbar */}
+            <div className={styles.toolbar}>
+                {/* Tab bar */}
+                <div className={styles.sectionStart}>
                     <LibraryViewMenu />
-                </Box>
+                </div>
 
-                <Box
-                    sx={{
-                        flexGrow: {
-                            xs: 1,
-                            sm: 0
-                        },
-                        marginRight: 1
-                    }}
-                >
-                    <ButtonGroup
-                        color='inherit'
-                        variant='text'
-                    >
-                        {isBtnFilterEnabled && (
-                            <FilterButton
-                                parentId={parentId}
-                                itemType={itemType}
-                                viewType={viewType}
-                                hasFilters={hasFilters}
-                                libraryViewSettings={libraryViewSettings}
-                                setLibraryViewSettings={setLibraryViewSettings}
-                            />
-                        )}
+                {/* Filter/Sort buttons */}
+                <div className={styles.section}>
+                    {isBtnFilterEnabled && (
+                        <FilterMenu
+                            parentId={parentId}
+                            itemType={itemType}
+                            viewType={viewType}
+                            hasFilters={hasFilters}
+                            libraryViewSettings={libraryViewSettings}
+                            setLibraryViewSettings={setLibraryViewSettings}
+                        />
+                    )}
 
-                        {isBtnSortEnabled && (
-                            <SortButton
-                                viewType={viewType}
-                                libraryViewSettings={libraryViewSettings}
-                                setLibraryViewSettings={setLibraryViewSettings}
-                            />
-                        )}
+                    {isBtnSortEnabled && (
+                        <SortMenu
+                            viewType={viewType}
+                            libraryViewSettings={libraryViewSettings}
+                            setLibraryViewSettings={setLibraryViewSettings}
+                        />
+                    )}
+                </div>
 
-                        {isBtnGridListEnabled && (
-                            <ViewSettingsButton
-                                viewType={viewType}
-                                libraryViewSettings={libraryViewSettings}
-                                setLibraryViewSettings={setLibraryViewSettings}
-                            />
-                        )}
-                    </ButtonGroup>
-                </Box>
-
-                <Box
-                    sx={{
-                        display: 'flex',
-                        flexGrow: {
-                            xs: 1,
-                            sm: 0
-                        },
-                        justifyContent: 'flex-end'
-                    }}
-                >
+                {/* Action buttons + pagination */}
+                <div className={styles.sectionEnd}>
                     {!isPending && (
                         <>
-                            <ButtonGroup
-                                variant='contained'
-                            >
-                                {isBtnPlayAllEnabled && (
-                                    <PlayAllButton
-                                        item={item}
-                                        items={items}
-                                        viewType={viewType}
-                                        hasFilters={hasFilters}
-                                        isTextVisible={isSmallScreen}
-                                        libraryViewSettings={libraryViewSettings}
-                                    />
-                                )}
+                            {isBtnPlayAllEnabled && (
+                                <PlayAllButton
+                                    item={item}
+                                    items={items}
+                                    viewType={viewType}
+                                    hasFilters={hasFilters}
+                                    libraryViewSettings={libraryViewSettings}
+                                />
+                            )}
 
-                                {isBtnShuffleEnabled && totalRecordCount > 1 && (
-                                    <ShuffleButton
-                                        item={item}
-                                        items={items}
-                                        viewType={viewType}
-                                        hasFilters={hasFilters}
-                                        isTextVisible={isSmallScreen && !isBtnPlayAllEnabled}
-                                        libraryViewSettings={libraryViewSettings}
-                                    />
-                                )}
+                            {isBtnShuffleEnabled && totalRecordCount > 1 && (
+                                <ShuffleButton
+                                    item={item}
+                                    items={items}
+                                    viewType={viewType}
+                                    hasFilters={hasFilters}
+                                    libraryViewSettings={libraryViewSettings}
+                                />
+                            )}
 
-                                {isBtnQueueEnabled && item && playbackManager.canQueue(item) && (
-                                    <QueueButton
-                                        item={item}
-                                        items={items}
-                                        hasFilters={hasFilters}
-                                        isTextVisible={isSmallScreen && !isBtnPlayAllEnabled && !isBtnShuffleEnabled}
-                                    />
-                                )}
-                            </ButtonGroup>
-
-                            {isBtnNewCollectionEnabled && <NewCollectionButton isTextVisible={isSmallScreen} />}
+                            {isBtnNewCollectionEnabled && <NewCollectionButton />}
                         </>
                     )}
-                </Box>
 
-                <Box
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'end',
-                        flexBasis: {
-                            xs: '100%',
-                            sm: 'auto'
-                        },
-                        flexGrow: 1,
-                        marginTop: {
-                            xs: 0.5,
-                            sm: 0
-                        }
-                    }}
-                >
                     {!isPending && isPaginationEnabled && (
                         <Pagination
                             totalRecordCount={totalRecordCount}
                             libraryViewSettings={libraryViewSettings}
-                            isPlaceholderData={isPlaceholderData}
                             setLibraryViewSettings={setLibraryViewSettings}
+                            isPlaceholderData={isPlaceholderData}
                         />
                     )}
-                </Box>
-            </Box>
+                </div>
+            </div>
 
+            {/* Alphabet picker */}
             {isAlphabetPickerEnabled && hasSortName && (
                 <AlphabetPicker
                     libraryViewSettings={libraryViewSettings}
@@ -379,39 +187,42 @@ const ItemsView: FC<ItemsViewProps> = ({
                 />
             )}
 
+            {/* Content */}
             {isPending ? (
                 <Loading />
             ) : (
                 <ItemsContainer
-                    className={itemsContainerClass}
+                    className="padded-left padded-right"
                     parentId={parentId}
                     reloadItems={refetch}
                     queryKey={['ItemsViewByType']}
                 >
-                    {getItems()}
+                    {!items.length ? (
+                        <NoItemsMessage message={noItemsMessage} />
+                    ) : (
+                        <ItemGrid
+                            items={items}
+                            variant={cardVariant}
+                            onToggleFavorite={onToggleFavorite}
+                            onTogglePlayed={onTogglePlayed}
+                            onAfterAction={onAfterAction}
+                        />
+                    )}
                 </ItemsContainer>
             )}
 
-            {!isPending && isPaginationEnabled && (
-                <Box
-                    className={classNames(
-                        'padded-left padded-right',
-                        { 'padded-right-withalphapicker': isAlphabetPickerEnabled }
-                    )}
-                    sx={{
-                        display: 'flex',
-                        justifyContent: 'flex-end'
-                    }}
-                >
+            {/* Bottom pagination */}
+            {!isPending && isPaginationEnabled && totalRecordCount > 100 && (
+                <div className="padded-left padded-right" style={{ display: 'flex', justifyContent: 'flex-end', padding: '16px' }}>
                     <Pagination
                         totalRecordCount={totalRecordCount}
                         libraryViewSettings={libraryViewSettings}
-                        isPlaceholderData={isPlaceholderData}
                         setLibraryViewSettings={setLibraryViewSettings}
+                        isPlaceholderData={isPlaceholderData}
                     />
-                </Box>
+                </div>
             )}
-        </Box>
+        </div>
     );
 };
 

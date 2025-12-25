@@ -33,6 +33,7 @@ import iconQuickConnect from './img/icons/quick connect.svg';
 import iconSignOut from './img/icons/sign out.svg';
 import iconMacMini from './img/icons/macmini.fill.small.svg';
 import iconShuffle from './img/icons/shuffle.svg';
+import iconSort from './img/icons/sort.svg';
 
 import iconHomeRaw from './img/icons/home.svg?raw';
 import iconSearchRaw from './img/icons/search.svg?raw';
@@ -65,6 +66,7 @@ import iconQuickConnectRaw from './img/icons/quick connect.svg?raw';
 import iconSignOutRaw from './img/icons/sign out.svg?raw';
 import iconMacMiniRaw from './img/icons/macmini.fill.small.svg?raw';
 import iconShuffleRaw from './img/icons/shuffle.svg?raw';
+import iconSortRaw from './img/icons/sort.svg?raw';
 
 export const Icons = {
     home: iconHome,
@@ -97,7 +99,8 @@ export const Icons = {
     quickConnect: iconQuickConnect,
     signOut: iconSignOut,
     macMini: iconMacMini,
-    shuffle: iconShuffle
+    shuffle: iconShuffle,
+    sort: iconSort
 } as const;
 
 // Light normalization: ensure viewBox, strip width/height, tint to currentColor.
@@ -153,7 +156,8 @@ const BaseIconSvgs = {
     quickConnect: toCurrentColorSvg(iconQuickConnectRaw),
     signOut: toCurrentColorSvg(iconSignOutRaw),
     macMini: toCurrentColorSvg(iconMacMiniRaw),
-    shuffle: toCurrentColorSvg(iconShuffleRaw)
+    shuffle: toCurrentColorSvg(iconShuffleRaw),
+    sort: toCurrentColorSvg(iconSortRaw)
 };
 
 // Manual overrides for complex multi-path icons to avoid masking/clip issues.
