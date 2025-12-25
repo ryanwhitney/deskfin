@@ -61,7 +61,7 @@ export const ExperimentalTopBar: FC<ExperimentalTopBarProps> = ({
 
                 <Link className={styles.brand} to="/home">
                     <span className={styles.brandImg} aria-hidden="true">
-                        <SvgIcon svg={IconSvgs.macMini} size={28} />
+                        <SvgIcon svg={IconSvgs.macMini} size={24} />
                     </span>
                     <span className={styles.brandText}>
                         <span className={styles.brandTitle}>{title}</span>

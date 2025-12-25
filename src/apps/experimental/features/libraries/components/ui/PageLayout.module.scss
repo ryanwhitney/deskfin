@@ -8,6 +8,8 @@
 
 .toolbar {
     padding: $space-3 $space-4;
+    display: flex;
+    justify-content: center;
 }
 
 .content {

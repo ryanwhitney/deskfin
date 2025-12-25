@@ -114,68 +114,68 @@ const ItemsView: FC<ItemsViewProps> = ({
             {/* Toolbar */}
             <div className={styles.toolbar}>
                 {/* Tab bar */}
-                <div className={styles.sectionStart}>
+                <div className={styles.tabBar}>
                     <LibraryViewMenu />
                 </div>
+                <div className={styles.tertiaryControls}>
+                    <div className={styles.listButtons}>
+                        {isBtnFilterEnabled && (
+                            <FilterMenu
+                                parentId={parentId}
+                                itemType={itemType}
+                                viewType={viewType}
+                                hasFilters={hasFilters}
+                                libraryViewSettings={libraryViewSettings}
+                                setLibraryViewSettings={setLibraryViewSettings}
+                            />
+                        )}
 
-                {/* Filter/Sort buttons */}
-                <div className={styles.section}>
-                    {isBtnFilterEnabled && (
-                        <FilterMenu
-                            parentId={parentId}
-                            itemType={itemType}
-                            viewType={viewType}
-                            hasFilters={hasFilters}
-                            libraryViewSettings={libraryViewSettings}
-                            setLibraryViewSettings={setLibraryViewSettings}
-                        />
-                    )}
+                        {isBtnSortEnabled && (
+                            <SortMenu
+                                viewType={viewType}
+                                libraryViewSettings={libraryViewSettings}
+                                setLibraryViewSettings={setLibraryViewSettings}
+                            />
+                        )}
 
-                    {isBtnSortEnabled && (
-                        <SortMenu
-                            viewType={viewType}
-                            libraryViewSettings={libraryViewSettings}
-                            setLibraryViewSettings={setLibraryViewSettings}
-                        />
-                    )}
-                </div>
+                        {!isPending && (
+                            <>
+                                {isBtnPlayAllEnabled && (
+                                    <PlayAllButton
+                                        item={item}
+                                        items={items}
+                                        viewType={viewType}
+                                        hasFilters={hasFilters}
+                                        libraryViewSettings={libraryViewSettings}
+                                    />
+                                )}
 
-                {/* Action buttons + pagination */}
-                <div className={styles.sectionEnd}>
-                    {!isPending && (
-                        <>
-                            {isBtnPlayAllEnabled && (
-                                <PlayAllButton
-                                    item={item}
-                                    items={items}
-                                    viewType={viewType}
-                                    hasFilters={hasFilters}
-                                    libraryViewSettings={libraryViewSettings}
-                                />
-                            )}
+                                {isBtnShuffleEnabled && totalRecordCount > 1 && (
+                                    <ShuffleButton
+                                        item={item}
+                                        items={items}
+                                        viewType={viewType}
+                                        hasFilters={hasFilters}
+                                        libraryViewSettings={libraryViewSettings}
+                                    />
+                                )}
 
-                            {isBtnShuffleEnabled && totalRecordCount > 1 && (
-                                <ShuffleButton
-                                    item={item}
-                                    items={items}
-                                    viewType={viewType}
-                                    hasFilters={hasFilters}
-                                    libraryViewSettings={libraryViewSettings}
-                                />
-                            )}
+                                {isBtnNewCollectionEnabled && <NewCollectionButton />}
+                            </>
+                        )}
 
-                            {isBtnNewCollectionEnabled && <NewCollectionButton />}
-                        </>
-                    )}
+                    </div>
 
-                    {!isPending && isPaginationEnabled && (
-                        <Pagination
-                            totalRecordCount={totalRecordCount}
-                            libraryViewSettings={libraryViewSettings}
-                            setLibraryViewSettings={setLibraryViewSettings}
-                            isPlaceholderData={isPlaceholderData}
-                        />
-                    )}
+                    <div className={styles.pagination}>
+                        {!isPending && isPaginationEnabled && (
+                            <Pagination
+                                totalRecordCount={totalRecordCount}
+                                libraryViewSettings={libraryViewSettings}
+                                setLibraryViewSettings={setLibraryViewSettings}
+                                isPlaceholderData={isPlaceholderData}
+                            />
+                        )}
+                    </div>
                 </div>
             </div>
 

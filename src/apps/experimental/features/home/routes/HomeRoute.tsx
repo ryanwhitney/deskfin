@@ -230,9 +230,6 @@ const Home: FC = () => {
             <div className={styles.page}>
                 {isFavoritesTab ? (
                     <>
-                        <section className={styles.section}>
-                            <h2 className={styles.sectionTitle}>{t('Favorites', 'Favorites')}</h2>
-                        </section>
                         <HomeRow title={t('Movies', 'Movies')} items={favoriteMovies} {...rowProps} />
                         <HomeRow title={t('Shows', 'Shows')} items={favoriteShows} {...rowProps} />
                         <HomeRow title={t('Episodes', 'Episodes')} items={favoriteEpisodes} {...rowProps} />

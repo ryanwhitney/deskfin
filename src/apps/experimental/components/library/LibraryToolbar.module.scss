@@ -2,6 +2,7 @@
 
 .toolbar {
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     align-items: center;
     gap: $space-2;
@@ -14,17 +15,24 @@
     gap: $space-2;
 }
 
-.sectionStart {
+.tabBar {
     flex: 0 0 auto;
 }
 
-.sectionCenter {
-    flex: 1 1 auto;
+.tertiaryControls {
+    width: 100%;
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
 }
 
-.sectionEnd {
+.listButtons {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.pagination {
     flex: 0 0 auto;
     display: flex;
     align-items: center;
@@ -35,6 +43,9 @@
 // Tab bar styles
 .tabs {
     display: flex;
+    background: rgba(128, 128, 128, 0.108);
+    border-radius: $radius-md;
+    width: fit-content;
 }
 
 .tabList {
@@ -202,7 +213,7 @@
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.5px;
     color: $text-muted;
 }
 

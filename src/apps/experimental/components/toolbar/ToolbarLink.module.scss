@@ -12,7 +12,7 @@
     text-decoration: none;
     color: inherit;
     font-weight: 500;
-    font-variation-settings: "wdth" 110;
+    font-variation-settings: "wdth" 105;
     font-size: 14px;
     line-height: 1;
     white-space: nowrap;
@@ -32,8 +32,7 @@
 }
 
 .active {
-    text-decoration: underline;
-    text-underline-offset: 3px;
+    color: white;
     background: $hover-bg;
 }
 
