@@ -1,8 +1,11 @@
-import React, { type ButtonHTMLAttributes, type FC } from 'react';
+import React, { type FC } from 'react';
+import { Button as RacButton, type ButtonProps as RacButtonProps } from 'react-aria-components';
 
 import styles from './ToolbarIconButton.module.scss';
 
-type ToolbarIconButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'> & {
+const cx = (...parts: Array<string | undefined>) => parts.filter(Boolean).join(' ');
+
+type ToolbarIconButtonProps = Omit<RacButtonProps, 'className'> & {
     className?: string;
     variant?: 'default' | 'hamburger';
 };
@@ -10,22 +13,16 @@ type ToolbarIconButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'cla
 export const ToolbarIconButton: FC<ToolbarIconButtonProps> = ({
     className,
     variant = 'default',
-    type = 'button',
     ...props
 }) => {
-    const classes = [
-        styles.button,
-        variant === 'hamburger' ? styles.hamburger : '',
-        className ?? ''
-    ].filter(Boolean).join(' ');
-
     return (
-        <button
+        <RacButton
             {...props}
-            type={type}
-            className={classes}
+            className={cx(
+                styles.button,
+                variant === 'hamburger' ? styles.hamburger : undefined,
+                className
+            )}
         />
     );
 };
-
-

@@ -3,7 +3,7 @@ import React, { type FC, useMemo, useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 
 import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import { IconSvgs, getLegacyCommandIcon } from 'assets/icons';
 import type { ItemDto } from 'types/base/models/item-dto';
 import { playbackManager } from 'components/playback/playbackmanager';
 
@@ -183,7 +183,11 @@ export const MediaCard: FC<MediaCardProps> = ({
                                                 textValue={cmd.name ?? cmd.id}
                                                 onAction={() => { void onCommand(cmd.id!); }}
                                             >
-                                                <span className={ActionMenuStyles.icon} aria-hidden="true" />
+                                                <span className={ActionMenuStyles.icon} aria-hidden="true">
+                                                    {getLegacyCommandIcon(cmd.icon) && (
+                                                        <SvgIcon svg={getLegacyCommandIcon(cmd.icon)!} size={18} />
+                                                    )}
+                                                </span>
                                                 <span className={ActionMenuStyles.text}>{cmd.name ?? cmd.id}</span>
                                             </MenuItem>
                                         );

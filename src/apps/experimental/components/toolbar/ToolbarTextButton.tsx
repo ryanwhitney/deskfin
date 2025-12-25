@@ -1,8 +1,11 @@
-import React, { type ButtonHTMLAttributes, type FC } from 'react';
+import React, { type FC } from 'react';
+import { Button as RacButton, type ButtonProps as RacButtonProps } from 'react-aria-components';
 
 import styles from './ToolbarLink.module.scss';
 
-type ToolbarTextButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'> & {
+const cx = (...parts: Array<string | undefined>) => parts.filter(Boolean).join(' ');
+
+type ToolbarTextButtonProps = Omit<RacButtonProps, 'className'> & {
     className?: string;
     isActive?: boolean;
 };
@@ -10,22 +13,16 @@ type ToolbarTextButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'cla
 export const ToolbarTextButton: FC<ToolbarTextButtonProps> = ({
     className,
     isActive,
-    type = 'button',
     ...props
 }) => {
-    const classes = [
-        styles.link,
-        isActive ? styles.active : '',
-        className ?? ''
-    ].filter(Boolean).join(' ');
-
     return (
-        <button
+        <RacButton
             {...props}
-            type={type}
-            className={classes}
+            className={cx(
+                styles.link,
+                isActive ? styles.active : undefined,
+                className
+            )}
         />
     );
 };
-
-

@@ -1,23 +1,26 @@
 import React, { forwardRef } from 'react';
+import { Link as RacLink, type LinkProps as RacLinkProps } from 'react-aria-components';
 import styles from './Button.module.scss';
-
-type Classy = { className?: string };
 
 const cx = (...parts: Array<string | undefined>) => parts.filter(Boolean).join(' ');
 
-type LinkButtonProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & Classy & {
+export interface LinkButtonProps extends Omit<RacLinkProps, 'className'> {
+    className?: string;
     icon?: React.ReactNode;
-};
+}
 
 export const LinkButton = forwardRef<HTMLAnchorElement, LinkButtonProps>(function LinkButton(
     { icon, className, children, ...rest },
     ref
 ) {
     return (
-        <a ref={ref} className={cx(styles.button, className)} {...rest}>
+        <RacLink
+            ref={ref}
+            className={cx(styles.button, className)}
+            {...rest}
+        >
             {icon ?? null}
             {children}
-        </a>
+        </RacLink>
     );
 });
-

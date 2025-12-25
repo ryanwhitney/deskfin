@@ -1,23 +1,26 @@
 import React, { forwardRef } from 'react';
+import { Button as RacButton, type ButtonProps as RacButtonProps } from 'react-aria-components';
 import styles from './Button.module.scss';
-
-type Classy = { className?: string };
 
 const cx = (...parts: Array<string | undefined>) => parts.filter(Boolean).join(' ');
 
-type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & Classy & {
+export interface ButtonProps extends Omit<RacButtonProps, 'className'> {
+    className?: string;
     icon?: React.ReactNode;
-};
+}
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-    { icon, className, children, type = 'button', ...rest },
+    { icon, className, children, ...rest },
     ref
 ) {
     return (
-        <button ref={ref} type={type} className={cx(styles.button, className)} {...rest}>
+        <RacButton
+            ref={ref}
+            className={cx(styles.button, className)}
+            {...rest}
+        >
             {icon ?? null}
             {children}
-        </button>
+        </RacButton>
     );
 });
-
