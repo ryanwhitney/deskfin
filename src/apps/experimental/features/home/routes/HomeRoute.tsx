@@ -36,12 +36,78 @@ const t = (key: string, fallback: string) => {
     return globalize.tryTranslate?.(key) ?? fallback;
 };
 
-const buildPrimaryImageUrl = (item: { Id?: string | null; ImageTags?: Record<string, string> | null; PrimaryImageTag?: string | null }, maxWidth = 420) => {
+type ImageCandidate = { itemId: string; type: 'Primary' | 'Thumb' | 'Backdrop'; tag: string };
+
+const buildCardImageUrl = (
+    item: {
+        Id?: string | null;
+        Type?: string | null;
+        ImageTags?: Record<string, string> | null;
+        PrimaryImageTag?: string | null;
+        BackdropImageTags?: string[] | null;
+        ParentBackdropImageTags?: string[] | null;
+        ParentBackdropItemId?: string | null;
+        // Thumb inheritance (commonly set on episodes)
+        ParentThumbImageTag?: string | null;
+        ParentThumbItemId?: string | null;
+        SeriesThumbImageTag?: string | null;
+        SeriesId?: string | null;
+    },
+    options?: { variant?: 'portrait' | 'landscape'; maxWidth?: number }
+) => {
     const apiClient = ServerConnections.currentApiClient();
     if (!apiClient || !item.Id) return '';
-    const tag = item.PrimaryImageTag || item.ImageTags?.Primary;
-    if (!tag) return '';
-    return apiClient.getImageUrl(item.Id, { type: 'Primary', tag, maxWidth });
+
+    const maxWidth = options?.maxWidth ?? 420;
+    const variant = options?.variant ?? 'portrait';
+
+    const candidates: ImageCandidate[] = [];
+
+    // Prefer *item-owned* imagery first (especially important for Episodes),
+    // then fall back to inherited series/parent imagery only if needed.
+    const localThumbTag = item.ImageTags?.Thumb;
+    if (localThumbTag) {
+        candidates.push({ itemId: item.Id, type: 'Thumb', tag: localThumbTag });
+    }
+
+    const localBackdropTag = item.BackdropImageTags?.[0];
+    if (localBackdropTag) {
+        candidates.push({ itemId: item.Id, type: 'Backdrop', tag: localBackdropTag });
+    }
+
+    const localPrimaryTag = item.PrimaryImageTag || item.ImageTags?.Primary;
+    if (localPrimaryTag) {
+        candidates.push({ itemId: item.Id, type: 'Primary', tag: localPrimaryTag });
+    }
+
+    const hasAnyLocalImage = Boolean(localThumbTag || localBackdropTag || localPrimaryTag);
+    const allowInherited = !hasAnyLocalImage || item.Type !== 'Episode';
+
+    if (allowInherited) {
+        if (item.ParentThumbItemId && item.ParentThumbImageTag) {
+            candidates.push({ itemId: item.ParentThumbItemId, type: 'Thumb', tag: item.ParentThumbImageTag });
+        } else if (item.SeriesId && item.SeriesThumbImageTag) {
+            candidates.push({ itemId: item.SeriesId, type: 'Thumb', tag: item.SeriesThumbImageTag });
+        }
+
+        if (item.ParentBackdropItemId && item.ParentBackdropImageTags?.[0]) {
+            candidates.push({ itemId: item.ParentBackdropItemId, type: 'Backdrop', tag: item.ParentBackdropImageTags[0] });
+        }
+    }
+
+    // Landscape cards should strongly prefer landscape-oriented imagery.
+    // Portrait cards should prefer primary, but can fall back if needed.
+    const ordered = variant === 'landscape'
+        ? candidates // thumb/backdrop/primary already in priority order
+        : [
+            ...candidates.filter(c => c.type === 'Primary'),
+            ...candidates.filter(c => c.type !== 'Primary')
+        ];
+
+    const chosen = ordered[0];
+    if (!chosen) return '';
+
+    return apiClient.getImageUrl(chosen.itemId, { type: chosen.type, tag: chosen.tag, maxWidth });
 };
 
 type Command = { name?: string; id?: string; icon?: string; divider?: boolean };
@@ -188,7 +254,7 @@ const HomeCard: FC<{
     onTogglePlayed: (item: ItemDto) => void;
     variant?: 'portrait' | 'landscape';
 }> = ({ item, user, onAfterAction, onToggleFavorite, onTogglePlayed, variant = 'portrait' }) => {
-    const img = buildPrimaryImageUrl(item, variant === 'landscape' ? 720 : 420);
+    const img = buildCardImageUrl(item, { variant, maxWidth: variant === 'landscape' ? 720 : 420 });
     const isFavorite = !!item.UserData?.IsFavorite;
     const isPlayed = !!item.UserData?.Played;
     const isResumable = !!item.UserData?.PlaybackPositionTicks && item.UserData.PlaybackPositionTicks > 0;
