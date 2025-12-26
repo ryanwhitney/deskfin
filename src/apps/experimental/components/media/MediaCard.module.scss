@@ -43,23 +43,22 @@
     background-color: $surface-menu;
     transition: all 200ms ease;
     overflow: hidden;
-}
-
-.thumbLandscape {
+    display: flex;
 }
 
 .thumbImg {
     width: 100%;
-    height: 100%;
+    display: block;
 }
 
 .thumbPlaceholder {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
-    height: 100%;
+    aspect-ratio: 2/3;
     background: linear-gradient(135deg, #1f1f1f, #2a2a2a);
+}
+
+.thumbLandscape .thumbPlaceholder {
+    aspect-ratio: 16/9;
 }
 
 .countBadge {
@@ -97,24 +96,28 @@
     color: #fff;
     cursor: pointer;
     transition: all 100ms ease-in;
+    backdrop-filter: blur(10px);
+
+    & > span{
+        transform: scale(1);
+        transition: all 200ms ease;
+        opacity: 0.8;
+    }
+
+    &:hover {
+        width: 56px;
+        height: 56px;
+        opacity: 1;
+        backdrop-filter: blur(10px) brightness(0.5);
+
+        & > span {
+            transform: scale(1.2);
+            opacity: 0.9;
+        }
+
+    }
 }
 
-.playOverlay > span {
-    transform: scale(1);
-    transition: all 200ms ease;
-}
-
-.playOverlay:hover {
-    width: 62px;
-    height: 62px;
-    opacity: 1;
-    background: rgba(59, 130, 246, 0.3);
-}
-
-.playOverlay:hover > span {
-    transform: scale(1.4);
-    color: #3b82f6;
-}
 
 .actions {
     opacity: 0;
