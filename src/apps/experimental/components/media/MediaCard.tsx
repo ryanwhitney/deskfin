@@ -178,55 +178,6 @@ export const MediaCard: FC<MediaCardProps> = ({
                         className={styles.actions}
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <FocusRing focusRingClass="focus-ring">
-                            <button
-                                type="button"
-                                className={styles.iconBtn}
-                                title={
-                                    isFavorite ? "Favorite" : "Add to favorites"
-                                }
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    onToggleFavorite(item);
-                                }}
-                            >
-                                <span
-                                    style={{
-                                        color: isFavorite
-                                            ? "#ff4d6d"
-                                            : undefined,
-                                    }}
-                                >
-                                    <SvgIcon svg={IconSvgs.heart} size={18} />
-                                </span>
-                            </button>
-                        </FocusRing>
-
-                        <FocusRing focusRingClass="focus-ring">
-                            <button
-                                type="button"
-                                className={styles.iconBtn}
-                                title={isPlayed ? "Watched" : "Mark played"}
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    e.stopPropagation();
-                                    onTogglePlayed(item);
-                                }}
-                            >
-                                <span
-                                    style={{
-                                        color: isPlayed ? "#4ade80" : undefined,
-                                    }}
-                                >
-                                    <SvgIcon
-                                        svg={IconSvgs.checkmark}
-                                        size={18}
-                                    />
-                                </span>
-                            </button>
-                        </FocusRing>
-
                         <MenuTrigger
                             isOpen={isMoreOpen}
                             onOpenChange={onOpenChange}
@@ -247,6 +198,41 @@ export const MediaCard: FC<MediaCardProps> = ({
                                     className={ActionMenuStyles.menu}
                                     aria-label="More options"
                                 >
+                                    <MenuItem
+                                        className={ActionMenuStyles.item}
+                                        textValue={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                                        onAction={() => onToggleFavorite(item)}
+                                    >
+                                        <span
+                                            className={ActionMenuStyles.icon}
+                                            aria-hidden="true"
+                                            style={{ color: isFavorite ? "#ff4d6d" : undefined }}
+                                        >
+                                            <SvgIcon svg={IconSvgs.heart} size={18} />
+                                        </span>
+                                        <span className={ActionMenuStyles.text}>
+                                            {isFavorite ? "Remove from favorites" : "Add to favorites"}
+                                        </span>
+                                    </MenuItem>
+                                    <MenuItem
+                                        className={ActionMenuStyles.item}
+                                        textValue={isPlayed ? "Mark as unwatched" : "Mark as watched"}
+                                        onAction={() => onTogglePlayed(item)}
+                                    >
+                                        <span
+                                            className={ActionMenuStyles.icon}
+                                            aria-hidden="true"
+                                            style={{ color: isPlayed ? "#4ade80" : undefined }}
+                                        >
+                                            <SvgIcon svg={IconSvgs.checkmark} size={18} />
+                                        </span>
+                                        <span className={ActionMenuStyles.text}>
+                                            {isPlayed ? "Mark as unwatched" : "Mark as watched"}
+                                        </span>
+                                    </MenuItem>
+                                    {commands.length > 0 && (
+                                        <Separator className={ActionMenuStyles.divider} />
+                                    )}
                                     {commands.map((cmd, idx) => {
                                         if (cmd.divider)
                                             return (
