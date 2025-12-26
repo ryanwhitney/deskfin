@@ -16,7 +16,6 @@
     position: relative;
     overflow: hidden;
     cursor: pointer;
-    border-radius: 14px;
     background: $surface-raised;
     border: 1px solid $border-subtle;
     transition: all 200ms ease;
@@ -39,26 +38,28 @@
 
 .thumb {
     width: 100%;
+    aspect-ratio: 2/3;
     position: relative;
     background-color: $surface-menu;
     transition: all 200ms ease;
     overflow: hidden;
-    display: flex;
+}
+
+.thumbLandscape {
+    aspect-ratio: 16/9;
 }
 
 .thumbImg {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
     display: block;
 }
 
 .thumbPlaceholder {
     width: 100%;
-    aspect-ratio: 2/3;
+    height: 100%;
     background: linear-gradient(135deg, #1f1f1f, #2a2a2a);
-}
-
-.thumbLandscape .thumbPlaceholder {
-    aspect-ratio: 16/9;
 }
 
 .countBadge {
@@ -67,16 +68,16 @@
     right: 8px;
     height: 16px;
     border-radius: 999px;
-    background: rgba(0, 0, 0, 0.55);
-    color: #f3f3f3;
-    font-size: 12px;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-size: 11px;
     font-weight: 640;
-    line-height: 1;
+    line-height: 0.85;
     pointer-events: none;
-    backdrop-filter: blur(6px);
-    display: flex;
+    backdrop-filter: blur(10px) saturate(1);
+    display: inline-flex;
     align-items: center;
-    padding: 0 4px;
+    padding: 1px 5px;
 }
 
 .playOverlay {

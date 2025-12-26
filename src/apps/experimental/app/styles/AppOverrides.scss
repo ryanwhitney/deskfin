@@ -21,7 +21,7 @@ $mui-bp-xl: 1536px;
 }
 
 .backgroundContainer, .dialog, .nowPlayingPlaylist, .nowPlayingContextMenu, html{
-    background-color: $app-ackground;
+    background-color: $app-ackground !important;
 }
 
 // Fix the padding of some pages

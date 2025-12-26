@@ -9,12 +9,14 @@
 .image {
     position: relative;
     width: 100%;
+    aspect-ratio: 2/3;
     overflow: hidden;
-    display: flex;
 }
 
 .img {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
     display: block;
 }
 

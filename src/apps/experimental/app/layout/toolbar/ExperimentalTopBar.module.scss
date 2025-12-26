@@ -12,7 +12,7 @@
     padding-left: max(16px, env(safe-area-inset-left));
     padding-right: max(16px, env(safe-area-inset-right));
     background: $surface-topbar;
-    border-bottom: 1px solid $border-subtle;
+    border-bottom: 0.5px solid $border-subtle;
     backdrop-filter: $blur-strong;
 }
 

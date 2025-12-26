@@ -6,6 +6,7 @@ import type { ItemDto } from 'types/base/models/item-dto';
 import { playbackManager } from 'components/playback/playbackmanager';
 
 import { Button as RacButton, Menu, MenuItem, MenuTrigger, Popover, Separator } from 'react-aria-components';
+import { Squircle } from '@squircle-js/react';
 
 import * as itemContextMenu from 'components/itemContextMenu';
 import { ActionMenuStyles } from 'apps/experimental/components/menu/ActionMenu';
@@ -109,7 +110,9 @@ export const MediaCard: FC<MediaCardProps> = ({
     };
 
     return (
-        <div
+        <Squircle
+            cornerRadius={22}
+            cornerSmoothing={1}
             className={[
                 styles.card,
                 variant === 'landscape' ? styles.landscape : styles.portrait,
@@ -234,7 +237,7 @@ export const MediaCard: FC<MediaCardProps> = ({
                     )
                 ) : null}
             </div>
-        </div>
+        </Squircle>
     );
 };
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Squircle } from '@squircle-js/react';
 import styles from './ItemCard.module.scss';
 
 type Classy = { className?: string };
@@ -45,28 +46,34 @@ export function ItemCard({
                     String(title ?? '');
 
     return (
-        <a
-            href={href}
-            className={cx(styles.root, classes?.root, className)}
-            onClick={onClick}
+        <Squircle
+            asChild
+            cornerRadius={16}
+            cornerSmoothing={1}
         >
-            <div
-                className={cx(styles.image, classes?.image)}
-                style={{ backgroundColor: imageUrl ? undefined : imageFallback }}
+            <a
+                href={href}
+                className={cx(styles.root, classes?.root, className)}
+                onClick={onClick}
             >
-                {imageUrl ? (
-                    <img
-                        src={imageUrl}
-                        alt={altText}
-                        className={styles.img}
-                    />
-                ) : null}
-                {badge}
-            </div>
-            <div className={cx(styles.title, classes?.title)}>
-                {title}
-            </div>
-        </a>
+                <div
+                    className={cx(styles.image, classes?.image)}
+                    style={{ backgroundColor: imageUrl ? undefined : imageFallback }}
+                >
+                    {imageUrl ? (
+                        <img
+                            src={imageUrl}
+                            alt={altText}
+                            className={styles.img}
+                        />
+                    ) : null}
+                    {badge}
+                </div>
+                <div className={cx(styles.title, classes?.title)}>
+                    {title}
+                </div>
+            </a>
+        </Squircle>
     );
 }
 
