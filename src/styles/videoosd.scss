@@ -1,5 +1,10 @@
 @use 'mixins' as *;
 
+#videoOsdPage {
+    z-index: 1300;
+    position: relative;
+}
+
 .chapterThumbTextContainer,
 .videoOsdBottom {
     user-select: none;

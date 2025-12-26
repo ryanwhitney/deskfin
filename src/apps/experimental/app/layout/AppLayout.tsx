@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { StrictMode, useCallback, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 
 import AppBody from 'components/AppBody';
@@ -26,19 +26,21 @@ export const Component = () => {
     return (
         <>
             <div style={{ position: 'relative', display: 'flex', height: '100%' }}>
-                <ExperimentalTopBar
-                    isDrawerAvailable={!isMediumScreen && isDrawerAvailable}
-                    isDrawerOpen={isDrawerOpen}
-                    onDrawerButtonClick={onToggleDrawer}
-                />
-
-                {isDrawerAvailable ? (
-                    <AppDrawer
-                        open={isDrawerOpen}
-                        onClose={onToggleDrawer}
-                        onOpen={onToggleDrawer}
+                <StrictMode>
+                    <ExperimentalTopBar
+                        isDrawerAvailable={!isMediumScreen && isDrawerAvailable}
+                        isDrawerOpen={isDrawerOpen}
+                        onDrawerButtonClick={onToggleDrawer}
                     />
-                ) : null}
+
+                    {isDrawerAvailable ? (
+                        <AppDrawer
+                            open={isDrawerOpen}
+                            onClose={onToggleDrawer}
+                            onOpen={onToggleDrawer}
+                        />
+                    ) : null}
+                </StrictMode>
 
                 <main style={{ width: '100%', flexGrow: 1 }}>
                     <AppBody>

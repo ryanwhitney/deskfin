@@ -1,5 +1,5 @@
 import { Action } from 'history';
-import { FunctionComponent, useEffect } from 'react';
+import { FunctionComponent, useEffect, useRef } from 'react';
 import { useLocation, useNavigationType } from 'react-router-dom';
 
 import globalize from 'lib/globalize';
@@ -82,6 +82,8 @@ const ViewManagerPage: FunctionComponent<ViewManagerPageProps> = ({
 }) => {
     const location = useLocation();
     const navigationType = useNavigationType();
+    const loadingPromiseRef = useRef<Promise<void> | null>(null);
+    const lastViewKeyRef = useRef<string>('');
 
     useEffect(() => {
         const loadPage = () => {
@@ -113,7 +115,23 @@ const ViewManagerPage: FunctionComponent<ViewManagerPageProps> = ({
                 });
         };
 
-        loadPage();
+        // Prevent double-loading in React StrictMode by tracking if we've already loaded this view
+        const viewKey = `${controller}:${view}:${location.pathname}:${location.search}`;
+
+        if (loadingPromiseRef.current && lastViewKeyRef.current === viewKey) {
+            return;
+        }
+
+        lastViewKeyRef.current = viewKey;
+        const promise = loadPage();
+        loadingPromiseRef.current = promise;
+
+        // Clear promise when it completes
+        promise?.then(() => {
+            loadingPromiseRef.current = null;
+        }).catch(() => {
+            loadingPromiseRef.current = null;
+        });
     },
     // location.state and navigationType are NOT included as dependencies here since dialogs will update state while the current view stays the same
     // eslint-disable-next-line react-hooks/exhaustive-deps
