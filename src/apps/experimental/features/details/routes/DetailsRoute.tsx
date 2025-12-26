@@ -167,7 +167,7 @@ export default function DetailsPage() {
                             <h1 className={styles.title}>
                                 {item.Name}
                                 {item.ProductionYear && (
-                                    <span style={{ fontWeight: 400, opacity: 0.7, marginLeft: '0.5rem' }}>
+                                    <span style={{ fontWeight: 400, opacity: 0.7, marginLeft: '8px' }}>
                                         {item.ProductionYear}
                                     </span>
                                 )}
@@ -195,7 +195,7 @@ export default function DetailsPage() {
                             )}
 
                             {item.OriginalTitle && item.OriginalTitle !== item.Name && (
-                                <div style={{ color: '#b8b8b8', fontSize: '0.9rem', marginTop: '0.25rem' }}>
+                                <div style={{ color: '#b8b8b8', fontSize: '14px', marginTop: '4px' }}>
                                     {item.OriginalTitle}
                                 </div>
                             )}
@@ -265,7 +265,7 @@ export default function DetailsPage() {
                                 {globalize.tryTranslate?.('Items') ?? 'Items'}
                             </h2>
                             {isBoxSetItemsPending ? null : boxSetItems.length ? (
-                                <div className="itemsContainer vertical-wrap">
+                                <div className={styles.itemsGrid}>
                                     <Cards
                                         items={boxSetItems}
                                         cardOptions={{

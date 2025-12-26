@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useRef } from 'react';
-import Box from '@mui/material/Box';
+import classNames from 'classnames';
 import Guide from 'components/guide/guide';
 import 'material-design-icons-iconfont';
 import 'elements/emby-programcell/emby-programcell';
@@ -11,6 +11,8 @@ import 'components/guide/guide.scss';
 import 'components/guide/programs.scss';
 import 'styles/scrollstyles.scss';
 import 'styles/flexstyles.scss';
+
+import styles from './GuideView.module.scss';
 
 const GuideView: FC = () => {
     const guideInstance = useRef<Guide | null>();
@@ -46,20 +48,12 @@ const GuideView: FC = () => {
         };
     }, [initGuide]);
 
-    return <Box
-        ref={tvGuideContainerRef}
-        className='absolutePageTabContent'
-        sx={{
-            display: 'flex !important',
-            width: 'auto',
-            paddingTop: '0',
-            paddingBottom: '0 !important',
-            top: {
-                xs: '6.9em !important',
-                lg: '4em !important'
-            }
-        }}
-    />;
+    return (
+        <div
+            ref={tvGuideContainerRef}
+            className={classNames('absolutePageTabContent', styles.container)}
+        />
+    );
 };
 
 export default GuideView;

@@ -5,5 +5,4 @@
 export { LibraryViewMenu } from './LibraryViewMenu';
 export { SortMenu } from './SortMenu';
 export { FilterMenu } from './FilterMenu';
-export { Pagination } from './Pagination';
 export { PlayAllButton, ShuffleButton, NewCollectionButton } from './ActionButtons';

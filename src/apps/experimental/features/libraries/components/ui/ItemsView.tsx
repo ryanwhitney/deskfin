@@ -1,6 +1,5 @@
 import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
 import type { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
-import { ItemSortBy } from '@jellyfin/sdk/lib/generated-client/models/item-sort-by';
 import React, { type FC, useCallback } from 'react';
 
 import { useLocalStorage } from 'hooks/useLocalStorage';
@@ -18,27 +17,22 @@ import type { ItemDto } from 'types/base/models/item-dto';
 import { LibraryViewMenu } from 'apps/experimental/components/library/LibraryViewMenu';
 import { SortMenu } from 'apps/experimental/components/library/SortMenu';
 import { FilterMenu } from 'apps/experimental/components/library/FilterMenu';
-import { Pagination } from 'apps/experimental/components/library/Pagination';
 import { PlayAllButton, ShuffleButton, NewCollectionButton } from 'apps/experimental/components/library/ActionButtons';
 import styles from 'apps/experimental/components/library/LibraryToolbar.module.scss';
 
 import { ItemGrid } from 'apps/experimental/components/media/ItemGrid';
-
-import AlphabetPicker from './AlphabetPicker';
 
 interface ItemsViewProps {
     viewType: LibraryTab;
     parentId: ParentId;
     itemType: BaseItemKind[];
     collectionType?: CollectionType;
-    isPaginationEnabled?: boolean;
     isBtnPlayAllEnabled?: boolean;
     isBtnQueueEnabled?: boolean;
     isBtnShuffleEnabled?: boolean;
     isBtnSortEnabled?: boolean;
     isBtnFilterEnabled?: boolean;
     isBtnNewCollectionEnabled?: boolean;
-    isAlphabetPickerEnabled?: boolean;
     noItemsMessage: string;
 }
 
@@ -46,13 +40,11 @@ const ItemsView: FC<ItemsViewProps> = ({
     viewType,
     parentId,
     collectionType,
-    isPaginationEnabled = true,
     isBtnPlayAllEnabled = false,
     isBtnShuffleEnabled = false,
     isBtnSortEnabled = true,
     isBtnFilterEnabled = true,
     isBtnNewCollectionEnabled = false,
-    isAlphabetPickerEnabled = true,
     itemType,
     noItemsMessage
 }) => {
@@ -65,7 +57,6 @@ const ItemsView: FC<ItemsViewProps> = ({
     const {
         isPending,
         data: itemsResult,
-        isPlaceholderData,
         refetch
     } = useGetItemsViewByType(
         viewType,
@@ -97,7 +88,6 @@ const ItemsView: FC<ItemsViewProps> = ({
     const hasFilters = Object.values(libraryViewSettings.Filters ?? {}).some(
         (filter) => !!filter
     );
-    const hasSortName = libraryViewSettings.SortBy.includes(ItemSortBy.SortName);
 
     // Determine card variant based on content type
     const getCardVariant = () => {
@@ -165,27 +155,8 @@ const ItemsView: FC<ItemsViewProps> = ({
                         )}
 
                     </div>
-
-                    <div className={styles.pagination}>
-                        {!isPending && isPaginationEnabled && (
-                            <Pagination
-                                totalRecordCount={totalRecordCount}
-                                libraryViewSettings={libraryViewSettings}
-                                setLibraryViewSettings={setLibraryViewSettings}
-                                isPlaceholderData={isPlaceholderData}
-                            />
-                        )}
-                    </div>
                 </div>
             </div>
-
-            {/* Alphabet picker */}
-            {isAlphabetPickerEnabled && hasSortName && (
-                <AlphabetPicker
-                    libraryViewSettings={libraryViewSettings}
-                    setLibraryViewSettings={setLibraryViewSettings}
-                />
-            )}
 
             {/* Content */}
             {isPending ? (
@@ -209,18 +180,6 @@ const ItemsView: FC<ItemsViewProps> = ({
                         />
                     )}
                 </ItemsContainer>
-            )}
-
-            {/* Bottom pagination */}
-            {!isPending && isPaginationEnabled && totalRecordCount > 100 && (
-                <div className="padded-left padded-right" style={{ display: 'flex', justifyContent: 'flex-end', padding: '16px' }}>
-                    <Pagination
-                        totalRecordCount={totalRecordCount}
-                        libraryViewSettings={libraryViewSettings}
-                        setLibraryViewSettings={setLibraryViewSettings}
-                        isPlaceholderData={isPlaceholderData}
-                    />
-                </div>
             )}
         </div>
     );

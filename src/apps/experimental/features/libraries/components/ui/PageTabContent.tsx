@@ -123,14 +123,12 @@ const PageTabContent: FC<PageTabContentProps> = ({ parentId, currentTab }) => {
             viewType={currentTab.viewType}
             parentId={parentId}
             collectionType={currentTab.collectionType}
-            isPaginationEnabled={currentTab.isPaginationEnabled}
             isBtnPlayAllEnabled={currentTab.isBtnPlayAllEnabled}
             isBtnQueueEnabled={currentTab.isBtnQueueEnabled}
             isBtnShuffleEnabled={currentTab.isBtnShuffleEnabled}
             isBtnNewCollectionEnabled={currentTab.isBtnNewCollectionEnabled}
             isBtnFilterEnabled={currentTab.isBtnFilterEnabled}
             isBtnSortEnabled={currentTab.isBtnSortEnabled}
-            isAlphabetPickerEnabled={currentTab.isAlphabetPickerEnabled}
             itemType={currentTab.itemType || []}
             noItemsMessage={
                 currentTab.noItemsMessage || 'MessageNoItemsAvailable'

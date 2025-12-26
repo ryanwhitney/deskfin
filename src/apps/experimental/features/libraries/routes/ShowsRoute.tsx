@@ -14,7 +14,6 @@ const episodesTabContent: LibraryTabContent = {
     viewType: LibraryTab.Episodes,
     itemType: [BaseItemKind.Episode],
     collectionType: CollectionType.Tvshows,
-    isAlphabetPickerEnabled: false,
     noItemsMessage: 'MessageNoEpisodesFound'
 };
 
@@ -30,8 +29,7 @@ const networksTabContent: LibraryTabContent = {
     itemType: [BaseItemKind.Series],
     isBtnFilterEnabled: false,
     isBtnGridListEnabled: false,
-    isBtnSortEnabled: false,
-    isAlphabetPickerEnabled: false
+    isBtnSortEnabled: false
 };
 
 const upcomingTabContent: LibraryTabContent = {

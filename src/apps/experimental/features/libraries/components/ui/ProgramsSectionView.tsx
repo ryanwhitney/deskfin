@@ -1,7 +1,6 @@
 import React, { type FC } from 'react';
 
 import NoItemsMessage from 'components/common/NoItemsMessage';
-import SectionContainer from 'components/common/SectionContainer';
 import Loading from 'components/loading/LoadingComponent';
 import { appRouter } from 'components/router/appRouter';
 import { ItemAction } from 'constants/itemAction';
@@ -11,6 +10,8 @@ import globalize from 'lib/globalize';
 import type { ParentId } from 'types/library';
 import type { Section, SectionType } from 'types/sections';
 import { CardShape } from 'utils/card';
+
+import { ProgramsSection } from 'apps/experimental/components/media/ProgramsSection';
 
 interface ProgramsSectionViewProps {
     parentId: ParentId;
@@ -54,17 +55,15 @@ const ProgramsSectionView: FC<ProgramsSectionViewProps> = ({
     return (
         <>
             {sectionsWithItems?.map(({ section, items }) => (
-                <SectionContainer
+                <ProgramsSection
                     key={section.type}
-                    sectionHeaderProps={{
-                        title: globalize.translate(section.name),
-                        url: getRouteUrl(section)
-                    }}
+                    title={globalize.translate(section.name)}
+                    titleHref={getRouteUrl(section)}
+                    items={items}
                     itemsContainerProps={{
                         queryKey: ['ProgramSectionWithItems'],
                         reloadItems: refetch
                     }}
-                    items={items}
                     cardOptions={{
                         ...section.cardOptions,
                         queryKey: ['ProgramSectionWithItems'],
@@ -74,16 +73,14 @@ const ProgramsSectionView: FC<ProgramsSectionViewProps> = ({
             ))}
 
             {upcomingRecordings?.map((group) => (
-                <SectionContainer
+                <ProgramsSection
                     key={group.name}
-                    sectionHeaderProps={{
-                        title: group.name
-                    }}
+                    title={group.name}
+                    items={group.timerInfo}
                     itemsContainerProps={{
                         queryKey: ['Timers'],
                         reloadItems: refetch
                     }}
-                    items={group.timerInfo}
                     cardOptions={{
                         queryKey: ['Timers'],
                         shape: CardShape.BackdropOverflow,

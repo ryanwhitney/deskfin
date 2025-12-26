@@ -1,11 +1,12 @@
-import Box from '@mui/material/Box/Box';
-import Fade from '@mui/material/Fade/Fade';
+import classNames from 'classnames';
 import React, { useRef, type FC, useEffect, useState } from 'react';
 
 import AppToolbar from 'components/toolbar/AppToolbar';
 import ViewManagerPage from 'components/viewManager/ViewManagerPage';
 import { EventType } from 'constants/eventType';
 import Events, { type Event } from 'utils/events';
+
+import styles from './VideoRoute.module.scss';
 
 /**
  * Video player page component that renders mui controls for the top controls and the legacy view for everything else.
@@ -30,25 +31,14 @@ const VideoPage: FC = () => {
 
     return (
         <>
-            <Fade
-                in={isVisible}
-                easing='fade-out'
-            >
-                <Box sx={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    color: 'white'
-                }}>
-                    <AppToolbar
-                        isDrawerAvailable={false}
-                        isDrawerOpen={false}
-                        isBackButtonAvailable
-                        isUserMenuAvailable={false}
-                    />
-                </Box>
-            </Fade>
+            <div className={classNames(styles.toolbar, { [styles.toolbarHidden]: !isVisible })}>
+                <AppToolbar
+                    isDrawerAvailable={false}
+                    isDrawerOpen={false}
+                    isBackButtonAvailable
+                    isUserMenuAvailable={false}
+                />
+            </div>
 
             <ViewManagerPage
                 controller='playback/video/index'

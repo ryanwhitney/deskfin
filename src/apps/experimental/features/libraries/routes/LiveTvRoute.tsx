@@ -10,11 +10,9 @@ import { ProgramSectionsView, RecordingsSectionsView, ScheduleSectionsView } fro
 
 const seriestimersTabContent: LibraryTabContent = {
     viewType: LibraryTab.SeriesTimers,
-    isPaginationEnabled: false,
     isBtnFilterEnabled: false,
     isBtnGridListEnabled: false,
-    isBtnSortEnabled: false,
-    isAlphabetPickerEnabled: false
+    isBtnSortEnabled: false
 };
 
 const scheduleTabContent: LibraryTabContent = {
@@ -30,8 +28,7 @@ const recordingsTabContent: LibraryTabContent = {
 const channelsTabContent: LibraryTabContent = {
     viewType: LibraryTab.Channels,
     isBtnGridListEnabled: false,
-    isBtnSortEnabled: false,
-    isAlphabetPickerEnabled: false
+    isBtnSortEnabled: false
 };
 
 const programsTabContent: LibraryTabContent = {

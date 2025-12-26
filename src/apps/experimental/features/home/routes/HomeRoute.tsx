@@ -211,7 +211,7 @@ const Home: FC = () => {
         };
     }, [isFavoritesTab, refreshAll, refreshFavorites]);
 
-    useTitle(formatLibraryTitle('Home', isFavoritesTab ? 'Favorites' : undefined));
+    useTitle(isFavoritesTab ? formatLibraryTitle('Favorites') : "desk");
 
     const sectionOrder = useMemo(() => getAllSectionsToShow(10), []);
 

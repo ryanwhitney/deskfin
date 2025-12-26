@@ -1,5 +1,56 @@
 // Experimental theme tokens (keep minimal; add only when used).
 
+// ============================================================================
+// CORE THEME COLORS - Edit these to change the app's color scheme
+// ============================================================================
+
+// Primary accent color (used for focus rings, active states, links)
+$accent-color: #3b82f6;
+$accent-hover: rgba(59, 130, 246, 0.2);
+
+// App background - the main page background
+$app-background: #070512;
+$app-background-alpha: 0.86;
+
+// Surface colors - cards, menus, raised elements
+$surface-base: #101010;
+$surface-elevated: #1c1c1c;
+
+// Topbar/navbar
+$topbar-bg: rgba(18, 18, 18, 0.86);
+$topbar-border: rgba(255, 255, 255, 0.08);
+
+// ============================================================================
+// DERIVED COLORS - These use the core colors above
+// ============================================================================
+
+// Surfaces
+$app-ackground: rgba($app-background, $app-background-alpha);
+$surface-topbar: $topbar-bg;
+$surface-menu: $surface-elevated;
+$surface-raised: rgba(255, 255, 255, 0.04);
+
+// Borders
+$border-subtle: rgba(255, 255, 255, 0.08);
+$border-muted: rgba(255, 255, 255, 0.10);
+
+// Text
+$text-muted: rgba(255, 255, 255, 0.65);
+
+// Interaction states
+$hover-bg: rgba(255, 255, 255, 0.06);
+$hover-bg-strong: rgba(255, 255, 255, 0.08);
+$hover-bg-stronger: rgba(255, 255, 255, 0.12);
+$focus-ring: rgba($accent-color, 0.75);
+
+// Controls (buttons, inputs)
+$border-control: rgba(255, 255, 255, 0.12);
+$border-control-hover: rgba(255, 255, 255, 0.18);
+
+// ============================================================================
+// LAYOUT
+// ============================================================================
+
 // Spacing (8px scale)
 $space-1: 4px;
 $space-2: 8px;
@@ -20,27 +71,9 @@ $topbar-height: 52px;
 $toolbar-link-height: 34px;
 $toolbar-icon-size: 38px;
 
-// Colors
-$app-ackground: rgba(7, 5, 18, 0.86);
-$surface-topbar: rgba(18, 18, 18, 0.86);
-$surface-menu: #1c1c1c;
-$surface-raised: rgba(255, 255, 255, 0.04);
-$border-subtle: rgba(255, 255, 255, 0.08);
-$border-muted: rgba(255, 255, 255, 0.10);
-$text-muted: rgba(255, 255, 255, 0.65);
+// ============================================================================
+// EFFECTS
+// ============================================================================
 
-// Interaction
-$hover-bg: rgba(255, 255, 255, 0.06);
-$hover-bg-strong: rgba(255, 255, 255, 0.08);
-$hover-bg-stronger: rgba(255, 255, 255, 0.12);
-$focus-ring: rgba(59, 130, 246, 0.75);
-
-// Controls (used by shared button primitives)
-$border-control: rgba(255, 255, 255, 0.12);
-$border-control-hover: rgba(255, 255, 255, 0.18);
-
-// Effects
 $blur-strong: blur(14px);
 $menu-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
-
-

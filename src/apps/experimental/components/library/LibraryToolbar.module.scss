@@ -32,14 +32,6 @@
     gap: 10px;
 }
 
-.pagination {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
-    gap: $space-2;
-    margin-left: auto;
-}
-
 // Tab bar styles
 .tabs {
     display: flex;
@@ -290,47 +282,6 @@
     background: transparent;
     cursor: pointer;
     accent-color: #3b82f6;
-}
-
-// Pagination styles
-.pagination {
-    display: flex;
-    align-items: center;
-    gap: $space-2;
-}
-
-.paginationInfo {
-    font-size: 13px;
-    color: $text-muted;
-    white-space: nowrap;
-}
-
-.paginationButton {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: $radius-sm;
-    background: transparent;
-    border: 1px solid $border-control;
-    color: inherit;
-    cursor: pointer;
-    transition: background 120ms ease;
-}
-
-.paginationButton:hover:not(:disabled) {
-    background: $hover-bg;
-}
-
-.paginationButton:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-.paginationButton:focus-visible {
-    outline: 2px solid $focus-ring;
-    outline-offset: 2px;
 }
 
 // Card grid

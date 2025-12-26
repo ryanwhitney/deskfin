@@ -251,6 +251,12 @@
     padding-bottom: 4px;
 }
 
+.itemsGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
 .loading,
 .error {
     color: #b8b8b8;

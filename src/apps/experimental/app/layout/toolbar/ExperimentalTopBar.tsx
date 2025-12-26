@@ -1,4 +1,4 @@
-import React, { type FC, useMemo } from 'react';
+import React, { type FC } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 import SvgIcon from 'components/SvgIcon';
@@ -32,6 +32,9 @@ const MenuIcon = () => (
     </svg>
 );
 
+const TITLE = 'desk';
+const SUBTITLE = '';
+
 export const ExperimentalTopBar: FC<ExperimentalTopBarProps> = ({
     isDrawerAvailable,
     isDrawerOpen,
@@ -43,8 +46,6 @@ export const ExperimentalTopBar: FC<ExperimentalTopBarProps> = ({
     if (location.pathname === '/video') return null;
 
     const isPublicPath = PUBLIC_PATHS.includes(location.pathname);
-    const title = useMemo(() => 'desk', []);
-    const subtitle = useMemo(() => '', []);
 
     return (
         <header className={styles.root}>
@@ -64,8 +65,8 @@ export const ExperimentalTopBar: FC<ExperimentalTopBarProps> = ({
                         <SvgIcon svg={IconSvgs.macMini} size={24} />
                     </span>
                     <span className={styles.brandText}>
-                        <span className={styles.brandTitle}>{title}</span>
-                        {subtitle ? <span className={styles.brandSub}>{subtitle}</span> : null}
+                        <span className={styles.brandTitle}>{TITLE}</span>
+                        {SUBTITLE ? <span className={styles.brandSub}>{SUBTITLE}</span> : null}
                     </span>
                 </Link>
             </div>

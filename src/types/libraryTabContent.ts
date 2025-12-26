@@ -16,7 +16,6 @@ export interface LibraryTabContent {
     itemType?: BaseItemKind[];
     collectionType?: CollectionType;
     sectionsView?: SectionsView;
-    isPaginationEnabled?: boolean;
     isBtnPlayAllEnabled?: boolean;
     isBtnQueueEnabled?: boolean;
     isBtnShuffleEnabled?: boolean;
@@ -24,7 +23,6 @@ export interface LibraryTabContent {
     isBtnFilterEnabled?: boolean;
     isBtnNewCollectionEnabled?: boolean;
     isBtnGridListEnabled?: boolean;
-    isAlphabetPickerEnabled?: boolean;
     noItemsMessage?: string;
 }
 

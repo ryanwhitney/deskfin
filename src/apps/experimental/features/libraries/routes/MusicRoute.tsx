@@ -35,7 +35,6 @@ const playlistsTabContent: LibraryTabContent = {
     isBtnFilterEnabled: false,
     isBtnGridListEnabled: false,
     isBtnSortEnabled: false,
-    isAlphabetPickerEnabled: false,
     itemType: [BaseItemKind.Playlist]
 };
 
@@ -43,7 +42,6 @@ const songsTabContent: LibraryTabContent = {
     viewType: LibraryTab.Songs,
     isBtnShuffleEnabled: true,
     isBtnGridListEnabled: false,
-    isAlphabetPickerEnabled: false,
     itemType: [BaseItemKind.Audio]
 };
 

@@ -149,6 +149,10 @@ class MediaSessionSubscriber extends PlaybackSubscriber {
     }
 
     onPlayerChange() {
+        // If player is null/undefined, reset the media session instead of trying to get state
+        if (!this.player) {
+            return resetMediaSession();
+        }
         this.onMediaSessionUpdate({ type: 'timeupdate' });
     }
 

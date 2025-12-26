@@ -1,0 +1,13 @@
+@use '../../../../styles/theme' as *;
+
+.container {
+    display: flex !important;
+    width: auto;
+    padding-top: 0;
+    padding-bottom: 0 !important;
+    top: 110px !important; // ~6.9em for mobile
+
+    @media (min-width: 1200px) {
+        top: 64px !important; // ~4em for desktop
+    }
+}
