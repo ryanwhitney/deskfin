@@ -65,6 +65,7 @@ const Home: FC = () => {
     const [favoriteEpisodes, setFavoriteEpisodes] = useState<ItemDto[]>([]);
     const [favoriteCollections, setFavoriteCollections] = useState<ItemDto[]>([]);
 
+
     const refreshAll = useCallback(async (options?: { priorityOnly?: boolean }) => {
         if (!apiClient || !user?.Id) return;
         const priorityOnly = !!options?.priorityOnly;

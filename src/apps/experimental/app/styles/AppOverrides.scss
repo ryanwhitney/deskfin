@@ -1,4 +1,13 @@
-@import '/src/apps/experimental/styles/theme.scss';
+@import "/src/apps/experimental/styles/theme.scss";
+
+html,
+body {
+    font-synthesis: none;
+    quotes: "“" "”";
+    font-size: 17px;
+    -webkit-font-smoothing: antialiased;
+    interpolate-size: allow-keywords;
+}
 
 // Default MUI breakpoints
 // https://mui.com/material-ui/customization/breakpoints/#default-breakpoints
@@ -20,7 +29,11 @@ $mui-bp-xl: 1536px;
     }
 }
 
-.backgroundContainer, .dialog, .nowPlayingPlaylist, .nowPlayingContextMenu, html{
+.backgroundContainer,
+.dialog,
+.nowPlayingPlaylist,
+.nowPlayingContextMenu,
+html {
     background-color: $app-ackground !important;
 }
 
@@ -44,7 +57,12 @@ $mui-bp-xl: 1536px;
             content: "";
             height: 100%;
             width: 100%;
-            background: linear-gradient(180deg, rgba(32, 32, 32, 0.6) 0%, rgba(32, 32, 32, 0.2) 64px, rgba(0, 0, 0, 0) 50%);
+            background: linear-gradient(
+                180deg,
+                rgba(32, 32, 32, 0.6) 0%,
+                rgba(32, 32, 32, 0.2) 64px,
+                rgba(0, 0, 0, 0) 50%
+            );
         }
     }
 }

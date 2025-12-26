@@ -24,11 +24,6 @@
     border-color: $border-control-hover;
 }
 
-.button:focus-visible {
-    outline: 2px solid $focus-ring;
-    outline-offset: 2px;
-}
-
 .button:active {
     transform: translateY(1px);
 }
@@ -51,11 +46,6 @@
 .iconButton:hover {
     background: $hover-bg-stronger;
     border-color: $border-control-hover;
-}
-
-.iconButton:focus-visible {
-    outline: 2px solid $focus-ring;
-    outline-offset: 2px;
 }
 
 .iconButton:active {

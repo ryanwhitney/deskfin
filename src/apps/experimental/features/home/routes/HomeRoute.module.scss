@@ -1,4 +1,4 @@
-@use '../../../styles/theme' as *;
+@use "../../../styles/theme" as *;
 
 .page {
     display: flex;
@@ -9,23 +9,24 @@
 }
 
 .sectionTitle {
-    margin: 0 0 10px;
-    font-size: 18px;
-    font-weight: 640;
+    margin-bottom: 16px;
+    font-size: 20px;
+    font-weight: 600;
     font-variation-settings: "wdth" 105;
     color: #f5f5f5;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .row {
     display: flex;
-    gap: 12px;
+    gap: 20px;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
+    height: calc-size(min-content, size + 10px);
 }
 
 .row::-webkit-scrollbar {
-    height: 8px;
+    height: px;
 }
 
 .row::-webkit-scrollbar-thumb {
@@ -49,7 +50,7 @@
 }
 
 .pill:hover {
-    border-color: rgba(255, 255, 255, 0.20);
+    border-color: rgba(255, 255, 255, 0.2);
 }
 
 .loading {

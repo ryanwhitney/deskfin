@@ -1,21 +1,29 @@
-import React, { type FC, useMemo, useState } from 'react';
+import React, { type FC, useMemo, useState } from "react";
+import { Squircle } from "@squircle-js/react";
 
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs, getLegacyCommandIcon } from 'assets/icons';
-import type { ItemDto } from 'types/base/models/item-dto';
-import { playbackManager } from 'components/playback/playbackmanager';
+import SvgIcon from "components/SvgIcon";
+import { IconSvgs, getLegacyCommandIcon } from "assets/icons";
+import type { ItemDto } from "types/base/models/item-dto";
+import { playbackManager } from "components/playback/playbackmanager";
 
-import { Button as RacButton, Menu, MenuItem, MenuTrigger, Popover, Separator } from 'react-aria-components';
-import { Squircle } from '@squircle-js/react';
+import {
+    Button as RacButton,
+    Menu,
+    MenuItem,
+    MenuTrigger,
+    Popover,
+    Separator,
+} from "react-aria-components";
+import { FocusRing } from "@react-aria/focus";
 
-import * as itemContextMenu from 'components/itemContextMenu';
-import { ActionMenuStyles } from 'apps/experimental/components/menu/ActionMenu';
+import * as itemContextMenu from "components/itemContextMenu";
+import { ActionMenuStyles } from "apps/experimental/components/menu/ActionMenu";
 
-import styles from './MediaCard.module.scss';
+import styles from "./MediaCard.module.scss";
 
 type Command = { name?: string; id?: string; icon?: string; divider?: boolean };
 
-export type MediaCardVariant = 'portrait' | 'landscape';
+export type MediaCardVariant = "portrait" | "landscape";
 
 export const MediaCardStyles = styles;
 
@@ -39,7 +47,7 @@ export type MediaCardProps = {
 export const MediaCard: FC<MediaCardProps> = ({
     item,
     user,
-    variant = 'portrait',
+    variant = "portrait",
     imageUrl,
     overlayCount,
     progressPct = 0,
@@ -50,10 +58,10 @@ export const MediaCard: FC<MediaCardProps> = ({
     isRovingFocused = false,
     onToggleFavorite,
     onTogglePlayed,
-    onAfterAction
+    onAfterAction,
 }) => {
-    const [ isMoreOpen, setIsMoreOpen ] = useState(false);
-    const [ isFocusWithin, setIsFocusWithin ] = useState(false);
+    const [isMoreOpen, setIsMoreOpen] = useState(false);
+    const [isFocusWithin, setIsFocusWithin] = useState(false);
     const isActive = isRovingFocused || isFocusWithin || isMoreOpen;
 
     const isFavorite = !!item.UserData?.IsFavorite;
@@ -69,55 +77,65 @@ export const MediaCard: FC<MediaCardProps> = ({
         e.preventDefault();
         e.stopPropagation();
         void playbackManager.play({
-            items: [ item ],
-            startPositionTicks: item.UserData?.PlaybackPositionTicks || 0
+            items: [item],
+            startPositionTicks: item.UserData?.PlaybackPositionTicks || 0,
         });
     };
 
-    const [ commands, setCommands ] = useState<Command[]>([]);
-    const menuOptions = useMemo(() => ({
-        item,
-        user,
-        play: true,
-        queue: true,
-        shuffle: true,
-        instantMix: true,
-        playlist: true,
-        edit: true,
-        editImages: true,
-        editSubtitles: true,
-        deleteItem: true,
-        positionTo: null
-    }), [ item, user ]);
+    const [commands, setCommands] = useState<Command[]>([]);
+    const menuOptions = useMemo(
+        () => ({
+            item,
+            user,
+            play: true,
+            queue: true,
+            shuffle: true,
+            instantMix: true,
+            playlist: true,
+            edit: true,
+            editImages: true,
+            editSubtitles: true,
+            deleteItem: true,
+            positionTo: null,
+        }),
+        [item, user]
+    );
 
     // Load on first open.
     const onOpenChange = (open: boolean) => {
         setIsMoreOpen(open);
         if (open && !commands.length) {
-            void itemContextMenu.getCommands(menuOptions).then((cmds) => setCommands(cmds as Command[])).catch(() => setCommands([]));
+            void itemContextMenu
+                .getCommands(menuOptions)
+                .then((cmds) => setCommands(cmds as Command[]))
+                .catch(() => setCommands([]));
         }
     };
 
     const onCommand = async (id: string) => {
         try {
-            const result = await itemContextMenu.executeCommand(item, id, menuOptions);
+            const result = await itemContextMenu.executeCommand(
+                item,
+                id,
+                menuOptions
+            );
             if (result?.updated || result?.deleted) {
                 onAfterAction();
             }
         } catch (e) {
-            console.error('[MediaCard] command failed', id, e);
+            console.error("[MediaCard] command failed", id, e);
         }
     };
 
     return (
-        <Squircle
-            cornerRadius={22}
-            cornerSmoothing={1}
+        <div
             className={[
                 styles.card,
-                variant === 'landscape' ? styles.landscape : styles.portrait,
-                isActive ? styles.active : ''
-            ].filter(Boolean).join(' ')}
+                variant === "landscape" ? styles.landscape : styles.portrait,
+                isActive ? styles.active : "",
+            ]
+                .filter(Boolean)
+                .join(" ")}
             onClick={onOpenDetails}
             onFocusCapture={() => setIsFocusWithin(true)}
             onBlurCapture={(e) => {
@@ -127,8 +145,19 @@ export const MediaCard: FC<MediaCardProps> = ({
                 }
             }}
         >
-            <div className={styles.thumbWrap}>
-                <div className={[ styles.thumb, variant === 'landscape' ? styles.thumbLandscape : '' ].filter(Boolean).join(' ')}>
+            <Squircle
+                cornerRadius={14}
+                cornerSmoothing={1}
+                className={styles.thumbWrap}
+            >
+                <div
+                    className={[
+                        styles.thumb,
+                        variant === "landscape" ? styles.thumbLandscape : "",
+                    ]
+                        .filter(Boolean)
+                        .join(" ")}
+                >
                     {imageUrl ? (
                         <img
                             src={imageUrl}
@@ -139,61 +168,133 @@ export const MediaCard: FC<MediaCardProps> = ({
                         <div className={styles.thumbPlaceholder} />
                     )}
 
-                    {typeof overlayCount === 'number' ? (
-                        <div className={styles.countBadge} aria-hidden="true">{overlayCount}</div>
+                    {typeof overlayCount === "number" ? (
+                        <div className={styles.countBadge} aria-hidden="true">
+                            {overlayCount}
+                        </div>
                     ) : null}
 
-                    <div className={styles.actions} onClick={(e) => e.stopPropagation()}>
-                        <button
-                            type="button"
-                            className={styles.iconBtn}
-                            tabIndex={isActive ? 0 : -1}
-                            title={isFavorite ? 'Favorite' : 'Add to favorites'}
-                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onToggleFavorite(item); }}
-                        >
-                            <span style={{ color: isFavorite ? '#ff4d6d' : undefined }}>
-                                <SvgIcon svg={IconSvgs.heart} size={18} />
-                            </span>
-                        </button>
-
-                        <button
-                            type="button"
-                            className={styles.iconBtn}
-                            tabIndex={isActive ? 0 : -1}
-                            title={isPlayed ? 'Watched' : 'Mark played'}
-                            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onTogglePlayed(item); }}
-                        >
-                            <span style={{ color: isPlayed ? '#4ade80' : undefined }}>
-                                <SvgIcon svg={IconSvgs.checkmark} size={18} />
-                            </span>
-                        </button>
-
-                        <MenuTrigger isOpen={isMoreOpen} onOpenChange={onOpenChange}>
-                            <RacButton
+                    <div
+                        className={styles.actions}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <FocusRing focusRingClass="focus-ring">
+                            <button
+                                type="button"
                                 className={styles.iconBtn}
-                                aria-label="More"
-                                excludeFromTabOrder={!isActive}
+                                title={
+                                    isFavorite ? "Favorite" : "Add to favorites"
+                                }
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    onToggleFavorite(item);
+                                }}
                             >
-                                <SvgIcon svg={IconSvgs.ellipsis} size={18} />
-                            </RacButton>
+                                <span
+                                    style={{
+                                        color: isFavorite
+                                            ? "#ff4d6d"
+                                            : undefined,
+                                    }}
+                                >
+                                    <SvgIcon svg={IconSvgs.heart} size={18} />
+                                </span>
+                            </button>
+                        </FocusRing>
+
+                        <FocusRing focusRingClass="focus-ring">
+                            <button
+                                type="button"
+                                className={styles.iconBtn}
+                                title={isPlayed ? "Watched" : "Mark played"}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    onTogglePlayed(item);
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        color: isPlayed ? "#4ade80" : undefined,
+                                    }}
+                                >
+                                    <SvgIcon
+                                        svg={IconSvgs.checkmark}
+                                        size={18}
+                                    />
+                                </span>
+                            </button>
+                        </FocusRing>
+
+                        <MenuTrigger
+                            isOpen={isMoreOpen}
+                            onOpenChange={onOpenChange}
+                        >
+                            <FocusRing focusRingClass="focus-ring">
+                                <RacButton
+                                    className={styles.iconBtn}
+                                    aria-label="More"
+                                >
+                                    <SvgIcon
+                                        svg={IconSvgs.ellipsis}
+                                        size={18}
+                                    />
+                                </RacButton>
+                            </FocusRing>
                             <Popover className={ActionMenuStyles.popover}>
-                                <Menu className={ActionMenuStyles.menu} aria-label="More options">
+                                <Menu
+                                    className={ActionMenuStyles.menu}
+                                    aria-label="More options"
+                                >
                                     {commands.map((cmd, idx) => {
-                                        if (cmd.divider) return <Separator key={`div-${idx}`} className={ActionMenuStyles.divider} />;
+                                        if (cmd.divider)
+                                            return (
+                                                <Separator
+                                                    key={`div-${idx}`}
+                                                    className={
+                                                        ActionMenuStyles.divider
+                                                    }
+                                                />
+                                            );
                                         if (!cmd.id) return null;
                                         return (
                                             <MenuItem
                                                 key={cmd.id}
-                                                className={ActionMenuStyles.item}
+                                                className={
+                                                    ActionMenuStyles.item
+                                                }
                                                 textValue={cmd.name ?? cmd.id}
-                                                onAction={() => { void onCommand(cmd.id!); }}
+                                                onAction={() => {
+                                                    void onCommand(cmd.id!);
+                                                }}
                                             >
-                                                <span className={ActionMenuStyles.icon} aria-hidden="true">
-                                                    {getLegacyCommandIcon(cmd.icon) && (
-                                                        <SvgIcon svg={getLegacyCommandIcon(cmd.icon)!} size={18} />
+                                                <span
+                                                    className={
+                                                        ActionMenuStyles.icon
+                                                    }
+                                                    aria-hidden="true"
+                                                >
+                                                    {getLegacyCommandIcon(
+                                                        cmd.icon
+                                                    ) && (
+                                                        <SvgIcon
+                                                            svg={
+                                                                getLegacyCommandIcon(
+                                                                    cmd.icon
+                                                                )!
+                                                            }
+                                                            size={18}
+                                                        />
                                                     )}
                                                 </span>
-                                                <span className={ActionMenuStyles.text}>{cmd.name ?? cmd.id}</span>
+                                                <span
+                                                    className={
+                                                        ActionMenuStyles.text
+                                                    }
+                                                >
+                                                    {cmd.name ?? cmd.id}
+                                                </span>
                                             </MenuItem>
                                         );
                                     })}
@@ -204,41 +305,55 @@ export const MediaCard: FC<MediaCardProps> = ({
                 </div>
 
                 {playbackManager.canPlay(item) ? (
-                    <button
-                        type="button"
-                        className={styles.playOverlay}
-                        aria-label={`Play ${title}`}
-                        title={`Play ${title}`}
-                        tabIndex={isActive ? 0 : -1}
-                        onClick={onPlay}
-                    >
-                        <SvgIcon svg={IconSvgs.play} size={18} />
-                    </button>
+                    <FocusRing focusRingClass="focus-ring">
+                        <button
+                            type="button"
+                            className={styles.playOverlay}
+                            aria-label={`Play ${title}`}
+                            title={`Play ${title}`}
+                            onClick={onPlay}
+                        >
+                            <SvgIcon svg={IconSvgs.play} size={18} />
+                        </button>
+                    </FocusRing>
                 ) : null}
-            </div>
+            </Squircle>
 
             {progressPct > 0 ? (
                 <div className={styles.progress}>
-                    <div className={styles.progressBar} style={{ width: `${progressPct}%` }} />
+                    <div
+                        className={styles.progressBar}
+                        style={{ width: `${progressPct}%` }}
+                    />
                 </div>
             ) : null}
 
             <div className={styles.meta}>
-                <a className={styles.title} href={titleHref} tabIndex={isActive ? 0 : -1} onClick={(e) => e.stopPropagation()}>
-                    {title}
-                </a>
+                <FocusRing focusRingClass="focus-ring">
+                    <a
+                        className={styles.title}
+                        href={titleHref}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {title}
+                    </a>
+                </FocusRing>
                 {subtitle ? (
                     subtitleHref ? (
-                        <a className={styles.subTitle} href={subtitleHref} tabIndex={isActive ? 0 : -1} onClick={(e) => e.stopPropagation()}>
-                            {subtitle}
-                        </a>
+                        <FocusRing focusRingClass="focus-ring">
+                            <a
+                                className={styles.subTitle}
+                                href={subtitleHref}
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                {subtitle}
+                            </a>
+                        </FocusRing>
                     ) : (
                         <div className={styles.subTitle}>{subtitle}</div>
                     )
                 ) : null}
             </div>
-        </Squircle>
+        </div>
     );
 };
-
-

@@ -1,5 +1,6 @@
 import React, { type FC } from 'react';
 import { Link as RacLink, type LinkProps as RacLinkProps } from 'react-aria-components';
+import { FocusRing } from '@react-aria/focus';
 
 import styles from './ToolbarLink.module.scss';
 
@@ -16,14 +17,16 @@ export const ToolbarAnchor: FC<ToolbarAnchorProps> = ({
     ...props
 }) => {
     return (
-        <RacLink
-            {...props}
-            className={cx(
-                styles.link,
-                isActive ? styles.active : undefined,
-                className
-            )}
-            aria-current={isActive ? 'page' : undefined}
-        />
+        <FocusRing focusRingClass="focus-ring">
+            <RacLink
+                {...props}
+                className={cx(
+                    styles.link,
+                    isActive ? styles.active : undefined,
+                    className
+                )}
+                aria-current={isActive ? 'page' : undefined}
+            />
+        </FocusRing>
     );
 };

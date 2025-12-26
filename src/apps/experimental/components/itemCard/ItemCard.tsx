@@ -46,34 +46,30 @@ export function ItemCard({
                     String(title ?? '');
 
     return (
-        <Squircle
-            asChild
-            cornerRadius={16}
-            cornerSmoothing={1}
+        <a
+            href={href}
+            className={cx(styles.root, classes?.root, className)}
+            onClick={onClick}
         >
-            <a
-                href={href}
-                className={cx(styles.root, classes?.root, className)}
-                onClick={onClick}
+            <Squircle
+                cornerRadius={16}
+                cornerSmoothing={1}
+                className={cx(styles.image, classes?.image)}
+                style={{ backgroundColor: imageUrl ? undefined : imageFallback }}
             >
-                <div
-                    className={cx(styles.image, classes?.image)}
-                    style={{ backgroundColor: imageUrl ? undefined : imageFallback }}
-                >
-                    {imageUrl ? (
-                        <img
-                            src={imageUrl}
-                            alt={altText}
-                            className={styles.img}
-                        />
-                    ) : null}
-                    {badge}
-                </div>
-                <div className={cx(styles.title, classes?.title)}>
-                    {title}
-                </div>
-            </a>
-        </Squircle>
+                {imageUrl ? (
+                    <img
+                        src={imageUrl}
+                        alt={altText}
+                        className={styles.img}
+                    />
+                ) : null}
+                {badge}
+            </Squircle>
+            <div className={cx(styles.title, classes?.title)}>
+                {title}
+            </div>
+        </a>
     );
 }
 

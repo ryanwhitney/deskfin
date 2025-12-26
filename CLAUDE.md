@@ -157,6 +157,27 @@ Common React Aria components in use:
 - `Menu`, `MenuItem`, `MenuTrigger`, `Popover`
 - `DialogTrigger`, `Separator`
 
+#### FocusRing Pattern
+All React Aria interactive components should use `FocusRing` for keyboard focus indicators:
+
+```tsx
+import { Button as RacButton } from 'react-aria-components';
+import { FocusRing } from '@react-aria/focus';
+
+export const CustomButton = (props) => (
+    <FocusRing focusRingClass="focus-ring">
+        <RacButton {...props} />
+    </FocusRing>
+);
+```
+
+**Benefits**:
+- Only shows focus ring for keyboard navigation (not mouse/touch)
+- Cross-browser consistent behavior
+- Shared `.focus-ring` global class defined in `theme.scss`
+
+**Important**: Don't use `:focus-visible` in CSS for React Aria components - let FocusRing handle it
+
 #### Barrel Exports Pattern
 ```ts
 // components/index.ts

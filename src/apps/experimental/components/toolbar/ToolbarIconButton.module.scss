@@ -23,11 +23,6 @@
     transform: translateY(0.5px);
 }
 
-.button:focus-visible {
-    outline: 2px solid $focus-ring;
-    outline-offset: 2px;
-}
-
 /* Slightly larger hit-area for the hamburger without adding visible chrome */
 .hamburger {
     width: 40px;

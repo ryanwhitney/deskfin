@@ -9,7 +9,7 @@ $accent-color: #3b82f6;
 $accent-hover: rgba(59, 130, 246, 0.2);
 
 // App background - the main page background
-$app-background: #0c0c0c;
+$app-background: rgba(19, 19, 20);
 $app-background-alpha: 1;
 
 // Surface colors - cards, menus, raised elements
@@ -32,7 +32,7 @@ $surface-raised: rgba(255, 255, 255, 0.04);
 
 // Borders
 $border-subtle: rgba(255, 255, 255, 0.08);
-$border-muted: rgba(255, 255, 255, 0.10);
+$border-muted: rgba(255, 255, 255, 0.1);
 
 // Text
 $text-muted: rgba(255, 255, 255, 0.65);
@@ -77,3 +77,13 @@ $toolbar-icon-size: 38px;
 
 $blur-strong: blur(14px);
 $menu-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+
+// ============================================================================
+// GLOBAL STYLES
+// ============================================================================
+
+// Shared focus ring class for React Aria FocusRing component
+:global(.focus-ring) {
+    outline: 2px solid red;
+    outline-offset: 2px;
+}

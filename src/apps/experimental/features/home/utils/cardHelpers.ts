@@ -95,8 +95,8 @@ export const getCardMeta = (item: ItemDto) => {
         const parentIndex = (item as any).ParentIndexNumber as number | undefined;
         const index = (item as any).IndexNumber as number | undefined;
         const s = parentIndex != null ? `S${parentIndex}` : '';
-        const e = index != null ? `E${index}` : '';
-        const prefix = (s || e) ? `${s}${s && e ? ':' : ''}${e}` : '';
+        const e = index != null ? ` E${index}` : '';
+        const prefix = (s || e) ? `${s}${s && e ? ',' : ''}${e}` : '';
         const epTitle = item.Name || '';
         const subtitle = prefix ? `${prefix}: ${epTitle}` : epTitle;
 
