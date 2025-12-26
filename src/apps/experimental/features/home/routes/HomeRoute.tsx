@@ -6,6 +6,8 @@ import globalize from 'lib/globalize';
 import { useApi } from 'hooks/useApi';
 import { useUserViews } from 'hooks/useUserViews';
 import { useToggleFavoriteMutation, useTogglePlayedMutation } from 'hooks/useFetchItems';
+import { useTitle } from 'apps/experimental/utils/useTitle';
+import { formatLibraryTitle } from 'apps/experimental/utils/titleUtils';
 import * as userSettings from 'scripts/settings/userSettings';
 import { clearBackdrop } from 'components/backdrop/backdrop';
 import Page from 'components/Page';
@@ -209,12 +211,7 @@ const Home: FC = () => {
         };
     }, [isFavoritesTab, refreshAll, refreshFavorites]);
 
-    const libraryMenu = useMemo(async () => (await import('scripts/libraryMenu')).default, []);
-    useEffect(() => {
-        void (async () => {
-            (await libraryMenu).setTitle(isFavoritesTab ? t('Favorites', 'Favorites') : null);
-        })();
-    }, [isFavoritesTab, libraryMenu]);
+    useTitle(formatLibraryTitle('Home', isFavoritesTab ? 'Favorites' : undefined));
 
     const sectionOrder = useMemo(() => getAllSectionsToShow(10), []);
 

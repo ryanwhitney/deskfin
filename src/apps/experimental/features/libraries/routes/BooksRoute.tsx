@@ -3,6 +3,8 @@ import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collec
 import React, { type FC } from 'react';
 
 import useCurrentTab from 'hooks/useCurrentTab';
+import { useTitle } from 'apps/experimental/utils/useTitle';
+import { formatLibraryTitle } from 'apps/experimental/utils/titleUtils';
 import Page from 'components/Page';
 import PageTabContent from '../components/ui/PageTabContent';
 import { LibraryTab } from 'types/libraryTab';
@@ -24,6 +26,8 @@ const booksTabMapping: LibraryTabMapping = {
 const Books: FC = () => {
     const { libraryId, activeTab } = useCurrentTab();
     const currentTab = booksTabMapping[activeTab] ?? booksTabMapping[0];
+
+    useTitle(formatLibraryTitle('Books'));
 
     return (
         <Page

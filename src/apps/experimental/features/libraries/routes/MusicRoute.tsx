@@ -1,6 +1,8 @@
 import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
 import React, { FC } from 'react';
 import useCurrentTab from 'hooks/useCurrentTab';
+import { useTitle } from 'apps/experimental/utils/useTitle';
+import { formatLibraryTitle } from 'apps/experimental/utils/titleUtils';
 import Page from 'components/Page';
 import PageTabContent from '../components/ui/PageTabContent';
 import { LibraryTab } from 'types/libraryTab';
@@ -70,6 +72,22 @@ const musicTabMapping: LibraryTabMapping = {
 const Music: FC = () => {
     const { libraryId, activeTab } = useCurrentTab();
     const currentTab = musicTabMapping[activeTab];
+
+    // Set title based on current tab
+    const getTitleForTab = () => {
+        switch (activeTab) {
+            case 0: return undefined; // Default "Music" tab (Albums)
+            case 1: return 'Suggestions';
+            case 2: return 'Album Artists';
+            case 3: return 'Artists';
+            case 4: return 'Playlists';
+            case 5: return 'Songs';
+            case 6: return 'Genres';
+            default: return undefined;
+        }
+    };
+
+    useTitle(formatLibraryTitle('Music', getTitleForTab()));
 
     return (
         <Page

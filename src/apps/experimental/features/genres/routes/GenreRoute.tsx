@@ -16,6 +16,8 @@ import globalize from 'lib/globalize';
 import { useApi } from 'hooks/useApi';
 import { useItem } from 'hooks/useItem';
 import { useGetItems } from 'hooks/useFetchItems';
+import { useTitle } from 'apps/experimental/utils/useTitle';
+import { formatItemTitle } from 'apps/experimental/utils/titleUtils';
 
 import type { ItemDto } from 'types/base/models/item-dto';
 import type { CardOptions } from 'types/cardOptions';
@@ -39,6 +41,9 @@ export default function GenrePage() {
 
     const { __legacyApiClient__ } = useApi();
     const { data: genre } = useItem(genreId || undefined);
+
+    // Set title based on genre name
+    useTitle(genre ? formatItemTitle(genre.Name, genre.Type) : undefined);
 
     const queryKey = useMemo(() => ([ 'Genre', genreId, parentId ] as string[]), [ genreId, parentId ]);
     const includeItemTypes = useMemo(() => getIncludeItemTypesForGenre(genre), [ genre ]);

@@ -6,11 +6,15 @@ import { useSearchParams } from 'react-router-dom';
 import Page from 'components/Page';
 import globalize from 'lib/globalize';
 import { LibraryTab } from 'types/libraryTab';
+import { useTitle } from 'apps/experimental/utils/useTitle';
+import { formatLibraryTitle } from 'apps/experimental/utils/titleUtils';
 import ItemsView from '../components/ui/ItemsView';
 
 export default function CollectionsRoute() {
     const [ params ] = useSearchParams();
     const parentId = params.get('topParentId') || params.get('parentId') || '';
+
+    useTitle(formatLibraryTitle('Collections'));
 
     if (!parentId) {
         return (

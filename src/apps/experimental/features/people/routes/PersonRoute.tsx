@@ -15,6 +15,8 @@ import globalize from 'lib/globalize';
 import { useApi } from 'hooks/useApi';
 import { useItem } from 'hooks/useItem';
 import { useGetItems } from 'hooks/useFetchItems';
+import { useTitle } from 'apps/experimental/utils/useTitle';
+import { formatItemTitle } from 'apps/experimental/utils/titleUtils';
 
 import type { ItemDto } from 'types/base/models/item-dto';
 import type { CardOptions } from 'types/cardOptions';
@@ -33,6 +35,9 @@ export default function PersonPage() {
 
     const { __legacyApiClient__ } = useApi();
     const { data: person } = useItem(personId || undefined);
+
+    // Set title based on person name
+    useTitle(person ? formatItemTitle(person.Name, person.Type) : undefined);
 
     const queryKey = useMemo(() => ([ 'Person', personId ] as string[]), [ personId ]);
 

@@ -14,6 +14,8 @@ import Cards from 'components/cardbuilder/Card/Cards';
 import { useItem } from 'hooks/useItem';
 import { useApi } from 'hooks/useApi';
 import { useGetItems } from 'hooks/useFetchItems';
+import { useTitle } from 'apps/experimental/utils/useTitle';
+import { formatItemTitle } from 'apps/experimental/utils/titleUtils';
 import { CardShape } from 'utils/card';
 import { ItemKind } from 'types/base/models/item-kind';
 
@@ -42,6 +44,13 @@ export default function DetailsPage() {
     const seasonId = (item as any)?.SeasonId as string | undefined;
     const { data: seriesItem } = useItem(seriesId);
     const { data: seasonItem } = useItem(seasonId);
+
+    // Extract names for title formatting and breadcrumbs
+    const seriesName = (item as any)?.SeriesName as string | undefined;
+    const seasonName = (item as any)?.SeasonName as string | undefined;
+
+    // Set title with proper formatting for episodes/seasons
+    useTitle(item ? formatItemTitle(item.Name, item.Type, seriesName, seasonName) : undefined);
 
     // Build image URLs with fallback chain
     const primaryUrl = useMemo(() => (
@@ -132,9 +141,7 @@ export default function DetailsPage() {
     const writers = people.filter(p => p.Type === 'Writer');
     const cast = people.filter(p => p.Type === 'Actor' || p.Type === 'GuestStar');
 
-    // Series/Season breadcrumb data
-    const seriesName = (item as any).SeriesName as string | undefined;
-    const seasonName = (item as any).SeasonName as string | undefined;
+    // Series/Season breadcrumb data (variables declared above for title formatting)
 
     const isPlayed = !!item.UserData?.Played;
     const isFavorite = !!item.UserData?.IsFavorite;

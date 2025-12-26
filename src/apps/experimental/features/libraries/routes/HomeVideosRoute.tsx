@@ -1,6 +1,8 @@
 import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
 import React, { type FC } from 'react';
 import useCurrentTab from 'hooks/useCurrentTab';
+import { useTitle } from 'apps/experimental/utils/useTitle';
+import { formatLibraryTitle } from 'apps/experimental/utils/titleUtils';
 import Page from 'components/Page';
 import PageTabContent from '../components/ui/PageTabContent';
 import { LibraryTab } from 'types/libraryTab';
@@ -40,6 +42,18 @@ const homevideosTabMapping: LibraryTabMapping = {
 const HomeVideos: FC = () => {
     const { libraryId, activeTab } = useCurrentTab();
     const currentTab = homevideosTabMapping[activeTab];
+
+    // Set title based on current tab
+    const getTitleForTab = () => {
+        switch (activeTab) {
+            case 0: return undefined; // Default "Home Videos" tab (Photos)
+            case 1: return 'Photo Albums';
+            case 2: return 'Videos';
+            default: return undefined;
+        }
+    };
+
+    useTitle(formatLibraryTitle('Home Videos', getTitleForTab()));
 
     return (
         <Page
