@@ -87,12 +87,17 @@ export const EpisodeRow: FC<EpisodeRowProps> = ({ episode, queryKey, showSeriesA
             }}
         >
             <div className={styles.thumb}>
-                <div
-                    className={styles.thumbImg}
-                    style={{
-                        backgroundImage: img ? `url(${img})` : 'linear-gradient(135deg, #1f1f1f, #2a2a2a)'
-                    }}
-                />
+                <div className={styles.thumbImg}>
+                    {img ? (
+                        <img
+                            src={img}
+                            alt={formatEpisodeLabel(episode)}
+                            className={styles.thumbImgElement}
+                        />
+                    ) : (
+                        <div className={styles.thumbPlaceholder} />
+                    )}
+                </div>
                 <button
                     type='button'
                     className={styles.thumbPlay}

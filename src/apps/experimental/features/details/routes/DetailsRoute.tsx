@@ -157,12 +157,15 @@ export default function DetailsPage() {
 
                 <div className={styles.container}>
                     <div className={styles.top}>
-                        <div
-                            className={styles.poster}
-                            style={{
-                                backgroundImage: primaryUrl ? `url(${primaryUrl})` : 'rgba(255,255,255,0.05)'
-                            }}
-                        />
+                        <div className={styles.poster}>
+                            {primaryUrl ? (
+                                <img
+                                    src={primaryUrl}
+                                    alt={item.Name || ''}
+                                    className={styles.posterImg}
+                                />
+                            ) : null}
+                        </div>
                         <div>
                             <h1 className={styles.title}>
                                 {item.Name}

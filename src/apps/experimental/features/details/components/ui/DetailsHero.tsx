@@ -6,10 +6,12 @@ interface DetailsHeroProps {
 }
 
 export const DetailsHero: FC<DetailsHeroProps> = ({ backdropUrl }) => (
-    <div
-        className={styles.hero}
-        style={{ backgroundImage: backdropUrl ? `url(${backdropUrl})` : undefined }}
-    >
-        <div className={styles.heroOverlay} />
+    <div className={styles.heroContainer}>
+        <div
+            className={styles.hero}
+            style={{ backgroundImage: backdropUrl ? `url(${backdropUrl})` : undefined }}
+        >
+            <div className={styles.heroOverlay} />
+        </div>
     </div>
 );

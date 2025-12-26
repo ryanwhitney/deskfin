@@ -37,7 +37,7 @@
 .right {
     display: flex;
     align-items: center;
-    gap: $space-2;
+    gap: 0;
 }
 
 .brand {
@@ -66,7 +66,7 @@
 }
 
 .brandTitle {
-    font-weight: 540;
+    font-weight: 620;
     font-variation-settings: "wdth" 105;
     font-size: 14px;
     line-height: 1.1;

@@ -9,8 +9,14 @@
 .image {
     position: relative;
     width: 100%;
-    background-size: cover;
-    background-position: center;
+    overflow: hidden;
+}
+
+.img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .title {

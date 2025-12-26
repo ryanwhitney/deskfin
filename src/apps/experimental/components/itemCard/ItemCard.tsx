@@ -24,7 +24,7 @@ export type ItemCardProps = {
 } & Classy;
 
 /**
- * Minimal, reusable “card” primitive for experimental.
+ * Minimal, reusable "card" primitive for experimental.
  *
  * It intentionally supports passing existing classNames so features can keep
  * their current styling (e.g. Details cards, Home cards) while we migrate.
@@ -39,6 +39,11 @@ export function ItemCard({
     className,
     classes
 }: Readonly<ItemCardProps>) {
+    // Convert title to string for alt text
+    const altText = typeof title === 'string' ? title :
+                    React.isValidElement(title) ? '' :
+                    String(title ?? '');
+
     return (
         <a
             href={href}
@@ -47,11 +52,15 @@ export function ItemCard({
         >
             <div
                 className={cx(styles.image, classes?.image)}
-                style={{
-                    backgroundImage: imageUrl ? `url(${imageUrl})` : undefined,
-                    backgroundColor: imageUrl ? undefined : imageFallback
-                }}
+                style={{ backgroundColor: imageUrl ? undefined : imageFallback }}
             >
+                {imageUrl ? (
+                    <img
+                        src={imageUrl}
+                        alt={altText}
+                        className={styles.img}
+                    />
+                ) : null}
                 {badge}
             </div>
             <div className={cx(styles.title, classes?.title)}>

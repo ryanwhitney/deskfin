@@ -125,13 +125,17 @@ export const MediaCard: FC<MediaCardProps> = ({
             }}
         >
             <div className={styles.thumbWrap}>
-                <div
-                    className={[ styles.thumb, variant === 'landscape' ? styles.thumbLandscape : '' ].filter(Boolean).join(' ')}
-                    style={{
-                        backgroundImage: imageUrl ? `url(${imageUrl})` : 'linear-gradient(135deg, #1f1f1f, #2a2a2a)'
-                    }}
-                    aria-label={title}
-                >
+                <div className={[ styles.thumb, variant === 'landscape' ? styles.thumbLandscape : '' ].filter(Boolean).join(' ')}>
+                    {imageUrl ? (
+                        <img
+                            src={imageUrl}
+                            alt={title}
+                            className={styles.thumbImg}
+                        />
+                    ) : (
+                        <div className={styles.thumbPlaceholder} />
+                    )}
+
                     {typeof overlayCount === 'number' ? (
                         <div className={styles.countBadge} aria-hidden="true">{overlayCount}</div>
                     ) : null}
