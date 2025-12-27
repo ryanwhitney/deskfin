@@ -90,6 +90,7 @@ function getCurrentApiClient() {
 }
 
 function lazyLoadViewMenuBarImages() {
+    if (!skinHeader) return;
     import('../components/images/imageLoader').then((imageLoader) => {
         imageLoader.lazyChildren(skinHeader);
     });
@@ -134,6 +135,8 @@ function retranslateUi() {
 }
 
 function updateUserInHeader(user) {
+    if (!headerUserButton) return;
+
     retranslateUi();
 
     let hasImage;
@@ -562,6 +565,8 @@ function updateLibraryNavLinks(page) {
 }
 
 function updateMenuForPageType(isDashboardPage, isLibraryPage) {
+    if (!skinHeader) return;
+
     let newPageType = 3;
     if (isDashboardPage) {
         newPageType = 2;
@@ -698,8 +703,9 @@ let headerSyncButton;
 let currentTimeText;
 const enableLibraryNavDrawer = layoutManager.desktop;
 const enableLibraryNavDrawerHome = !layoutManager.tv;
-const skinHeader = document.querySelector('.skinHeader');
+let skinHeader = null;
 let requiresUserRefresh = true;
+let initialized = false;
 
 function setTabs (type, selectedIndex, builder) {
     Events.trigger(document, EventType.SET_TABS, type ? [ type, selectedIndex, builder()] : []);
@@ -773,6 +779,7 @@ function setTitle (title) {
 }
 
 function setTransparentMenu (transparent) {
+    if (!skinHeader) return;
     if (transparent) {
         skinHeader.classList.add('semiTransparent');
     } else {
@@ -846,8 +853,21 @@ Events.on(ServerConnections, 'localusersignedout', function () {
 
 Events.on(playbackManager, 'playerchange', updateCastIcon);
 
-fetchServerName(getCurrentApiClient());
-loadNavDrawer();
+function initLibraryMenu() {
+    if (initialized) return;
+
+    skinHeader = document.querySelector('.skinHeader');
+    if (!skinHeader) {
+        // DOM not ready yet, try again later
+        requestAnimationFrame(initLibraryMenu);
+        return;
+    }
+
+    initialized = true;
+    fetchServerName(getCurrentApiClient());
+    loadNavDrawer();
+    renderHeader();
+}
 
 const LibraryMenu = {
     getTopParentId,
@@ -861,6 +881,12 @@ const LibraryMenu = {
 };
 
 window.LibraryMenu = LibraryMenu;
-renderHeader();
+
+// Defer initialization until DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initLibraryMenu);
+} else {
+    initLibraryMenu();
+}
 
 export default LibraryMenu;
