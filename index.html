@@ -1,150 +1,152 @@
 <!DOCTYPE html>
 <html class="preload" dir="ltr" lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <link rel="manifest" href="manifest.json">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="msapplication-tap-highlight" content="no">
-    <meta http-equiv="X-UA-Compatibility" content="IE=Edge">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Jellyfin">
-    <meta name="robots" content="noindex, nofollow, noarchive">
-    <meta name="referrer" content="no-referrer">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="manifest" href="manifest.json" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <meta http-equiv="X-UA-Compatibility" content="IE=Edge" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="application-name" content="deskfun" />
+        <meta name="robots" content="noindex, nofollow, noarchive" />
+        <meta name="referrer" content="no-referrer" />
+        <meta id="themeColor" name="theme-color" content="#202020" />
 
-    <meta id="themeColor" name="theme-color" content="#202020">
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="/public/touchicon.png"
+        />
+        <link rel="icon" href="/favicon.ico" />
 
-    <link rel="apple-touch-icon" sizes="180x180" href="/node_modules/@jellyfin/ux-web/favicons/touchicon.png">
-    <link rel="shortcut icon" href="/node_modules/@jellyfin/ux-web/favicons/favicon.ico">
-    <meta name="msapplication-TileImage" content="/node_modules/@jellyfin/ux-web/favicons/touchicon144.png">
-    <meta name="msapplication-TileColor" content="#333333">
+        <title>desk</title>
 
-    <title>desk</title>
+        <style>
+            .transparentDocument,
+            .backgroundContainer-transparent:not(.withBackdrop) {
+                background: none !important;
+                background-color: transparent !important;
+            }
 
-    <style>
-        .transparentDocument,
-        .backgroundContainer-transparent:not(.withBackdrop) {
-            background: none !important;
-            background-color: transparent !important;
-        }
+            .layout-tv .mouseIdle,
+            .layout-tv .mouseIdle button,
+            .layout-tv .mouseIdle select,
+            .layout-tv .mouseIdle input,
+            .layout-tv .mouseIdle textarea,
+            .layout-tv .mouseIdle a,
+            .layout-tv .mouseIdle label,
+            .transparentDocument .mouseIdle,
+            .transparentDocument .mouseIdle button,
+            .transparentDocument .mouseIdle select,
+            .transparentDocument .mouseIdle input,
+            .transparentDocument .mouseIdle textarea,
+            .transparentDocument .mouseIdle a,
+            .transparentDocument .mouseIdle label,
+            .screensaver-noScroll.mouseIdle,
+            .screensaver-noScroll.mouseIdle button,
+            .screensaver-noScroll.mouseIdle select,
+            .screensaver-noScroll.mouseIdle input,
+            .screensaver-noScroll.mouseIdle textarea,
+            .screensaver-noScroll.mouseIdle a,
+            .screensaver-noScroll.mouseIdle label {
+                cursor: none !important;
+            }
 
-        .layout-tv .mouseIdle,
-        .layout-tv .mouseIdle button,
-        .layout-tv .mouseIdle select,
-        .layout-tv .mouseIdle input,
-        .layout-tv .mouseIdle textarea,
-        .layout-tv .mouseIdle a,
-        .layout-tv .mouseIdle label,
-        .transparentDocument .mouseIdle,
-        .transparentDocument .mouseIdle button,
-        .transparentDocument .mouseIdle select,
-        .transparentDocument .mouseIdle input,
-        .transparentDocument .mouseIdle textarea,
-        .transparentDocument .mouseIdle a,
-        .transparentDocument .mouseIdle label,
-        .screensaver-noScroll.mouseIdle,
-        .screensaver-noScroll.mouseIdle button,
-        .screensaver-noScroll.mouseIdle select,
-        .screensaver-noScroll.mouseIdle input,
-        .screensaver-noScroll.mouseIdle textarea,
-        .screensaver-noScroll.mouseIdle a,
-        .screensaver-noScroll.mouseIdle label {
-            cursor: none !important;
-        }
+            .preload {
+                background-color: #101010;
+            }
 
-        .preload {
-            background-color: #101010;
-        }
+            @keyframes splashFadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(6px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
 
-        @keyframes splashFadeIn {
-            from {
+            /* Inline splash to avoid blank screen before JS/CSS bundles load */
+            .splashLogo {
+                display: flex;
+                width: 100vw;
+                height: 100vh;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                flex-direction: column;
+                gap: 10px;
                 opacity: 0;
-                transform: translateY(6px);
+                animation: splashFadeIn 500ms ease-out 500ms forwards;
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+
+            .splashLogo p {
+                font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+                    "SF Pro Display", "Helvetica Neue", Helvetica, Arial,
+                    "Apple Color Emoji", sans-serif;
+                text-size-adjust: 100%;
+                -webkit-font-smoothing: antialiased;
+                text-rendering: optimizeLegibility;
+                font-size: 12px;
+                font-weight: 640;
+                font-variation-settings: "wdth" 115;
             }
-        }
 
-        /* Inline splash to avoid blank screen before JS/CSS bundles load */
-        .splashLogo {
-            display: flex;
-            width: 100vw;
-            height: 100vh;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            flex-direction: column;
-            gap: 10px;
-            opacity: 0;
-            animation: splashFadeIn 500ms ease-out 500ms forwards;
-        }
+            .splashLogo svg {
+                width: 40px;
+            }
 
-        .splashLogo p {
-            font-family:
-                -apple-system,
-                BlinkMacSystemFont,
-                "SF Pro Text",
-                "SF Pro Display",
-                "Helvetica Neue",
-                Helvetica,
-                Arial,
-                "Apple Color Emoji",
-                sans-serif;
-            text-size-adjust: 100%;
-            -webkit-font-smoothing: antialiased;
-            text-rendering: optimizeLegibility;
-            font-size: 12px;
-            font-weight: 640;
-            font-variation-settings: "wdth" 115;
-        }
+            .hide,
+            .layout-desktop .hide-desktop,
+            .layout-mobile .hide-mobile,
+            .layout-tv .hide-tv,
+            .mouseIdle .hide-mouse-idle,
+            .mouseIdle-tv .hide-mouse-idle-tv {
+                display: none !important;
+            }
 
-        .splashLogo svg {
-            width: 40px;
-        }
+            .mainDrawerHandle {
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                z-index: 1;
+                width: 0.8em;
+                padding-left: env(safe-area-inset-left);
+                caret-color: transparent;
+            }
 
-        .hide,
-        .layout-desktop .hide-desktop,
-        .layout-mobile .hide-mobile,
-        .layout-tv .hide-tv,
-        .mouseIdle .hide-mouse-idle,
-        .mouseIdle-tv .hide-mouse-idle-tv {
-            display: none !important;
-        }
+            [dir="ltr"] .mainDrawerHandle {
+                left: 0;
+            }
 
-        .mainDrawerHandle {
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            z-index: 1;
-            width: 0.8em;
-            padding-left: env(safe-area-inset-left);
-            caret-color: transparent;
-        }
-
-        [dir="ltr"] .mainDrawerHandle {
-            left: 0;
-        }
-
-        [dir="rtl"] .mainDrawerHandle {
-            left: 0;
-        }
-    </style>
-</head>
-<body dir="ltr">
-    <div id="reactRoot">
-        <div class="splashLogo">
-            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 15.6372 6.3501">
-                <g>
-                    <rect opacity="0" x="0" y="0"></rect>
-                    <path d="M1.86768 6.34277L13.3374 6.34277C14.5825 6.34277 15.1978 5.72754 15.1978 4.50439L15.1978 1.83838C15.1978 0.615234 14.5825 0 13.3374 0L1.86768 0C0.615234 0 0 0.615234 0 1.83838L0 4.50439C0 5.72754 0.615234 6.34277 1.86768 6.34277ZM2.93701 3.36914L2.93701 4.21875C2.93701 4.42383 2.76855 4.58496 2.56348 4.58496C2.35107 4.58496 2.19727 4.42383 2.19727 4.21875L2.19727 3.36914C2.19727 3.15674 2.35107 2.99561 2.56348 2.99561C2.76855 2.99561 2.93701 3.15674 2.93701 3.36914ZM4.59229 3.36914L4.59229 4.21875C4.59229 4.42383 4.43115 4.58496 4.21875 4.58496C4.01367 4.58496 3.85254 4.42383 3.85254 4.21875L3.85254 3.36914C3.85254 3.15674 4.01367 2.99561 4.21875 2.99561C4.43115 2.99561 4.59229 3.15674 4.59229 3.36914ZM10.5908 4.2334C10.3418 4.2334 10.1367 4.03564 10.1367 3.78662C10.1367 3.5376 10.3418 3.33984 10.5908 3.33984C10.8398 3.33984 11.0449 3.5376 11.0449 3.78662C11.0449 4.03564 10.8398 4.2334 10.5908 4.2334ZM12.3999 4.38721C12.0776 4.38721 11.7993 4.12354 11.7993 3.78662C11.7993 3.44971 12.0776 3.18604 12.3999 3.18604C12.7368 3.18604 13.0078 3.44971 13.0078 3.78662C13.0078 4.12354 12.7368 4.38721 12.3999 4.38721Z" fill="currentColor"></path>
-                </g>
-            </svg>
-            <p>loading desk…</p>
+            [dir="rtl"] .mainDrawerHandle {
+                left: 0;
+            }
+        </style>
+    </head>
+    <body dir="ltr">
+        <div id="reactRoot">
+            <div class="splashLogo">
+                <svg
+                    version="1.1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink"
+                    viewBox="0 0 15.6372 6.3501"
+                >
+                    <g>
+                        <rect opacity="0" x="0" y="0"></rect>
+                        <path
+                            d="M1.86768 6.34277L13.3374 6.34277C14.5825 6.34277 15.1978 5.72754 15.1978 4.50439L15.1978 1.83838C15.1978 0.615234 14.5825 0 13.3374 0L1.86768 0C0.615234 0 0 0.615234 0 1.83838L0 4.50439C0 5.72754 0.615234 6.34277 1.86768 6.34277ZM2.93701 3.36914L2.93701 4.21875C2.93701 4.42383 2.76855 4.58496 2.56348 4.58496C2.35107 4.58496 2.19727 4.42383 2.19727 4.21875L2.19727 3.36914C2.19727 3.15674 2.35107 2.99561 2.56348 2.99561C2.76855 2.99561 2.93701 3.15674 2.93701 3.36914ZM4.59229 3.36914L4.59229 4.21875C4.59229 4.42383 4.43115 4.58496 4.21875 4.58496C4.01367 4.58496 3.85254 4.42383 3.85254 4.21875L3.85254 3.36914C3.85254 3.15674 4.01367 2.99561 4.21875 2.99561C4.43115 2.99561 4.59229 3.15674 4.59229 3.36914ZM10.5908 4.2334C10.3418 4.2334 10.1367 4.03564 10.1367 3.78662C10.1367 3.5376 10.3418 3.33984 10.5908 3.33984C10.8398 3.33984 11.0449 3.5376 11.0449 3.78662C11.0449 4.03564 10.8398 4.2334 10.5908 4.2334ZM12.3999 4.38721C12.0776 4.38721 11.7993 4.12354 11.7993 3.78662C11.7993 3.44971 12.0776 3.18604 12.3999 3.18604C12.7368 3.18604 13.0078 3.44971 13.0078 3.78662C13.0078 4.12354 12.7368 4.38721 12.3999 4.38721Z"
+                            fill="currentColor"
+                        ></path>
+                    </g>
+                </svg>
+                <p>loading desk…</p>
+            </div>
         </div>
-    </div>
-    <script type="module" src="/src/index.jsx"></script>
-</body>
+        <script type="module" src="/src/index.jsx"></script>
+    </body>
 </html>

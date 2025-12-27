@@ -84,6 +84,6 @@ $menu-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
 
 // Shared focus ring class for React Aria FocusRing component
 :global(.focus-ring) {
-    outline: 2px solid red;
+    outline: 2px solid white;
     outline-offset: 2px;
 }

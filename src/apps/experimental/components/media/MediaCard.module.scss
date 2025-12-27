@@ -40,6 +40,7 @@
 .thumbWrap {
     position: relative;
 }
+
 .thumbBorder {
     padding: 3px;
     background: transparent;
@@ -229,10 +230,10 @@
     background: $hover-bg;
 }
 
-.gridItem:focus-visible {
+.gridItem[data-focus-visible="true"] {
     .thumbBorder {
         padding: 3px;
-        background: red;
+        background: white;
     }
 }
 

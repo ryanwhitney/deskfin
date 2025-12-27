@@ -76,10 +76,6 @@ export default defineConfig({
                     src: 'src/serviceworker.js',
                     dest: '.'
                 },
-                {
-                    src: 'node_modules/@jellyfin/ux-web/favicons/touchicon*.png',
-                    dest: 'favicons'
-                },
                 ...Assets.map(asset => ({
                     src: path.resolve(__dirname, `node_modules/${asset}`),
                     dest: 'libraries'
