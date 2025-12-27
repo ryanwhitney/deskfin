@@ -1,6 +1,7 @@
 import React, { type FC } from 'react';
 
 import ViewManagerPage from 'components/viewManager/ViewManagerPage';
+import VideoOverlay from '../components/VideoOverlay';
 
 /**
  * Video player page component that renders the legacy video OSD view.
@@ -8,14 +9,17 @@ import ViewManagerPage from 'components/viewManager/ViewManagerPage';
  */
 const VideoPage: FC = () => {
     return (
-        <ViewManagerPage
-            controller='playback/video/index'
-            view='playback/video/index.html'
-            type='video-osd'
-            isFullscreen
-            isNowPlayingBarEnabled={false}
-            isThemeMediaSupported
-        />
+        <>
+            <VideoOverlay />
+            <ViewManagerPage
+                controller='playback/video/index'
+                view='playback/video/index.html'
+                type='video-osd'
+                isFullscreen
+                isNowPlayingBarEnabled={false}
+                isThemeMediaSupported
+            />
+        </>
     );
 };
 

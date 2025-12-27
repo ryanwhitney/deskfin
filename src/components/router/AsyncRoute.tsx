@@ -19,7 +19,12 @@ const dashboardRoutes = import.meta.glob('../../apps/dashboard/routes/**/*.tsx')
 const experimentalRoutes = import.meta.glob('../../apps/experimental/routes/**/*.tsx');
 const stableRoutes = import.meta.glob('../../apps/stable/routes/**/*.tsx');
 
-const importRoute = (page: string, type: AppType) => {
+interface RouteModule {
+    default?: React.ComponentType;
+    [key: string]: unknown;
+}
+
+const importRoute = (page: string, type: AppType): Promise<RouteModule> => {
     let routes: Record<string, () => Promise<unknown>>;
     let basePath: string;
 
@@ -33,6 +38,7 @@ const importRoute = (page: string, type: AppType) => {
             basePath = '../../apps/experimental/routes/';
             break;
         case AppType.Stable:
+        default:
             routes = stableRoutes;
             basePath = '../../apps/stable/routes/';
             break;
@@ -48,7 +54,7 @@ const importRoute = (page: string, type: AppType) => {
         console.error(`Route not found: ${page} (tried ${key}, ${keyTs}, ${keyIndex})`);
         return Promise.reject(new Error(`Route not found: ${page}`));
     }
-    return loader();
+    return loader() as Promise<RouteModule>;
 };
 
 export const toAsyncPageRoute = ({
@@ -59,15 +65,12 @@ export const toAsyncPageRoute = ({
     return {
         path,
         lazy: async () => {
-            const {
-                // If there is a default export, use it as the Component for compatibility
-                default: Component,
-                ...route
-            } = await importRoute(page ?? path, type);
-
+            const module = await importRoute(page ?? path, type);
+            if (!module.default) {
+                throw new Error(`Route module for ${page ?? path} has no default export`);
+            }
             return {
-                Component,
-                ...route
+                Component: module.default
             };
         }
     };
