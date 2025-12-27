@@ -11,6 +11,9 @@ import confirm from '../components/confirm/confirm';
 import { ServerConnections } from 'lib/jellyfin-apiclient';
 import * as dashboard from '../utils/dashboard';
 
+// Pre-bundle all plugin modules using Vite glob imports
+const pluginModules = import.meta.glob('../plugins/**/plugin.{js,ts}');
+
 // TODO: replace with each plugin version
 const cacheParam = new Date().getTime();
 
@@ -94,7 +97,17 @@ class PluginManager {
                 });
             } else {
                 console.debug(`Loading plugin (via dynamic import): ${pluginSpec}`);
-                const pluginResult = await import(/* @vite-ignore */ `../plugins/${pluginSpec}.js`);
+                // Try to find the plugin in pre-bundled modules
+                const pluginKey = `../plugins/${pluginSpec}.js`;
+                const pluginKeyTs = `../plugins/${pluginSpec}.ts`;
+                const loader = pluginModules[pluginKey] || pluginModules[pluginKeyTs];
+
+                if (!loader) {
+                    console.error(`Plugin not found: ${pluginSpec} (tried ${pluginKey}, ${pluginKeyTs})`);
+                    throw new Error(`Plugin not found: ${pluginSpec}`);
+                }
+
+                const pluginResult = await loader();
                 plugin = new pluginResult.default;
             }
         } else if (pluginSpec.then) {

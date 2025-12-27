@@ -1,4 +1,4 @@
-@import "/src/apps/experimental/styles/theme.scss";
+@use "/src/apps/experimental/styles/theme.scss" as *;
 
 html,
 body {

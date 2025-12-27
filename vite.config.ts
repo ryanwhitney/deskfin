@@ -57,11 +57,23 @@ export default defineConfig({
                     dest: '.'
                 },
                 {
+                    src: 'src/strings',
+                    dest: '.'
+                },
+                {
+                    src: 'src/plugins',
+                    dest: '.'
+                },
+                {
                     src: 'src/config.json',
                     dest: '.'
                 },
                 {
                     src: 'src/robots.txt',
+                    dest: '.'
+                },
+                {
+                    src: 'src/serviceworker.js',
                     dest: '.'
                 },
                 {
@@ -107,6 +119,12 @@ export default defineConfig({
                     return '[name].bundle.js';
                 },
                 chunkFileNames: '[name].[hash].chunk.js',
+                manualChunks: (id) => {
+                    // Keep jellyfin-apiclient modules together to avoid circular dependency issues
+                    if (id.includes('lib/jellyfin-apiclient')) {
+                        return 'jellyfin-apiclient';
+                    }
+                },
                 assetFileNames: (assetInfo) => {
                     if (assetInfo.name === 'manifest.json') {
                         return '[name][extname]';
@@ -141,7 +159,7 @@ export default defineConfig({
         devSourcemap: true
     },
     preview: {
-        port: 8080,
+        port: 1328,
         host: true
     },
     test: {

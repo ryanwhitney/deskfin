@@ -14,15 +14,41 @@ export interface AsyncRoute {
     type?: AppType
 }
 
+// Use Vite's glob imports to pre-bundle all route modules
+const dashboardRoutes = import.meta.glob('../../apps/dashboard/routes/**/*.tsx');
+const experimentalRoutes = import.meta.glob('../../apps/experimental/routes/**/*.tsx');
+const stableRoutes = import.meta.glob('../../apps/stable/routes/**/*.tsx');
+
 const importRoute = (page: string, type: AppType) => {
+    let routes: Record<string, () => Promise<unknown>>;
+    let basePath: string;
+
     switch (type) {
         case AppType.Dashboard:
-            return import(/* @vite-ignore */ `../../apps/dashboard/routes/${page}`);
+            routes = dashboardRoutes;
+            basePath = '../../apps/dashboard/routes/';
+            break;
         case AppType.Experimental:
-            return import(/* @vite-ignore */ `../../apps/experimental/routes/${page}`);
+            routes = experimentalRoutes;
+            basePath = '../../apps/experimental/routes/';
+            break;
         case AppType.Stable:
-            return import(/* @vite-ignore */ `../../apps/stable/routes/${page}`);
+            routes = stableRoutes;
+            basePath = '../../apps/stable/routes/';
+            break;
     }
+
+    // Try .tsx first, then .ts, then without extension (for index files)
+    const key = `${basePath}${page}.tsx`;
+    const keyTs = `${basePath}${page}.ts`;
+    const keyIndex = `${basePath}${page}/index.tsx`;
+
+    const loader = routes[key] || routes[keyTs] || routes[keyIndex];
+    if (!loader) {
+        console.error(`Route not found: ${page} (tried ${key}, ${keyTs}, ${keyIndex})`);
+        return Promise.reject(new Error(`Route not found: ${page}`));
+    }
+    return loader();
 };
 
 export const toAsyncPageRoute = ({

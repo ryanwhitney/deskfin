@@ -33,21 +33,61 @@ interface ViewOptions {
     }
 }
 
+// Use Vite's glob imports to pre-bundle all controller modules
+const dashboardControllers = import.meta.glob('../../apps/dashboard/controllers/**/*.js');
+const wizardControllers = import.meta.glob('../../apps/wizard/controllers/**/*.js');
+const stableControllers = import.meta.glob('../../controllers/**/*.js');
+
+// Import HTML views as raw strings
+const dashboardViews = import.meta.glob('../../apps/dashboard/controllers/**/*.html', { query: '?raw', import: 'default' });
+const wizardViews = import.meta.glob('../../apps/wizard/controllers/**/*.html', { query: '?raw', import: 'default' });
+const stableViews = import.meta.glob('../../controllers/**/*.html', { query: '?raw', import: 'default' });
+
 const importController = async (
     appType: AppType,
     controller: string,
     view: string
 ) => {
-    const basePath = appType === AppType.Dashboard 
-        ? '/src/apps/dashboard/controllers'
-        : appType === AppType.Wizard
-        ? '/src/apps/wizard/controllers'
-        : '/src/controllers';
-    
-    const controllerFactory = await import(/* @vite-ignore */ `${basePath}/${controller}`);
-    const response = await fetch(`${basePath}/${view}`);
-    const viewHtml = await response.text();
-    
+    let controllers: Record<string, () => Promise<unknown>>;
+    let views: Record<string, () => Promise<unknown>>;
+    let basePath: string;
+
+    switch (appType) {
+        case AppType.Dashboard:
+            controllers = dashboardControllers;
+            views = dashboardViews;
+            basePath = '../../apps/dashboard/controllers/';
+            break;
+        case AppType.Wizard:
+            controllers = wizardControllers;
+            views = wizardViews;
+            basePath = '../../apps/wizard/controllers/';
+            break;
+        default:
+            controllers = stableControllers;
+            views = stableViews;
+            basePath = '../../controllers/';
+            break;
+    }
+
+    const controllerKey = `${basePath}${controller}.js`;
+    const controllerIndexKey = `${basePath}${controller}/index.js`;
+    const viewKey = `${basePath}${view}`;
+
+    const controllerLoader = controllers[controllerKey] || controllers[controllerIndexKey];
+    const viewLoader = views[viewKey];
+
+    if (!controllerLoader) {
+        console.error(`Controller not found: ${controller} (tried ${controllerKey}, ${controllerIndexKey})`);
+        throw new Error(`Controller not found: ${controller}`);
+    }
+
+    const controllerFactory = await controllerLoader();
+    let viewHtml = '';
+    if (viewLoader) {
+        viewHtml = await viewLoader() as string;
+    }
+
     return [controllerFactory, globalize.translateHtml(viewHtml)];
 };
 

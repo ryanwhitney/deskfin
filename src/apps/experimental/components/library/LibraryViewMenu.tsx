@@ -1,29 +1,32 @@
-import React, { type FC, type Key } from 'react';
-import { Tabs, TabList, Tab } from 'react-aria-components';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import React, { type FC, type Key } from "react";
+import { Tabs, TabList, Tab } from "react-aria-components";
+import { useLocation, useSearchParams } from "react-router-dom";
 
-import { LibraryRoutes } from 'apps/experimental/features/libraries/constants/libraryRoutes';
-import useCurrentTab from 'hooks/useCurrentTab';
-import globalize from 'lib/globalize';
+import { LibraryRoutes } from "apps/experimental/features/libraries/constants/libraryRoutes";
+import useCurrentTab from "hooks/useCurrentTab";
+import globalize from "lib/globalize";
 
-import styles from './LibraryToolbar.module.scss';
+import styles from "./LibraryToolbar.module.scss";
 
 export const LibraryViewMenu: FC = () => {
     const location = useLocation();
     const [searchParams, setSearchParams] = useSearchParams();
     const { activeTab } = useCurrentTab();
 
-    const currentRoute = LibraryRoutes.find(({ path }) => path === location.pathname);
+    const currentRoute = LibraryRoutes.find(
+        ({ path }) => path === location.pathname
+    );
 
     if (!currentRoute) return null;
 
     const onSelectionChange = (key: Key) => {
-        searchParams.set('tab', String(key));
+        searchParams.set("tab", String(key));
         setSearchParams(searchParams);
     };
 
     return (
         <Tabs
+            id="currentRoute"
             selectedKey={String(activeTab)}
             onSelectionChange={onSelectionChange}
             className={styles.tabs}

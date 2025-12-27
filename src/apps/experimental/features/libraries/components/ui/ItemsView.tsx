@@ -1,26 +1,33 @@
-import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
-import type { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
-import React, { type FC, useCallback } from 'react';
+import type { BaseItemKind } from "@jellyfin/sdk/lib/generated-client/models/base-item-kind";
+import type { CollectionType } from "@jellyfin/sdk/lib/generated-client/models/collection-type";
+import React, { type FC, useCallback } from "react";
 
-import { useLocalStorage } from 'hooks/useLocalStorage';
-import { useGetItemsViewByType } from 'hooks/useFetchItems';
-import { useToggleFavoriteMutation, useTogglePlayedMutation } from 'hooks/useFetchItems';
-import { getDefaultLibraryViewSettings, getSettingsKey } from 'utils/items';
-import Loading from 'components/loading/LoadingComponent';
-import ItemsContainer from 'elements/emby-itemscontainer/ItemsContainer';
-import NoItemsMessage from 'components/common/NoItemsMessage';
-import { LibraryTab } from 'types/libraryTab';
-import { type LibraryViewSettings, type ParentId } from 'types/library';
-import { useItem } from 'hooks/useItem';
-import type { ItemDto } from 'types/base/models/item-dto';
+import { useLocalStorage } from "hooks/useLocalStorage";
+import { useGetItemsViewByType } from "hooks/useFetchItems";
+import {
+    useToggleFavoriteMutation,
+    useTogglePlayedMutation,
+} from "hooks/useFetchItems";
+import { getDefaultLibraryViewSettings, getSettingsKey } from "utils/items";
+import Loading from "components/loading/LoadingComponent";
+import ItemsContainer from "elements/emby-itemscontainer/ItemsContainer";
+import NoItemsMessage from "components/common/NoItemsMessage";
+import { LibraryTab } from "types/libraryTab";
+import { type LibraryViewSettings, type ParentId } from "types/library";
+import { useItem } from "hooks/useItem";
+import type { ItemDto } from "types/base/models/item-dto";
 
-import { LibraryViewMenu } from 'apps/experimental/components/library/LibraryViewMenu';
-import { SortMenu } from 'apps/experimental/components/library/SortMenu';
-import { FilterMenu } from 'apps/experimental/components/library/FilterMenu';
-import { PlayAllButton, ShuffleButton, NewCollectionButton } from 'apps/experimental/components/library/ActionButtons';
-import styles from 'apps/experimental/components/library/LibraryToolbar.module.scss';
+import { LibraryViewMenu } from "apps/experimental/components/library/LibraryViewMenu";
+import { SortMenu } from "apps/experimental/components/library/SortMenu";
+import { FilterMenu } from "apps/experimental/components/library/FilterMenu";
+import {
+    PlayAllButton,
+    ShuffleButton,
+    NewCollectionButton,
+} from "apps/experimental/components/library/ActionButtons";
+import styles from "apps/experimental/components/library/LibraryToolbar.module.scss";
 
-import { ItemGrid } from 'apps/experimental/components/media/ItemGrid';
+import { ItemGrid } from "apps/experimental/components/media/ItemGrid";
 
 interface ItemsViewProps {
     viewType: LibraryTab;
@@ -46,7 +53,7 @@ const ItemsView: FC<ItemsViewProps> = ({
     isBtnFilterEnabled = true,
     isBtnNewCollectionEnabled = false,
     itemType,
-    noItemsMessage
+    noItemsMessage,
 }) => {
     const [libraryViewSettings, setLibraryViewSettings] =
         useLocalStorage<LibraryViewSettings>(
@@ -57,7 +64,7 @@ const ItemsView: FC<ItemsViewProps> = ({
     const {
         isPending,
         data: itemsResult,
-        refetch
+        refetch,
     } = useGetItemsViewByType(
         viewType,
         parentId,
@@ -73,15 +80,27 @@ const ItemsView: FC<ItemsViewProps> = ({
         void refetch();
     }, [refetch]);
 
-    const onToggleFavorite = useCallback(async (cardItem: ItemDto) => {
-        await toggleFavorite({ itemId: cardItem.Id!, isFavorite: !!cardItem.UserData?.IsFavorite });
-        onAfterAction();
-    }, [onAfterAction, toggleFavorite]);
+    const onToggleFavorite = useCallback(
+        async (cardItem: ItemDto) => {
+            await toggleFavorite({
+                itemId: cardItem.Id!,
+                isFavorite: !!cardItem.UserData?.IsFavorite,
+            });
+            onAfterAction();
+        },
+        [onAfterAction, toggleFavorite]
+    );
 
-    const onTogglePlayed = useCallback(async (cardItem: ItemDto) => {
-        await togglePlayed({ itemId: cardItem.Id!, isPlayed: !!cardItem.UserData?.Played });
-        onAfterAction();
-    }, [onAfterAction, togglePlayed]);
+    const onTogglePlayed = useCallback(
+        async (cardItem: ItemDto) => {
+            await togglePlayed({
+                itemId: cardItem.Id!,
+                isPlayed: !!cardItem.UserData?.Played,
+            });
+            onAfterAction();
+        },
+        [onAfterAction, togglePlayed]
+    );
 
     const totalRecordCount = itemsResult?.TotalRecordCount ?? 0;
     const items = itemsResult?.Items ?? [];
@@ -92,9 +111,9 @@ const ItemsView: FC<ItemsViewProps> = ({
     // Determine card variant based on content type
     const getCardVariant = () => {
         if ([LibraryTab.Episodes].includes(viewType)) {
-            return 'landscape';
+            return "landscape";
         }
-        return 'portrait';
+        return "portrait";
     };
 
     const cardVariant = getCardVariant();
@@ -104,7 +123,7 @@ const ItemsView: FC<ItemsViewProps> = ({
             {/* Toolbar */}
             <div className={styles.toolbar}>
                 {/* Tab bar */}
-                <div className={styles.tabBar}>
+                <div className={styles.tabBar} id="1">
                     <LibraryViewMenu />
                 </div>
                 <div className={styles.tertiaryControls}>
@@ -136,24 +155,30 @@ const ItemsView: FC<ItemsViewProps> = ({
                                         items={items}
                                         viewType={viewType}
                                         hasFilters={hasFilters}
-                                        libraryViewSettings={libraryViewSettings}
+                                        libraryViewSettings={
+                                            libraryViewSettings
+                                        }
                                     />
                                 )}
 
-                                {isBtnShuffleEnabled && totalRecordCount > 1 && (
-                                    <ShuffleButton
-                                        item={item}
-                                        items={items}
-                                        viewType={viewType}
-                                        hasFilters={hasFilters}
-                                        libraryViewSettings={libraryViewSettings}
-                                    />
-                                )}
+                                {isBtnShuffleEnabled &&
+                                    totalRecordCount > 1 && (
+                                        <ShuffleButton
+                                            item={item}
+                                            items={items}
+                                            viewType={viewType}
+                                            hasFilters={hasFilters}
+                                            libraryViewSettings={
+                                                libraryViewSettings
+                                            }
+                                        />
+                                    )}
 
-                                {isBtnNewCollectionEnabled && <NewCollectionButton />}
+                                {isBtnNewCollectionEnabled && (
+                                    <NewCollectionButton />
+                                )}
                             </>
                         )}
-
                     </div>
                 </div>
             </div>
@@ -166,7 +191,7 @@ const ItemsView: FC<ItemsViewProps> = ({
                     className="padded-left padded-right"
                     parentId={parentId}
                     reloadItems={refetch}
-                    queryKey={['ItemsViewByType']}
+                    queryKey={["ItemsViewByType"]}
                 >
                     {!items.length ? (
                         <NoItemsMessage message={noItemsMessage} />

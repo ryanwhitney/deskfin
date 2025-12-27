@@ -4,6 +4,9 @@ import { currentSettings as userSettings } from 'scripts/settings/userSettings';
 import Events from 'utils/events';
 import { updateLocale } from 'utils/dateFnsLocale';
 
+// Pre-bundle all string/translation files using Vite glob imports
+const stringModules = import.meta.glob('../../strings/*.json');
+
 const Direction = {
     rtl: 'rtl',
     ltr: 'ltr'
@@ -194,8 +197,16 @@ function loadTranslation(translations, lang) {
         }
 
         const url = filtered[0].path;
+        const stringKey = `../../strings/${url}`;
+        const loader = stringModules[stringKey];
 
-        import(/* @vite-ignore */ `../../strings/${url}`).then((fileContent) => {
+        if (!loader) {
+            console.warn(`String file not found: ${url}`);
+            resolve({});
+            return;
+        }
+
+        loader().then((fileContent) => {
             resolve(fileContent);
         }).catch(() => {
             resolve({});

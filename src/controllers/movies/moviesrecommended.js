@@ -294,7 +294,7 @@ export default function (view, params) {
                 break;
         }
 
-        import(`../movies/${depends}`).then(({ default: ControllerFactory }) => {
+        import(`../movies/${depends}.js`).then(({ default: ControllerFactory }) => {
             let tabContent;
 
             if (index === suggestionsTabIndex) {
