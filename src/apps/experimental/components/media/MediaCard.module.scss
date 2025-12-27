@@ -141,15 +141,19 @@
 .progress {
     height: 3px;
     background: rgba(255, 255, 255, 0.1);
-    margin: 5px 4px -2px;
+    margin: 4px 4px -2px;
     border-radius: 10px;
-    border-radius: 10px;
+
+    .progressBar {
+        height: 100%;
+        background: #3b82f6;
+        border-radius: 10px 0 0 10px;
+    }
 }
 
-.progressBar {
-    height: 100%;
-    background: #3b82f6;
-    border-radius: 10px 0 0 10px;
+.portrait .progress {
+    margin-top: 1px;
+    margin-bottom: 2px;
 }
 
 .meta {

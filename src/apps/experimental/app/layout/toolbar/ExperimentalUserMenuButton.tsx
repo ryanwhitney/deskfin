@@ -1,19 +1,26 @@
-import React, { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button, Menu, MenuItem, MenuTrigger, Popover, Separator } from 'react-aria-components';
+import React, { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+    Button,
+    Menu,
+    MenuItem,
+    MenuTrigger,
+    Popover,
+    Separator,
+} from "react-aria-components";
 
-import SvgIcon from 'components/SvgIcon';
-import { appHost } from 'components/apphost';
-import { AppFeature } from 'constants/appFeature';
-import { IconSvgs } from 'assets/icons';
-import globalize from 'lib/globalize';
-import { ActionMenuStyles } from 'apps/experimental/components/menu/ActionMenu';
-import { useApi } from 'hooks/useApi';
-import { useQuickConnectEnabled } from 'hooks/useQuickConnect';
-import shell from 'scripts/shell';
-import Dashboard from 'utils/dashboard';
+import SvgIcon from "components/SvgIcon";
+import { appHost } from "components/apphost";
+import { AppFeature } from "constants/appFeature";
+import { IconSvgs } from "assets/icons";
+import globalize from "lib/globalize";
+import { ActionMenuStyles } from "apps/experimental/components/menu/ActionMenu";
+import { useApi } from "hooks/useApi";
+import { useQuickConnectEnabled } from "hooks/useQuickConnect";
+import shell from "scripts/shell";
+import Dashboard from "utils/dashboard";
 
-import toolbarIconStyles from 'apps/experimental/components/toolbar/ToolbarIconButton.module.scss';
+import toolbarIconStyles from "apps/experimental/components/toolbar/ToolbarIconButton.module.scss";
 
 const ExperimentalUserMenuButton = () => {
     const navigate = useNavigate();
@@ -40,70 +47,102 @@ const ExperimentalUserMenuButton = () => {
         Dashboard.selectServer();
     }, []);
 
-    const go = useCallback((to: string) => {
-        navigate(to);
-    }, [ navigate ]);
+    const go = useCallback(
+        (to: string) => {
+            navigate(to);
+        },
+        [navigate]
+    );
 
     return (
         <MenuTrigger>
             <Button
                 className={toolbarIconStyles.button}
-                aria-label={globalize.translate('UserMenu')}
+                aria-label={globalize.translate("UserMenu")}
             >
                 <SvgIcon svg={IconSvgs.avatar} size={24} />
             </Button>
 
-            <Popover className={ActionMenuStyles.popover}>
-                <Menu className={ActionMenuStyles.menu} aria-label={globalize.translate('UserMenu')}>
+            <Popover
+                className={ActionMenuStyles.popover}
+                placement="bottom end"
+                offset={8}
+                containerPadding={12}
+            >
+                <Menu
+                    className={ActionMenuStyles.menu}
+                    aria-label={globalize.translate("UserMenu")}
+                >
                     <MenuItem
                         className={ActionMenuStyles.item}
-                        textValue={globalize.translate('Profile')}
+                        textValue={globalize.translate("Profile")}
                         onAction={() => go(`/userprofile?userId=${user?.Id}`)}
                     >
-                        <span className={ActionMenuStyles.icon} aria-hidden="true">
+                        <span
+                            className={ActionMenuStyles.icon}
+                            aria-hidden="true"
+                        >
                             <SvgIcon svg={IconSvgs.avatar} size={18} />
                         </span>
-                        <span className={ActionMenuStyles.text}>{globalize.translate('Profile')}</span>
+                        <span className={ActionMenuStyles.text}>
+                            {globalize.translate("Profile")}
+                        </span>
                     </MenuItem>
 
                     <MenuItem
                         className={ActionMenuStyles.item}
-                        textValue={globalize.translate('Settings')}
-                        onAction={() => go('/mypreferencesmenu')}
+                        textValue={globalize.translate("Settings")}
+                        onAction={() => go("/mypreferencesmenu")}
                     >
-                        <span className={ActionMenuStyles.icon} aria-hidden="true">
+                        <span
+                            className={ActionMenuStyles.icon}
+                            aria-hidden="true"
+                        >
                             <SvgIcon svg={IconSvgs.settings} size={18} />
                         </span>
-                        <span className={ActionMenuStyles.text}>{globalize.translate('Settings')}</span>
+                        <span className={ActionMenuStyles.text}>
+                            {globalize.translate("Settings")}
+                        </span>
                     </MenuItem>
 
-                    {(appHost.supports(AppFeature.DownloadManagement) || appHost.supports(AppFeature.ClientSettings)) ? (
+                    {appHost.supports(AppFeature.DownloadManagement) ||
+                    appHost.supports(AppFeature.ClientSettings) ? (
                         <Separator className={ActionMenuStyles.divider} />
                     ) : null}
 
                     {appHost.supports(AppFeature.DownloadManagement) ? (
                         <MenuItem
                             className={ActionMenuStyles.item}
-                            textValue={globalize.translate('DownloadManager')}
+                            textValue={globalize.translate("DownloadManager")}
                             onAction={onDownloadManagerClick}
                         >
-                            <span className={ActionMenuStyles.icon} aria-hidden="true">
+                            <span
+                                className={ActionMenuStyles.icon}
+                                aria-hidden="true"
+                            >
                                 <SvgIcon svg={IconSvgs.download} size={18} />
                             </span>
-                            <span className={ActionMenuStyles.text}>{globalize.translate('DownloadManager')}</span>
+                            <span className={ActionMenuStyles.text}>
+                                {globalize.translate("DownloadManager")}
+                            </span>
                         </MenuItem>
                     ) : null}
 
                     {appHost.supports(AppFeature.ClientSettings) ? (
                         <MenuItem
                             className={ActionMenuStyles.item}
-                            textValue={globalize.translate('ClientSettings')}
+                            textValue={globalize.translate("ClientSettings")}
                             onAction={onClientSettingsClick}
                         >
-                            <span className={ActionMenuStyles.icon} aria-hidden="true">
+                            <span
+                                className={ActionMenuStyles.icon}
+                                aria-hidden="true"
+                            >
                                 <SvgIcon svg={IconSvgs.controls} size={18} />
                             </span>
-                            <span className={ActionMenuStyles.text}>{globalize.translate('ClientSettings')}</span>
+                            <span className={ActionMenuStyles.text}>
+                                {globalize.translate("ClientSettings")}
+                            </span>
                         </MenuItem>
                     ) : null}
 
@@ -112,23 +151,38 @@ const ExperimentalUserMenuButton = () => {
                             <Separator className={ActionMenuStyles.divider} />
                             <MenuItem
                                 className={ActionMenuStyles.item}
-                                textValue={globalize.translate('TabDashboard')}
-                                onAction={() => go('/dashboard')}
+                                textValue={globalize.translate("TabDashboard")}
+                                onAction={() => go("/dashboard")}
                             >
-                                <span className={ActionMenuStyles.icon} aria-hidden="true">
-                                    <SvgIcon svg={IconSvgs.dashboard} size={18} />
+                                <span
+                                    className={ActionMenuStyles.icon}
+                                    aria-hidden="true"
+                                >
+                                    <SvgIcon
+                                        svg={IconSvgs.dashboard}
+                                        size={18}
+                                    />
                                 </span>
-                                <span className={ActionMenuStyles.text}>{globalize.translate('TabDashboard')}</span>
+                                <span className={ActionMenuStyles.text}>
+                                    {globalize.translate("TabDashboard")}
+                                </span>
                             </MenuItem>
                             <MenuItem
                                 className={ActionMenuStyles.item}
-                                textValue={globalize.translate('MetadataManager')}
-                                onAction={() => go('/metadata')}
+                                textValue={globalize.translate(
+                                    "MetadataManager"
+                                )}
+                                onAction={() => go("/metadata")}
                             >
-                                <span className={ActionMenuStyles.icon} aria-hidden="true">
+                                <span
+                                    className={ActionMenuStyles.icon}
+                                    aria-hidden="true"
+                                >
                                     <SvgIcon svg={IconSvgs.edit} size={18} />
                                 </span>
-                                <span className={ActionMenuStyles.text}>{globalize.translate('MetadataManager')}</span>
+                                <span className={ActionMenuStyles.text}>
+                                    {globalize.translate("MetadataManager")}
+                                </span>
                             </MenuItem>
                         </>
                     ) : null}
@@ -138,38 +192,56 @@ const ExperimentalUserMenuButton = () => {
                     {isQuickConnectEnabled ? (
                         <MenuItem
                             className={ActionMenuStyles.item}
-                            textValue={globalize.translate('QuickConnect')}
-                            onAction={() => go('/quickconnect')}
+                            textValue={globalize.translate("QuickConnect")}
+                            onAction={() => go("/quickconnect")}
                         >
-                            <span className={ActionMenuStyles.icon} aria-hidden="true">
-                                <SvgIcon svg={IconSvgs.quickConnect} size={18} />
+                            <span
+                                className={ActionMenuStyles.icon}
+                                aria-hidden="true"
+                            >
+                                <SvgIcon
+                                    svg={IconSvgs.quickConnect}
+                                    size={18}
+                                />
                             </span>
-                            <span className={ActionMenuStyles.text}>{globalize.translate('QuickConnect')}</span>
+                            <span className={ActionMenuStyles.text}>
+                                {globalize.translate("QuickConnect")}
+                            </span>
                         </MenuItem>
                     ) : null}
 
                     {appHost.supports(AppFeature.MultiServer) ? (
                         <MenuItem
                             className={ActionMenuStyles.item}
-                            textValue={globalize.translate('SelectServer')}
+                            textValue={globalize.translate("SelectServer")}
                             onAction={onSelectServerClick}
                         >
-                            <span className={ActionMenuStyles.icon} aria-hidden="true">
+                            <span
+                                className={ActionMenuStyles.icon}
+                                aria-hidden="true"
+                            >
                                 <SvgIcon svg={IconSvgs.refresh} size={18} />
                             </span>
-                            <span className={ActionMenuStyles.text}>{globalize.translate('SelectServer')}</span>
+                            <span className={ActionMenuStyles.text}>
+                                {globalize.translate("SelectServer")}
+                            </span>
                         </MenuItem>
                     ) : null}
 
                     <MenuItem
                         className={ActionMenuStyles.item}
-                        textValue={globalize.translate('ButtonSignOut')}
+                        textValue={globalize.translate("ButtonSignOut")}
                         onAction={onLogoutClick}
                     >
-                        <span className={ActionMenuStyles.icon} aria-hidden="true">
+                        <span
+                            className={ActionMenuStyles.icon}
+                            aria-hidden="true"
+                        >
                             <SvgIcon svg={IconSvgs.signOut} size={18} />
                         </span>
-                        <span className={ActionMenuStyles.text}>{globalize.translate('ButtonSignOut')}</span>
+                        <span className={ActionMenuStyles.text}>
+                            {globalize.translate("ButtonSignOut")}
+                        </span>
                     </MenuItem>
 
                     {appHost.supports(AppFeature.ExitMenu) ? (
@@ -177,13 +249,18 @@ const ExperimentalUserMenuButton = () => {
                             <Separator className={ActionMenuStyles.divider} />
                             <MenuItem
                                 className={ActionMenuStyles.item}
-                                textValue={globalize.translate('ButtonExitApp')}
+                                textValue={globalize.translate("ButtonExitApp")}
                                 onAction={onExitAppClick}
                             >
-                                <span className={ActionMenuStyles.icon} aria-hidden="true">
+                                <span
+                                    className={ActionMenuStyles.icon}
+                                    aria-hidden="true"
+                                >
                                     <SvgIcon svg={IconSvgs.delete} size={18} />
                                 </span>
-                                <span className={ActionMenuStyles.text}>{globalize.translate('ButtonExitApp')}</span>
+                                <span className={ActionMenuStyles.text}>
+                                    {globalize.translate("ButtonExitApp")}
+                                </span>
                             </MenuItem>
                         </>
                     ) : null}
@@ -194,4 +271,3 @@ const ExperimentalUserMenuButton = () => {
 };
 
 export default ExperimentalUserMenuButton;
-

@@ -66,3 +66,10 @@ html {
         }
     }
 }
+
+// hide pinterest popovers that show in SOME people's browsers
+html body > span:last-child[style*='background:url("data:image/svg+xml'] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0;
+}

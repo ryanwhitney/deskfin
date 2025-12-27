@@ -1,4 +1,4 @@
-@use '../../../styles/theme' as *;
+@use "../../../styles/theme" as *;
 
 .root {
     position: fixed;
@@ -13,7 +13,7 @@
     padding-right: max(16px, env(safe-area-inset-right));
     background: $surface-topbar;
     border-bottom: 0.5px solid $border-subtle;
-    backdrop-filter: $blur-strong;
+    backdrop-filter: blur(14px) saturate(3) brightness(0.5);
 }
 
 .left {
@@ -83,5 +83,3 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
-

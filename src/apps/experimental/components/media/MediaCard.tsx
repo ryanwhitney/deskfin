@@ -184,10 +184,7 @@ export const MediaCard: FC<MediaCardProps> = ({
                             </div>
                         ) : null}
 
-                        <div
-                            className={styles.actions}
-                            onClick={(e) => e.stopPropagation()}
-                        >
+                        <div className={styles.actions}>
                             <MenuTrigger
                                 isOpen={isMoreOpen}
                                 onOpenChange={onOpenChange}
