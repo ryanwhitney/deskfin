@@ -146,163 +146,222 @@ export const MediaCard: FC<MediaCardProps> = ({
             }}
         >
             <Squircle
-                cornerRadius={14}
+                cornerRadius={16}
                 cornerSmoothing={1}
-                className={styles.thumbWrap}
+                className={styles.thumbBorder}
             >
-                <div
-                    className={[
-                        styles.thumb,
-                        variant === "landscape" ? styles.thumbLandscape : "",
-                    ]
-                        .filter(Boolean)
-                        .join(" ")}
+                <Squircle
+                    cornerRadius={14}
+                    cornerSmoothing={1}
+                    className={styles.thumbWrap}
                 >
-                    {imageUrl ? (
-                        <img
-                            src={imageUrl}
-                            alt={title}
-                            className={styles.thumbImg}
-                        />
-                    ) : (
-                        <div className={styles.thumbPlaceholder} />
-                    )}
-
-                    {typeof overlayCount === "number" ? (
-                        <div className={styles.countBadge} aria-hidden="true">
-                            {overlayCount}
-                        </div>
-                    ) : null}
-
                     <div
-                        className={styles.actions}
-                        onClick={(e) => e.stopPropagation()}
+                        className={[
+                            styles.thumb,
+                            variant === "landscape"
+                                ? styles.thumbLandscape
+                                : "",
+                        ]
+                            .filter(Boolean)
+                            .join(" ")}
                     >
-                        <MenuTrigger
-                            isOpen={isMoreOpen}
-                            onOpenChange={onOpenChange}
+                        {imageUrl ? (
+                            <img
+                                src={imageUrl}
+                                alt={title}
+                                className={styles.thumbImg}
+                            />
+                        ) : (
+                            <div className={styles.thumbPlaceholder} />
+                        )}
+
+                        {typeof overlayCount === "number" ? (
+                            <div
+                                className={styles.countBadge}
+                                aria-hidden="true"
+                            >
+                                {overlayCount}
+                            </div>
+                        ) : null}
+
+                        <div
+                            className={styles.actions}
+                            onClick={(e) => e.stopPropagation()}
                         >
-                            <FocusRing focusRingClass="focus-ring">
-                                <RacButton
-                                    className={styles.iconBtn}
-                                    aria-label="More"
-                                >
-                                    <SvgIcon
-                                        svg={IconSvgs.ellipsis}
-                                        size={18}
-                                    />
-                                </RacButton>
-                            </FocusRing>
-                            <Popover className={ActionMenuStyles.popover}>
-                                <Menu
-                                    className={ActionMenuStyles.menu}
-                                    aria-label="More options"
-                                >
-                                    <MenuItem
-                                        className={ActionMenuStyles.item}
-                                        textValue={isFavorite ? "Remove from favorites" : "Add to favorites"}
-                                        onAction={() => onToggleFavorite(item)}
+                            <MenuTrigger
+                                isOpen={isMoreOpen}
+                                onOpenChange={onOpenChange}
+                            >
+                                <FocusRing focusRingClass="focus-ring">
+                                    <RacButton
+                                        className={styles.iconBtn}
+                                        aria-label="More"
                                     >
-                                        <span
-                                            className={ActionMenuStyles.icon}
-                                            aria-hidden="true"
-                                            style={{ color: isFavorite ? "#ff4d6d" : undefined }}
-                                        >
-                                            <SvgIcon svg={IconSvgs.heart} size={18} />
-                                        </span>
-                                        <span className={ActionMenuStyles.text}>
-                                            {isFavorite ? "Remove from favorites" : "Add to favorites"}
-                                        </span>
-                                    </MenuItem>
-                                    <MenuItem
-                                        className={ActionMenuStyles.item}
-                                        textValue={isPlayed ? "Mark as unwatched" : "Mark as watched"}
-                                        onAction={() => onTogglePlayed(item)}
+                                        <SvgIcon
+                                            svg={IconSvgs.ellipsis}
+                                            size={18}
+                                        />
+                                    </RacButton>
+                                </FocusRing>
+                                <Popover className={ActionMenuStyles.popover}>
+                                    <Menu
+                                        className={ActionMenuStyles.menu}
+                                        aria-label="More options"
                                     >
-                                        <span
-                                            className={ActionMenuStyles.icon}
-                                            aria-hidden="true"
-                                            style={{ color: isPlayed ? "#4ade80" : undefined }}
+                                        <MenuItem
+                                            className={ActionMenuStyles.item}
+                                            textValue={
+                                                isFavorite
+                                                    ? "Remove from favorites"
+                                                    : "Add to favorites"
+                                            }
+                                            onAction={() =>
+                                                onToggleFavorite(item)
+                                            }
                                         >
-                                            <SvgIcon svg={IconSvgs.checkmark} size={18} />
-                                        </span>
-                                        <span className={ActionMenuStyles.text}>
-                                            {isPlayed ? "Mark as unwatched" : "Mark as watched"}
-                                        </span>
-                                    </MenuItem>
-                                    {commands.length > 0 && (
-                                        <Separator className={ActionMenuStyles.divider} />
-                                    )}
-                                    {commands.map((cmd, idx) => {
-                                        if (cmd.divider)
-                                            return (
-                                                <Separator
-                                                    key={`div-${idx}`}
-                                                    className={
-                                                        ActionMenuStyles.divider
-                                                    }
-                                                />
-                                            );
-                                        if (!cmd.id) return null;
-                                        return (
-                                            <MenuItem
-                                                key={cmd.id}
+                                            <span
                                                 className={
-                                                    ActionMenuStyles.item
+                                                    ActionMenuStyles.icon
                                                 }
-                                                textValue={cmd.name ?? cmd.id}
-                                                onAction={() => {
-                                                    void onCommand(cmd.id!);
+                                                aria-hidden="true"
+                                                style={{
+                                                    color: isFavorite
+                                                        ? "#ff4d6d"
+                                                        : undefined,
                                                 }}
                                             >
-                                                <span
+                                                <SvgIcon
+                                                    svg={IconSvgs.heart}
+                                                    size={18}
+                                                />
+                                            </span>
+                                            <span
+                                                className={
+                                                    ActionMenuStyles.text
+                                                }
+                                            >
+                                                {isFavorite
+                                                    ? "Remove from favorites"
+                                                    : "Add to favorites"}
+                                            </span>
+                                        </MenuItem>
+                                        <MenuItem
+                                            className={ActionMenuStyles.item}
+                                            textValue={
+                                                isPlayed
+                                                    ? "Mark as unwatched"
+                                                    : "Mark as watched"
+                                            }
+                                            onAction={() =>
+                                                onTogglePlayed(item)
+                                            }
+                                        >
+                                            <span
+                                                className={
+                                                    ActionMenuStyles.icon
+                                                }
+                                                aria-hidden="true"
+                                                style={{
+                                                    color: isPlayed
+                                                        ? "#4ade80"
+                                                        : undefined,
+                                                }}
+                                            >
+                                                <SvgIcon
+                                                    svg={IconSvgs.checkmark}
+                                                    size={18}
+                                                />
+                                            </span>
+                                            <span
+                                                className={
+                                                    ActionMenuStyles.text
+                                                }
+                                            >
+                                                {isPlayed
+                                                    ? "Mark as unwatched"
+                                                    : "Mark as watched"}
+                                            </span>
+                                        </MenuItem>
+                                        {commands.length > 0 && (
+                                            <Separator
+                                                className={
+                                                    ActionMenuStyles.divider
+                                                }
+                                            />
+                                        )}
+                                        {commands.map((cmd, idx) => {
+                                            if (cmd.divider)
+                                                return (
+                                                    <Separator
+                                                        key={`div-${idx}`}
+                                                        className={
+                                                            ActionMenuStyles.divider
+                                                        }
+                                                    />
+                                                );
+                                            if (!cmd.id) return null;
+                                            return (
+                                                <MenuItem
+                                                    key={cmd.id}
                                                     className={
-                                                        ActionMenuStyles.icon
+                                                        ActionMenuStyles.item
                                                     }
-                                                    aria-hidden="true"
-                                                >
-                                                    {getLegacyCommandIcon(
-                                                        cmd.icon
-                                                    ) && (
-                                                        <SvgIcon
-                                                            svg={
-                                                                getLegacyCommandIcon(
-                                                                    cmd.icon
-                                                                )!
-                                                            }
-                                                            size={18}
-                                                        />
-                                                    )}
-                                                </span>
-                                                <span
-                                                    className={
-                                                        ActionMenuStyles.text
+                                                    textValue={
+                                                        cmd.name ?? cmd.id
                                                     }
+                                                    onAction={() => {
+                                                        void onCommand(cmd.id!);
+                                                    }}
                                                 >
-                                                    {cmd.name ?? cmd.id}
-                                                </span>
-                                            </MenuItem>
-                                        );
-                                    })}
-                                </Menu>
-                            </Popover>
-                        </MenuTrigger>
+                                                    <span
+                                                        className={
+                                                            ActionMenuStyles.icon
+                                                        }
+                                                        aria-hidden="true"
+                                                    >
+                                                        {getLegacyCommandIcon(
+                                                            cmd.icon
+                                                        ) && (
+                                                            <SvgIcon
+                                                                svg={
+                                                                    getLegacyCommandIcon(
+                                                                        cmd.icon
+                                                                    )!
+                                                                }
+                                                                size={18}
+                                                            />
+                                                        )}
+                                                    </span>
+                                                    <span
+                                                        className={
+                                                            ActionMenuStyles.text
+                                                        }
+                                                    >
+                                                        {cmd.name ?? cmd.id}
+                                                    </span>
+                                                </MenuItem>
+                                            );
+                                        })}
+                                    </Menu>
+                                </Popover>
+                            </MenuTrigger>
+                        </div>
                     </div>
-                </div>
 
-                {playbackManager.canPlay(item) ? (
-                    <FocusRing focusRingClass="focus-ring">
-                        <button
-                            type="button"
-                            className={styles.playOverlay}
-                            aria-label={`Play ${title}`}
-                            title={`Play ${title}`}
-                            onClick={onPlay}
-                        >
-                            <SvgIcon svg={IconSvgs.play} size={18} />
-                        </button>
-                    </FocusRing>
-                ) : null}
+                    {playbackManager.canPlay(item) ? (
+                        <FocusRing focusRingClass="focus-ring">
+                            <button
+                                type="button"
+                                className={styles.playOverlay}
+                                aria-label={`Play ${title}`}
+                                title={`Play ${title}`}
+                                onClick={onPlay}
+                            >
+                                <SvgIcon svg={IconSvgs.play} size={18} />
+                            </button>
+                        </FocusRing>
+                    ) : null}
+                </Squircle>
             </Squircle>
 
             {progressPct > 0 ? (

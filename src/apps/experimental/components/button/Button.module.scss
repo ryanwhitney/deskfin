@@ -1,6 +1,6 @@
 // Scoped styles for `Button` components (CSS modules).
 
-@use '../../styles/theme' as *;
+@use "../../styles/theme" as *;
 
 .button {
     display: inline-flex;
@@ -16,7 +16,10 @@
     font-size: 14px;
     line-height: 1.1;
     cursor: pointer;
-    transition: background 120ms ease, border-color 120ms ease, transform 80ms ease;
+    transition:
+        background 120ms ease,
+        border-color 120ms ease,
+        transform 80ms ease;
 }
 
 .button:hover {
@@ -25,7 +28,7 @@
 }
 
 .button:active {
-    transform: translateY(1px);
+    transform: scale(0.9);
 }
 
 .iconButton {
@@ -40,7 +43,10 @@
     color: inherit;
     cursor: pointer;
     padding: 0;
-    transition: background 120ms ease, border-color 120ms ease, transform 80ms ease;
+    transition:
+        background 120ms ease,
+        border-color 120ms ease,
+        transform 80ms ease;
 }
 
 .iconButton:hover {
@@ -49,8 +55,7 @@
 }
 
 .iconButton:active {
-    transform: translateY(1px);
+    transform: scale(0.9);
 }
 
 /* NOTE: icon sizing is now owned by `SvgIcon` (default 18px, override per usage). */
-
