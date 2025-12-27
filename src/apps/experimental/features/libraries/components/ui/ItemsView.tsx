@@ -17,7 +17,6 @@ import { type LibraryViewSettings, type ParentId } from "types/library";
 import { useItem } from "hooks/useItem";
 import type { ItemDto } from "types/base/models/item-dto";
 
-import { LibraryViewMenu } from "apps/experimental/components/library/LibraryViewMenu";
 import { SortMenu } from "apps/experimental/components/library/SortMenu";
 import { FilterMenu } from "apps/experimental/components/library/FilterMenu";
 import {
@@ -122,10 +121,6 @@ const ItemsView: FC<ItemsViewProps> = ({
         <div className="padded-bottom-page">
             {/* Toolbar */}
             <div className={styles.toolbar}>
-                {/* Tab bar */}
-                <div className={styles.tabBar} id="1">
-                    <LibraryViewMenu />
-                </div>
                 <div className={styles.tertiaryControls}>
                     <div className={styles.listButtons}>
                         {isBtnFilterEnabled && (

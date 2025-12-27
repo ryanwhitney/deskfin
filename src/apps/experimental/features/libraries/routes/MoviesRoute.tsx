@@ -5,10 +5,13 @@ import { useTitle } from 'apps/experimental/utils/useTitle';
 import { formatLibraryTitle } from 'apps/experimental/utils/titleUtils';
 import Page from 'components/Page';
 import PageTabContent from '../components/ui/PageTabContent';
+import { LibraryViewMenu } from 'apps/experimental/components/library';
 import { LibraryTab } from 'types/libraryTab';
 import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
 import { LibraryTabContent, LibraryTabMapping } from 'types/libraryTabContent';
 import { MovieSuggestionsSectionsView } from 'types/sections';
+
+import layoutStyles from '../components/ui/PageLayout.module.scss';
 
 const moviesTabContent: LibraryTabContent = {
     viewType: LibraryTab.Movies,
@@ -77,6 +80,11 @@ const Movies: FC = () => {
             className='mainAnimatedPage libraryPage backdropPage collectionEditorPage pageWithAbsoluteTabs withTabs'
             backDropType='movie'
         >
+            {/* Tab bar stays mounted - never re-renders on tab change */}
+            <div className={layoutStyles.toolbar}>
+                <LibraryViewMenu />
+            </div>
+            {/* Content remounts on tab change */}
             <PageTabContent
                 key={`${currentTab.viewType} - ${libraryId}`}
                 currentTab={currentTab}

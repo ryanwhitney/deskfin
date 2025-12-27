@@ -4,9 +4,12 @@ import { useTitle } from 'apps/experimental/utils/useTitle';
 import { formatLibraryTitle } from 'apps/experimental/utils/titleUtils';
 import Page from 'components/Page';
 import PageTabContent from '../components/ui/PageTabContent';
+import { LibraryViewMenu } from 'apps/experimental/components/library';
 import { LibraryTab } from 'types/libraryTab';
 import { LibraryTabContent, LibraryTabMapping } from 'types/libraryTabContent';
 import { ProgramSectionsView, RecordingsSectionsView, ScheduleSectionsView } from 'types/sections';
+
+import layoutStyles from '../components/ui/PageLayout.module.scss';
 
 const seriestimersTabContent: LibraryTabContent = {
     viewType: LibraryTab.SeriesTimers,
@@ -73,6 +76,9 @@ const LiveTv: FC = () => {
             id='liveTvPage'
             className='mainAnimatedPage libraryPage collectionEditorPage pageWithAbsoluteTabs withTabs'
         >
+            <div className={layoutStyles.toolbar}>
+                <LibraryViewMenu />
+            </div>
             <PageTabContent
                 key={`${currentTab.viewType} - ${libraryId}`}
                 currentTab={currentTab}

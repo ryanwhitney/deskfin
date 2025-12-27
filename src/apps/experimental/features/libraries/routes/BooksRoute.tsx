@@ -7,8 +7,11 @@ import { useTitle } from 'apps/experimental/utils/useTitle';
 import { formatLibraryTitle } from 'apps/experimental/utils/titleUtils';
 import Page from 'components/Page';
 import PageTabContent from '../components/ui/PageTabContent';
+import { LibraryViewMenu } from 'apps/experimental/components/library';
 import { LibraryTab } from 'types/libraryTab';
 import type { LibraryTabContent, LibraryTabMapping } from 'types/libraryTabContent';
+
+import layoutStyles from '../components/ui/PageLayout.module.scss';
 
 const booksTabContent: LibraryTabContent = {
     viewType: LibraryTab.Books,
@@ -35,6 +38,9 @@ const Books: FC = () => {
             className='mainAnimatedPage libraryPage backdropPage collectionEditorPage pageWithAbsoluteTabs withTabs'
             backDropType='book'
         >
+            <div className={layoutStyles.toolbar}>
+                <LibraryViewMenu />
+            </div>
             <PageTabContent
                 key={`${currentTab.viewType} - ${libraryId}`}
                 currentTab={currentTab}
