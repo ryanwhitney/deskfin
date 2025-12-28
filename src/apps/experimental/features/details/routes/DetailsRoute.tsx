@@ -115,13 +115,7 @@ export default function DetailsPage() {
 
     // Loading state
     if (isLoading) {
-        return (
-            <Page id="itemDetailsPage" className={styles.page}>
-                <div className={styles.container}>
-                    <div className={styles.loading}>{globalize.translate('Loading')}</div>
-                </div>
-            </Page>
-        );
+        return <Page id="itemDetailsPage" className={styles.page} />;
     }
 
     // Error state
@@ -136,10 +130,11 @@ export default function DetailsPage() {
     }
 
     // Extract people data
-    const people = (item.People || []).slice(0, 15);
+    const people = item.People || [];
     const directors = people.filter(p => p.Type === 'Director');
     const writers = people.filter(p => p.Type === 'Writer');
-    const cast = people.filter(p => p.Type === 'Actor' || p.Type === 'GuestStar');
+    const castAndCrew = people.filter(p => p.Type !== 'GuestStar');
+    const guestStars = people.filter(p => p.Type === 'GuestStar');
 
     // Series/Season breadcrumb data (variables declared above for title formatting)
 
@@ -287,8 +282,17 @@ export default function DetailsPage() {
                         </div>
                     )}
 
-                    {/* Cast section */}
-                    <DetailsCast cast={cast} />
+                    {/* Cast & Crew section */}
+                    <DetailsCast
+                        title={globalize.translate('HeaderCastAndCrew')}
+                        people={castAndCrew}
+                    />
+
+                    {/* Guest Stars section */}
+                    <DetailsCast
+                        title={globalize.translate('HeaderGuestCast')}
+                        people={guestStars}
+                    />
                 </div>
             </div>
         </Page>
