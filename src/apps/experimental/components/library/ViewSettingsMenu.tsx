@@ -63,7 +63,7 @@ export const ViewSettingsMenu: FC<ViewSettingsMenuProps> = ({
             <Popover className={styles.popover} placement="bottom end" offset={4}>
                 <Menu className={styles.menu} aria-label="View settings">
                     {/* View mode */}
-                    <div className={styles.sectionHeader}>{globalize.translate('View')}</div>
+                    <div className={styles.sectionHeader}>View</div>
                     <MenuItem
                         className={styles.menuItem}
                         textValue={globalize.translate('GridView')}

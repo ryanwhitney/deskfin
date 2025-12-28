@@ -14,7 +14,7 @@ export const SeasonsSection: FC<SeasonsSectionProps> = ({ seasons }) => {
 
     return (
         <div className={styles.section}>
-            <h2 className={styles.sectionTitle}>{globalize.translate('Seasons')}</h2>
+            <h2 className={styles.sectionTitle}>{globalize.translate('HeaderSeasons')}</h2>
             <div className={styles.cardRow}>
                 {seasons.map(s => {
                     const sImg = buildImageUrl(s, 'Primary', 400);

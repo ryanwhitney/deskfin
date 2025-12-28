@@ -82,8 +82,6 @@ const UserViewNav = () => {
 
     const isFavorites = currentUserView?.Id === MetaView.Favorites.Id;
 
-    if (isPending) return null;
-
     return (
         <>
             <ToolbarLink
