@@ -21,6 +21,7 @@ const stableRoutes = import.meta.glob('../../apps/stable/routes/**/*.tsx');
 
 interface RouteModule {
     default?: React.ComponentType;
+    Component?: React.ComponentType;
     [key: string]: unknown;
 }
 
@@ -47,7 +48,8 @@ const importRoute = (page: string, type: AppType): Promise<RouteModule> => {
     // Try .tsx first, then .ts, then without extension (for index files)
     const key = `${basePath}${page}.tsx`;
     const keyTs = `${basePath}${page}.ts`;
-    const keyIndex = `${basePath}${page}/index.tsx`;
+    // Handle empty page name (root index) vs nested index
+    const keyIndex = page ? `${basePath}${page}/index.tsx` : `${basePath}index.tsx`;
 
     const loader = routes[key] || routes[keyTs] || routes[keyIndex];
     if (!loader) {
@@ -66,11 +68,13 @@ export const toAsyncPageRoute = ({
         path,
         lazy: async () => {
             const module = await importRoute(page ?? path, type);
-            if (!module.default) {
-                throw new Error(`Route module for ${page ?? path} has no default export`);
+            // Support both default export and named Component export (React Router lazy pattern)
+            const Component = module.default || module.Component;
+            if (!Component) {
+                throw new Error(`Route module for ${page ?? path} has no default or Component export`);
             }
             return {
-                Component: module.default
+                Component: Component as React.ComponentType
             };
         }
     };

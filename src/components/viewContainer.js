@@ -231,7 +231,6 @@ function triggerDestroy(view) {
 }
 
 export function reset() {
-    console.debug('[viewContainer] resetting view cache');
     allPages = [];
     currentUrls = [];
     const mainAnimatedPages = getMainAnimatedPages();

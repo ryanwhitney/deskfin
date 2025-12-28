@@ -7,6 +7,35 @@ $mui-bp-xl: 1536px;
 
 $drawer-width: 240px;
 
+// Server button brand styling (matches experimental top bar)
+.expToolbarButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 8px;
+    color: white;
+    text-decoration: none;
+    transition: background 120ms ease;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+}
+
+.expToolbarBrand {
+    gap: 10px;
+    font-weight: 620;
+    font-variation-settings: "wdth" 105;
+    font-size: 14px;
+    padding: 8px 12px;
+
+    svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
 // Fix dashboard pages layout to work with drawer
 .dashboardDocument {
     .mainAnimatedPage:not(.metadataEditorPage) {

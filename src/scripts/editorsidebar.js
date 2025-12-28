@@ -1,5 +1,6 @@
 import escapeHtml from 'escape-html';
-import 'jquery';
+import jQuery from 'jquery';
+const $ = jQuery;
 import 'material-design-icons-iconfont';
 
 import globalize from 'lib/globalize';
