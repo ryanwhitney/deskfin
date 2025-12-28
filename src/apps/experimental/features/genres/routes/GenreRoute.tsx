@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
 import { ImageType } from '@jellyfin/sdk/lib/generated-client/models/image-type';
@@ -9,18 +9,29 @@ import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collec
 
 import Page from 'components/Page';
 import ItemsContainer from 'elements/emby-itemscontainer/ItemsContainer';
-import Cards from 'components/cardbuilder/Card/Cards';
 import Loading from 'components/loading/LoadingComponent';
 import NoItemsMessage from 'components/common/NoItemsMessage';
 import globalize from 'lib/globalize';
 import { useApi } from 'hooks/useApi';
 import { useItem } from 'hooks/useItem';
-import { useGetItems } from 'hooks/useFetchItems';
+import {
+    useGetItems,
+    useToggleFavoriteMutation,
+    useTogglePlayedMutation
+} from 'hooks/useFetchItems';
 import { useTitle } from 'apps/experimental/utils/useTitle';
 import { formatItemTitle } from 'apps/experimental/utils/titleUtils';
 
 import type { ItemDto } from 'types/base/models/item-dto';
-import type { CardOptions } from 'types/cardOptions';
+
+import { MediaCard } from 'apps/experimental/components/media/MediaCard';
+import {
+    buildCardImageUrl,
+    getCardMeta,
+    getProgressPct,
+    getOverlayCount
+} from 'apps/experimental/features/home/utils/cardHelpers';
+import styles from 'apps/experimental/components/library/LibraryToolbar.module.scss';
 
 const getIncludeItemTypesForGenre = (genre: ItemDto | undefined): BaseItemKind[] | undefined => {
     const t = genre?.Type;
@@ -35,42 +46,60 @@ const getIncludeItemTypesForGenre = (genre: ItemDto | undefined): BaseItemKind[]
 };
 
 export default function GenrePage() {
-    const [ params ] = useSearchParams();
+    const [params] = useSearchParams();
     const genreId = params.get('id') || params.get('genreId') || '';
     const parentId = params.get('parentId') || params.get('topParentId') || undefined;
 
-    const { __legacyApiClient__ } = useApi();
+    const { user } = useApi();
     const { data: genre } = useItem(genreId || undefined);
 
-    // Set title based on genre name
     useTitle(genre ? formatItemTitle(genre.Name, genre.Type) : undefined);
 
-    const queryKey = useMemo(() => ([ 'Genre', genreId, parentId ] as string[]), [ genreId, parentId ]);
-    const includeItemTypes = useMemo(() => getIncludeItemTypesForGenre(genre), [ genre ]);
+    const queryKey = useMemo(() => (['Genre', genreId, parentId] as string[]), [genreId, parentId]);
+    const includeItemTypes = useMemo(() => getIncludeItemTypesForGenre(genre), [genre]);
 
-    const { data: itemsResult, isLoading } = useGetItems({
-        genreIds: genreId ? [ genreId ] : undefined,
+    const { data: itemsResult, isLoading, refetch } = useGetItems({
+        genreIds: genreId ? [genreId] : undefined,
         parentId,
         recursive: true,
         includeItemTypes,
-        sortBy: [ ItemSortBy.SortName ],
-        sortOrder: [ SortOrder.Ascending ],
-        fields: [ ItemFields.PrimaryImageAspectRatio, ItemFields.MediaSourceCount ],
+        sortBy: [ItemSortBy.SortName],
+        sortOrder: [SortOrder.Ascending],
+        fields: [ItemFields.PrimaryImageAspectRatio, ItemFields.MediaSourceCount],
         imageTypeLimit: 1,
-        enableImageTypes: [ ImageType.Primary, ImageType.Backdrop ]
+        enableImageTypes: [ImageType.Primary, ImageType.Backdrop]
     });
 
     const items = (itemsResult?.Items || []) as ItemDto[];
 
-    const cardOptions: CardOptions = useMemo(() => ({
-        scalable: true,
-        overlayPlayButton: true,
-        showTitle: true,
-        showParentTitle: true,
-        showYear: true,
-        serverId: __legacyApiClient__?.serverId(),
-        queryKey
-    }), [ __legacyApiClient__, queryKey ]);
+    const { mutateAsync: toggleFavorite } = useToggleFavoriteMutation();
+    const { mutateAsync: togglePlayed } = useTogglePlayedMutation();
+
+    const onAfterAction = useCallback(() => {
+        void refetch();
+    }, [refetch]);
+
+    const onToggleFavorite = useCallback(
+        async (cardItem: ItemDto) => {
+            await toggleFavorite({
+                itemId: cardItem.Id!,
+                isFavorite: !!cardItem.UserData?.IsFavorite
+            });
+            onAfterAction();
+        },
+        [onAfterAction, toggleFavorite]
+    );
+
+    const onTogglePlayed = useCallback(
+        async (cardItem: ItemDto) => {
+            await togglePlayed({
+                itemId: cardItem.Id!,
+                isPlayed: !!cardItem.UserData?.Played
+            });
+            onAfterAction();
+        },
+        [onAfterAction, togglePlayed]
+    );
 
     return (
         <Page
@@ -79,28 +108,44 @@ export default function GenrePage() {
             isBackButtonEnabled
             backDropType='movie,series'
         >
-            <div className='padded-left padded-right padded-top'>
-                <h1 className='sectionTitle'>
-                    {genre?.Name || globalize.tryTranslate?.('Genres') || 'Genre'}
-                </h1>
+            <div className='padded-left padded-right padded-top padded-bottom-page'>
+                {isLoading ? (
+                    <Loading />
+                ) : (
+                    <ItemsContainer queryKey={queryKey}>
+                        {items.length ? (
+                            <div className={styles.gridContainer}>
+                                <h1 className={styles.sectionHeader}>
+                                    {genre?.Name || globalize.translate('Genres')}
+                                </h1>
+                                <div className={styles.grid}>
+                                    {items.map((item) => (
+                                        <MediaCard
+                                            key={item.Id}
+                                            item={item}
+                                            user={user}
+                                            variant='portrait'
+                                            imageUrl={buildCardImageUrl(item, { variant: 'portrait' })}
+                                            title={getCardMeta(item).title}
+                                            titleHref={getCardMeta(item).titleHref}
+                                            subtitle={getCardMeta(item).subtitle}
+                                            subtitleHref={getCardMeta(item).subtitleHref}
+                                            progressPct={getProgressPct(item)}
+                                            overlayCount={getOverlayCount(item)}
+                                            onToggleFavorite={onToggleFavorite}
+                                            onTogglePlayed={onTogglePlayed}
+                                            onAfterAction={onAfterAction}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (
+                            <NoItemsMessage message='MessageNoItemsAvailable' />
+                        )}
+                    </ItemsContainer>
+                )}
             </div>
-
-            {isLoading ? (
-                <div className='padded-left padded-right'><Loading /></div>
-            ) : (
-                <ItemsContainer
-                    className='centered padded-left padded-right vertical-wrap'
-                    queryKey={queryKey}
-                >
-                    {items.length ? (
-                        <Cards items={items} cardOptions={cardOptions} />
-                    ) : (
-                        <NoItemsMessage message='MessageNoItemsAvailable' />
-                    )}
-                </ItemsContainer>
-            )}
         </Page>
     );
 }
-
 

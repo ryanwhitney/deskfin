@@ -1,49 +1,57 @@
 @use "../../styles/theme" as *;
 
+// Container query width mixin - snap to breakpoints using min-width
+// Portrait: 150px, Landscape: 240px, Gap: 20px
+@mixin gridWidth {
+    max-width: 150px; // 1 portrait
+
+    @container card-grid (min-width: 320px) {
+        max-width: 320px; // 2 portrait
+    }
+
+    @container card-grid (min-width: 490px) {
+        max-width: 490px; // 3 portrait
+    }
+
+    @container card-grid (min-width: 660px) {
+        max-width: 660px; // 4 portrait
+    }
+
+    @container card-grid (min-width: 830px) {
+        max-width: 830px; // 5 portrait
+    }
+
+    @container card-grid (min-width: 1000px) {
+        max-width: 1000px; // 6 portrait
+    }
+
+    @container card-grid (min-width: 1170px) {
+        max-width: 1170px; // 7 portrait
+    }
+
+    @container card-grid (min-width: 1340px) {
+        max-width: 1340px; // 8 portrait
+    }
+
+    @container card-grid (min-width: 1540px) {
+        max-width: 1540px; // 9 portrait
+    }
+
+    @container card-grid (min-width: 1740px) {
+        max-width: 1740px; // 10 portrait
+    }
+
+    @container card-grid (min-width: 1960px) {
+        max-width: 1960px; // 13 portrait
+    }
+}
+
+// Flexbox grid - cards have fixed widths, flex wraps them
 .grid {
-    display: grid;
-    gap: $space-4;
-    width: 100%;
-}
-
-// Portrait variant (movies, series, albums)
-.grid[data-variant="portrait"] {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-
-    @media (min-width: 600px) {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    }
-
-    @media (min-width: 900px) {
-        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-    }
-}
-
-// Landscape variant (episodes, backdrops)
-.grid[data-variant="landscape"] {
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-
-    @media (min-width: 900px) {
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    }
-}
-
-// Square variant (artists, playlists)
-.grid[data-variant="square"] {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-
-    @media (min-width: 600px) {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    }
-}
-
-// Banner variant (wide banners)
-.grid[data-variant="banner"] {
-    grid-template-columns: 1fr;
-
-    @media (min-width: 900px) {
-        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-    }
+    @include gridWidth;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
 // Scrollable horizontal variant
@@ -62,7 +70,7 @@
 .scrollRow {
     display: flex;
     gap: $space-4;
-    padding-bottom: $space-2; // Space for focus ring
+    padding-bottom: $space-2;
 }
 
 .scrollRow > * {

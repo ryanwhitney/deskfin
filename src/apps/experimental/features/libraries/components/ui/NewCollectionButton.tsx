@@ -1,16 +1,11 @@
 import React, { FC, useCallback } from 'react';
 import Add from '@mui/icons-material/Add';
-import Button from '@mui/material/Button';
 
 import globalize from 'lib/globalize';
 
-interface NewCollectionButtonProps {
-    isTextVisible: boolean
-}
+import styles from './GridActionButton.module.scss';
 
-const NewCollectionButton: FC<NewCollectionButtonProps> = ({
-    isTextVisible
-}) => {
+const NewCollectionButton: FC = () => {
     const showCollectionEditor = useCallback(() => {
         import('components/collectionEditor/collectionEditor').then(
             ({ default: CollectionEditor }) => {
@@ -28,17 +23,15 @@ const NewCollectionButton: FC<NewCollectionButtonProps> = ({
     }, []);
 
     return (
-        <Button
-            variant='contained'
-            startIcon={isTextVisible ? <Add /> : undefined}
+        <button
+            type="button"
+            className={styles.actionButton}
+            title={globalize.translate('NewCollection')}
             onClick={showCollectionEditor}
         >
-            {isTextVisible ? (
-                globalize.translate('NewCollection')
-            ) : (
-                <Add />
-            )}
-        </Button>
+            <Add sx={{ fontSize: 18 }} />
+            <span>{globalize.translate('NewCollection')}</span>
+        </button>
     );
 };
 

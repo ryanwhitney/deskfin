@@ -1,5 +1,4 @@
 import React, { FC, useCallback } from 'react';
-import Button from '@mui/material/Button';
 import PlayArrow from '@mui/icons-material/PlayArrow';
 
 import { playbackManager } from 'components/playback/playbackmanager';
@@ -9,12 +8,13 @@ import { LibraryViewSettings } from 'types/library';
 import { LibraryTab } from 'types/libraryTab';
 import type { ItemDto } from 'types/base/models/item-dto';
 
+import styles from './GridActionButton.module.scss';
+
 interface PlayAllButtonProps {
     item: ItemDto | undefined
     items: ItemDto[]
     viewType: LibraryTab
     hasFilters: boolean
-    isTextVisible: boolean
     libraryViewSettings: LibraryViewSettings
 }
 
@@ -23,7 +23,6 @@ const PlayAllButton: FC<PlayAllButtonProps> = ({
     items,
     viewType,
     hasFilters,
-    isTextVisible,
     libraryViewSettings
 }) => {
     const play = useCallback(() => {
@@ -55,17 +54,15 @@ const PlayAllButton: FC<PlayAllButtonProps> = ({
     }, [hasFilters, item, items, libraryViewSettings, viewType]);
 
     return (
-        <Button
+        <button
+            type="button"
+            className={styles.actionButton}
             title={globalize.translate('HeaderPlayAll')}
-            startIcon={isTextVisible ? <PlayArrow /> : undefined}
             onClick={play}
         >
-            {isTextVisible ? (
-                globalize.translate('HeaderPlayAll')
-            ) : (
-                <PlayArrow />
-            )}
-        </Button>
+            <PlayArrow sx={{ fontSize: 18 }} />
+            <span>{globalize.translate('HeaderPlayAll')}</span>
+        </button>
     );
 };
 

@@ -65,12 +65,14 @@
 
     [dir="ltr"] & {
         padding-left: 1.9em;
+
         /* add a little inset so the RT icon isn't flush against the pill edge */
         background-position: 0.5em center;
     }
 
     [dir="rtl"] & {
         padding-right: 1.5em;
+
         /* add a little inset so the RT icon isn't flush against the pill edge */
         background-position: calc(100% - 0.35em) center;
     }

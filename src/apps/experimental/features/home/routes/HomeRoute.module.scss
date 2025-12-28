@@ -8,7 +8,8 @@ $leftMargin: 20px;
     gap: 28px;
     padding: 40px 0 40px;
     color: #eee;
-    &:after {
+
+    &::after {
         content: "";
         background: linear-gradient(to left, $app-background -10%, transparent 10%);
         position: absolute;
@@ -46,6 +47,7 @@ $leftMargin: 20px;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     padding-bottom: 10px;
+
     > div:first-of-type {
         padding-left: $leftMargin; //
     }

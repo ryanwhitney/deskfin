@@ -1,7 +1,6 @@
 import { ItemSortBy } from '@jellyfin/sdk/lib/generated-client/models/item-sort-by';
 import React, { FC, useCallback } from 'react';
 import Shuffle from '@mui/icons-material/Shuffle';
-import Button from '@mui/material/Button';
 
 import { playbackManager } from 'components/playback/playbackmanager';
 import globalize from 'lib/globalize';
@@ -10,12 +9,13 @@ import { LibraryViewSettings } from 'types/library';
 import { LibraryTab } from 'types/libraryTab';
 import type { ItemDto } from 'types/base/models/item-dto';
 
+import styles from './GridActionButton.module.scss';
+
 interface ShuffleButtonProps {
     item: ItemDto | undefined
     items: ItemDto[]
     viewType: LibraryTab
     hasFilters: boolean
-    isTextVisible: boolean
     libraryViewSettings: LibraryViewSettings
 }
 
@@ -24,7 +24,6 @@ const ShuffleButton: FC<ShuffleButtonProps> = ({
     items,
     viewType,
     hasFilters,
-    isTextVisible,
     libraryViewSettings
 }) => {
     const shuffle = useCallback(() => {
@@ -46,17 +45,15 @@ const ShuffleButton: FC<ShuffleButtonProps> = ({
     }, [hasFilters, item, items, libraryViewSettings, viewType]);
 
     return (
-        <Button
+        <button
+            type="button"
+            className={styles.actionButton}
             title={globalize.translate('Shuffle')}
-            startIcon={isTextVisible ? <Shuffle /> : undefined}
             onClick={shuffle}
         >
-            {isTextVisible ? (
-                globalize.translate('Shuffle')
-            ) : (
-                <Shuffle />
-            )}
-        </Button>
+            <Shuffle sx={{ fontSize: 18 }} />
+            <span>{globalize.translate('Shuffle')}</span>
+        </button>
     );
 };
 

@@ -20,6 +20,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+
     /* Default size, but allows overrides via style/className easily */
     width: 1em;
     height: 1em;
@@ -32,4 +33,3 @@
     display: block;
     fill: currentColor;
 }
-

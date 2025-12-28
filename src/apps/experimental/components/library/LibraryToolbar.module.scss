@@ -44,11 +44,11 @@
 .tabList {
     position: relative;
     display: flex;
-    gap: $space-1;
     padding: 0;
     margin: 0;
     list-style: none;
 }
+
 .tab {
     position: relative;
     display: inline-grid;
@@ -64,12 +64,14 @@
     white-space: nowrap;
     color: rgba(144, 144, 146, 0.9);
     text-align: center;
+
     > span {
         grid-area: 1 / 1;
         font-weight: 450;
         text-align: center;
         transition: all 100ms ease-out;
     }
+
     &::after {
         content: attr(data-text);
         font-weight: 480;
@@ -114,43 +116,32 @@
     align-items: center;
     justify-content: center;
     gap: $space-2;
-    padding: $space-2 $space-3;
-    min-height: 36px;
-    border-radius: $radius-md;
-    background: $hover-bg;
-    border: 1px solid $border-control;
-    color: inherit;
-    font-size: 13px;
-    font-weight: 600;
+    padding: 0;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-    transition:
-        background 120ms ease,
-        border-color 120ms ease;
+    transition: color 120ms ease;
 }
 
 .toolbarButton:hover {
-    background: $hover-bg-stronger;
-    border-color: $border-control-hover;
+    color: rgba(255, 255, 255, 0.9);
 }
 
 .toolbarButton:focus-visible {
-    outline: 2px solid $focus-ring;
+    outline: 2px solid rgba(255, 255, 255, 0.35);
     outline-offset: 2px;
+    border-radius: 4px;
 }
 
 .toolbarButtonIcon {
-    padding: $space-2;
-    min-width: 36px;
+    padding: 0;
 }
 
 .toolbarButtonPrimary {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.18);
-}
-
-.toolbarButtonPrimary:hover {
-    background: rgba(255, 255, 255, 0.18);
-    border-color: rgba(255, 255, 255, 0.24);
+    // No special styling for primary
 }
 
 .badge {
@@ -317,29 +308,98 @@
     accent-color: #3b82f6;
 }
 
-// Card grid
-.cardGrid {
-    display: grid;
-    gap: $space-4;
-    padding: $space-4;
+// Grid container with container queries for edge-to-edge layout
+// Portrait: 150px, Landscape: 240px, Gap: 20px
+.gridContainer {
+    width: 100%;
+    container-type: inline-size;
+    container-name: card-grid;
 }
 
-.cardGrid[data-variant="portrait"] {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+// Mixin for elements that need to match grid width
+// Portrait: 150px, Landscape: 240px, Gap: 20px
+@mixin gridWidth {
+    max-width: 150px; // 1 portrait
 
-    @media (min-width: 600px) {
-        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    @container card-grid (min-width: 320px) {
+        max-width: 320px; // 2 portrait
     }
 
-    @media (min-width: 900px) {
-        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    @container card-grid (min-width: 490px) {
+        max-width: 490px; // 3 portrait
+    }
+
+    @container card-grid (min-width: 660px) {
+        max-width: 660px; // 4 portrait
+    }
+
+    @container card-grid (min-width: 830px) {
+        max-width: 830px; // 5 portrait
+    }
+
+    @container card-grid (min-width: 1000px) {
+        max-width: 1000px; // 6 portrait
+    }
+
+    @container card-grid (min-width: 1170px) {
+        max-width: 1170px; // 7 portrait
+    }
+
+    @container card-grid (min-width: 1340px) {
+        max-width: 1340px; // 8 portrait
+    }
+
+    @container card-grid (min-width: 1540px) {
+        max-width: 1540px; // 9 portrait
+    }
+
+    @container card-grid (min-width: 1740px) {
+        max-width: 1740px; // 10 portrait
+    }
+
+    @container card-grid (min-width: 1960px) {
+        max-width: 1960px; // 13 portrait
     }
 }
 
-.cardGrid[data-variant="landscape"] {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+// Grid header with item count and actions
+.gridHeader {
+    @include gridWidth;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
 
-    @media (min-width: 900px) {
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    }
+.itemCount {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 500;
+}
+
+.gridActions {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+// The actual grid of items - Flexbox with container query width
+.grid {
+    @include gridWidth;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+// Section header inside grid container - aligns with grid edges
+.sectionHeader {
+    @include gridWidth;
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 20px 0;
+    color: #fff;
 }

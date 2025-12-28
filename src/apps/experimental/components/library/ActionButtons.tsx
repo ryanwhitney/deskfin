@@ -1,16 +1,17 @@
 import React, { type FC, useCallback } from 'react';
-import { Button } from 'react-aria-components';
+import PlayArrow from '@mui/icons-material/PlayArrow';
+import Shuffle from '@mui/icons-material/Shuffle';
+import Add from '@mui/icons-material/Add';
+import { ItemSortBy } from '@jellyfin/sdk/lib/generated-client/models/item-sort-by';
 
 import globalize from 'lib/globalize';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
 import { playbackManager } from 'components/playback/playbackmanager';
 import { getFiltersQuery } from 'utils/items';
 import type { LibraryViewSettings } from 'types/library';
 import { LibraryTab } from 'types/libraryTab';
 import type { ItemDto } from 'types/base/models/item-dto';
 
-import styles from './LibraryToolbar.module.scss';
+import styles from './GridActionButton.module.scss';
 
 interface PlayAllButtonProps {
     item: ItemDto | undefined;
@@ -18,7 +19,6 @@ interface PlayAllButtonProps {
     viewType: LibraryTab;
     hasFilters: boolean;
     libraryViewSettings: LibraryViewSettings;
-    showText?: boolean;
 }
 
 export const PlayAllButton: FC<PlayAllButtonProps> = ({
@@ -26,10 +26,9 @@ export const PlayAllButton: FC<PlayAllButtonProps> = ({
     items,
     viewType,
     hasFilters,
-    libraryViewSettings,
-    showText = true
+    libraryViewSettings
 }) => {
-    const onPlay = useCallback(() => {
+    const play = useCallback(() => {
         if (item && !hasFilters) {
             playbackManager.play({
                 items: [item],
@@ -38,7 +37,7 @@ export const PlayAllButton: FC<PlayAllButtonProps> = ({
                     SortBy: [libraryViewSettings.SortBy],
                     SortOrder: [libraryViewSettings.SortOrder]
                 }
-            }).catch((err) => {
+            }).catch(err => {
                 console.error('[PlayAllButton] failed to play', err);
             });
         } else {
@@ -51,21 +50,22 @@ export const PlayAllButton: FC<PlayAllButtonProps> = ({
                     SortBy: [libraryViewSettings.SortBy],
                     SortOrder: [libraryViewSettings.SortOrder]
                 }
-            }).catch((err) => {
+            }).catch(err => {
                 console.error('[PlayAllButton] failed to play', err);
             });
         }
     }, [hasFilters, item, items, libraryViewSettings, viewType]);
 
     return (
-        <Button
-            className={`${styles.toolbarButton} ${styles.toolbarButtonPrimary}`}
-            onPress={onPlay}
-            aria-label={globalize.translate('HeaderPlayAll')}
+        <button
+            type='button'
+            className={styles.actionButton}
+            title={globalize.translate('HeaderPlayAll')}
+            onClick={play}
         >
-            <SvgIcon svg={IconSvgs.play} size={16} />
-            {showText && <span>{globalize.translate('HeaderPlayAll')}</span>}
-        </Button>
+            <PlayArrow sx={{ fontSize: 18 }} />
+            <span>{globalize.translate('HeaderPlayAll')}</span>
+        </button>
     );
 };
 
@@ -75,7 +75,6 @@ interface ShuffleButtonProps {
     viewType: LibraryTab;
     hasFilters: boolean;
     libraryViewSettings: LibraryViewSettings;
-    showText?: boolean;
 }
 
 export const ShuffleButton: FC<ShuffleButtonProps> = ({
@@ -83,63 +82,65 @@ export const ShuffleButton: FC<ShuffleButtonProps> = ({
     items,
     viewType,
     hasFilters,
-    libraryViewSettings,
-    showText = false
+    libraryViewSettings
 }) => {
-    const onShuffle = useCallback(() => {
+    const shuffle = useCallback(() => {
         if (item && !hasFilters) {
             playbackManager.shuffle(item);
         } else {
             playbackManager.play({
                 items,
                 autoplay: true,
-                shuffle: true,
                 queryOptions: {
                     ParentId: item?.Id ?? undefined,
                     ...getFiltersQuery(viewType, libraryViewSettings),
-                    SortBy: [libraryViewSettings.SortBy],
-                    SortOrder: [libraryViewSettings.SortOrder]
+                    SortBy: [ItemSortBy.Random]
                 }
-            }).catch((err) => {
-                console.error('[ShuffleButton] failed to shuffle', err);
+            }).catch(err => {
+                console.error('[ShuffleButton] failed to play', err);
             });
         }
     }, [hasFilters, item, items, libraryViewSettings, viewType]);
 
     return (
-        <Button
-            className={`${styles.toolbarButton} ${styles.toolbarButtonPrimary}`}
-            onPress={onShuffle}
-            aria-label={globalize.translate('Shuffle')}
+        <button
+            type='button'
+            className={styles.actionButton}
+            title={globalize.translate('Shuffle')}
+            onClick={shuffle}
         >
-            <SvgIcon svg={IconSvgs.shuffle} size={16} />
-            {showText && <span>{globalize.translate('Shuffle')}</span>}
-        </Button>
+            <Shuffle sx={{ fontSize: 18 }} />
+            <span>{globalize.translate('Shuffle')}</span>
+        </button>
     );
 };
 
-interface NewCollectionButtonProps {
-    showText?: boolean;
-}
-
-export const NewCollectionButton: FC<NewCollectionButtonProps> = ({ showText = true }) => {
-    const onClick = useCallback(() => {
-        import('components/collectionEditor/collectionEditor').then(({ default: CollectionEditor }) => {
-            const editor = new CollectionEditor();
-            editor.show({ items: [], serverId: '' });
-        }).catch((err) => {
-            console.error('[NewCollectionButton] failed to open editor', err);
+export const NewCollectionButton: FC = () => {
+    const showCollectionEditor = useCallback(() => {
+        import('components/collectionEditor/collectionEditor').then(
+            ({ default: CollectionEditor }) => {
+                const serverId = window.ApiClient.serverId();
+                const collectionEditor = new CollectionEditor();
+                collectionEditor.show({
+                    items: [],
+                    serverId: serverId
+                }).catch(() => {
+                    // closed collection editor
+                });
+            }).catch(err => {
+            console.error('[NewCollection] failed to load collection editor', err);
         });
     }, []);
 
     return (
-        <Button
-            className={styles.toolbarButton}
-            onPress={onClick}
-            aria-label={globalize.translate('NewCollection')}
+        <button
+            type='button'
+            className={styles.actionButton}
+            title={globalize.translate('NewCollection')}
+            onClick={showCollectionEditor}
         >
-            <SvgIcon svg={IconSvgs.addTo} size={16} />
-            {showText && <span>{globalize.translate('NewCollection')}</span>}
-        </Button>
+            <Add sx={{ fontSize: 18 }} />
+            <span>{globalize.translate('NewCollection')}</span>
+        </button>
     );
 };

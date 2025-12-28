@@ -166,9 +166,10 @@ export const SortMenu: FC<SortMenuProps> = ({
                 aria-label={globalize.translate('Sort')}
             >
                 <SvgIcon svg={IconSvgs.sort} size={18} />
+                <span>{globalize.translate('Sort')}</span>
             </Button>
-            <Popover className={styles.popover} placement="bottom start" offset={4}>
-                <Menu className={styles.menu} aria-label="Sort options">
+            <Popover className={styles.popover} placement='bottom start' offset={4}>
+                <Menu className={styles.menu} aria-label='Sort options'>
                     <Section>
                         <Header className={styles.sectionHeader}>
                             {globalize.translate('LabelSortBy')}
@@ -194,7 +195,7 @@ export const SortMenu: FC<SortMenuProps> = ({
                             {globalize.translate('LabelSortOrder')}
                         </Header>
                         <MenuItem
-                            id="sort-order-asc"
+                            id='sort-order-asc'
                             className={styles.menuItem}
                             onAction={() => onSortOrderSelect(SortOrder.Ascending)}
                         >
@@ -204,7 +205,7 @@ export const SortMenu: FC<SortMenuProps> = ({
                             )}
                         </MenuItem>
                         <MenuItem
-                            id="sort-order-desc"
+                            id='sort-order-desc'
                             className={styles.menuItem}
                             onAction={() => onSortOrderSelect(SortOrder.Descending)}
                         >
