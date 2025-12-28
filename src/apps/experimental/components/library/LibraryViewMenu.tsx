@@ -5,7 +5,7 @@ import {
     Tab as RACTab,
     TabProps,
     composeRenderProps,
-    SelectionIndicator
+    SelectionIndicator,
 } from "react-aria-components";
 import { useLocation, useSearchParams } from "react-router-dom";
 
@@ -54,7 +54,11 @@ export const LibraryViewMenu: FC = () => {
         >
             <TabList className={styles.tabList} aria-label="Library sections">
                 {currentRoute.views.map((tab) => (
-                    <Tab key={tab.index} id={String(tab.index)}>
+                    <Tab
+                        key={tab.index}
+                        data-text={globalize.translate(tab.label)}
+                        id={String(tab.index)}
+                    >
                         {globalize.translate(tab.label)}
                     </Tab>
                 ))}

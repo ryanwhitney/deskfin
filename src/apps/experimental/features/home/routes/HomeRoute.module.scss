@@ -21,6 +21,15 @@ $leftMargin: 20px;
     }
 }
 
+.section {
+    opacity: 0;
+    transition: opacity 300ms ease-out;
+}
+
+.section.visible {
+    opacity: 1;
+}
+
 .sectionTitle {
     margin-bottom: 16px;
     font-size: 20px;

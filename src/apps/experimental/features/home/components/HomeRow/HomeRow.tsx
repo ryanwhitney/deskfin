@@ -1,4 +1,4 @@
-import React, { type FC } from 'react';
+import React, { type FC, useEffect, useState } from 'react';
 import { GridList, GridListItem } from 'react-aria-components';
 import { MediaCard, MediaCardStyles } from 'apps/experimental/components/media/MediaCard';
 import type { ItemDto } from 'types/base/models/item-dto';
@@ -30,6 +30,16 @@ export const HomeRow: FC<HomeRowProps> = ({
     onTogglePlayed,
     cardVariant = 'portrait'
 }) => {
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        if (items.length > 0) {
+            // Small delay to trigger fade animation
+            const timer = setTimeout(() => setIsVisible(true), 10);
+            return () => clearTimeout(timer);
+        }
+    }, [items.length]);
+
     if (!items.length) return null;
 
     const openDetailsById = (id: string) => {
@@ -38,7 +48,7 @@ export const HomeRow: FC<HomeRowProps> = ({
     };
 
     return (
-        <section className={styles.section}>
+        <section className={`${styles.section} ${isVisible ? styles.visible : ''}`}>
             <h2 className={styles.sectionTitle}>{title}</h2>
             <GridList
                 aria-label={title}

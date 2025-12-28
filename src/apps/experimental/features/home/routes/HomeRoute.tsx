@@ -65,6 +65,16 @@ const Home: FC = () => {
     const [favoriteEpisodes, setFavoriteEpisodes] = useState<ItemDto[]>([]);
     const [favoriteCollections, setFavoriteCollections] = useState<ItemDto[]>([]);
 
+    // Visibility state for fade-in
+    const [showLibraryTiles, setShowLibraryTiles] = useState(false);
+
+    useEffect(() => {
+        if (userViews.length > 0) {
+            const timer = setTimeout(() => setShowLibraryTiles(true), 10);
+            return () => clearTimeout(timer);
+        }
+    }, [userViews.length]);
+
 
     const refreshAll = useCallback(async (options?: { priorityOnly?: boolean }) => {
         if (!apiClient || !user?.Id) return;
@@ -237,7 +247,7 @@ const Home: FC = () => {
                     <>
                         {/* Library tiles */}
                         {!sectionOrder.includes(HomeSectionType.SmallLibraryTiles) && userViews.length > 0 && (
-                            <section className={styles.section}>
+                            <section className={`${styles.section} ${showLibraryTiles ? styles.visible : ''}`}>
                                 <h2 className={styles.sectionTitle}>{t('HeaderMyMedia', 'My Media')}</h2>
                                 <div className={styles.row}>
                                     {userViews.map(v => {

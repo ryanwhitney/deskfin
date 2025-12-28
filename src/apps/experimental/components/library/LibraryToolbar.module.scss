@@ -1,4 +1,4 @@
-@use '../../styles/theme' as *;
+@use "../../styles/theme" as *;
 
 .toolbar {
     display: flex;
@@ -35,9 +35,10 @@
 // Tab bar styles
 .tabs {
     display: flex;
-    background: rgba(128, 128, 128, 0.108);
-    border-radius: $radius-md;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 999px;
     width: fit-content;
+    padding: 4px;
 }
 
 .tabList {
@@ -48,21 +49,34 @@
     margin: 0;
     list-style: none;
 }
-
 .tab {
     position: relative;
-    display: inline-flex;
+    display: inline-grid;
+    grid-template-columns: 1fr;
     align-items: center;
-    padding: $space-2 $space-3;
+    padding: 8px 16px;
     border-radius: $radius-md;
     background: transparent;
     border: none;
-    color: $text-muted;
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 13px;
+    line-height: 1;
     cursor: pointer;
-    transition: color 120ms ease;
     white-space: nowrap;
+    color: rgba(144, 144, 146, 0.9);
+    text-align: center;
+    > span {
+        grid-area: 1 / 1;
+        font-weight: 450;
+        text-align: center;
+        transition: all 100ms ease-out;
+    }
+    &::after {
+        content: attr(data-text);
+        font-weight: 480;
+        grid-area: 1 / 1;
+        visibility: hidden;
+        pointer-events: none;
+    }
 }
 
 .tabLabel {
@@ -73,24 +87,27 @@
 .indicator {
     position: absolute;
     inset: 0;
-    border-radius: $radius-md;
-    background: $hover-bg-stronger;
-    transition: translate 200ms ease, width 200ms ease, transform 200ms ease;
+    border-radius: 999px;
+    background: #2c2c2f;
+    transition:
+        translate 200ms ease,
+        width 200ms ease,
+        transform 200ms ease;
 }
 
 .tab:hover {
     color: #fff;
 }
 
-.tab[data-selected] {
+.tab[data-selected] span {
     color: #fff;
+    font-weight: 480;
 }
 
 .tab:focus-visible {
     outline: 2px solid $focus-ring;
     outline-offset: 2px;
 }
-
 
 .toolbarButton {
     display: inline-flex;
@@ -106,7 +123,9 @@
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: background 120ms ease, border-color 120ms ease;
+    transition:
+        background 120ms ease,
+        border-color 120ms ease;
 }
 
 .toolbarButton:hover {
