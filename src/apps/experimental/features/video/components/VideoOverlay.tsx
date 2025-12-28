@@ -58,6 +58,10 @@ export const VideoOverlay: FC = () => {
         navigate(-1);
     }, [navigate]);
 
+    const handleVideoClick = useCallback(() => {
+        playbackManager.playPause();
+    }, []);
+
     useEffect(() => {
         // Initial state
         updateNowPlaying();
@@ -88,19 +92,27 @@ export const VideoOverlay: FC = () => {
     }, [updateNowPlaying]);
 
     return (
-        <div className={`${styles.overlay} ${isVisible ? styles.visible : ''}`}>
+        <>
             <button
                 type="button"
-                className={styles.backButton}
-                onClick={handleBack}
-                aria-label="Go back"
-            >
-                <span className={styles.backIcon}>
-                    <SvgIcon svg={IconSvgs.chevronDown} size={20} />
-                </span>
-            </button>
-            <div className={styles.title}>{title}</div>
-        </div>
+                className={styles.clickArea}
+                onClick={handleVideoClick}
+                aria-label="Toggle play/pause"
+            />
+            <div className={`${styles.overlay} ${isVisible ? styles.visible : ''}`}>
+                <button
+                    type="button"
+                    className={styles.backButton}
+                    onClick={handleBack}
+                    aria-label="Go back"
+                >
+                    <span className={styles.backIcon}>
+                        <SvgIcon svg={IconSvgs.chevronDown} size={20} />
+                    </span>
+                </button>
+                <div className={styles.title}>{title}</div>
+            </div>
+        </>
     );
 };
 

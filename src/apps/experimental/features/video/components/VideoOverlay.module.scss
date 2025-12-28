@@ -1,4 +1,18 @@
-@use '../../../styles/theme' as *;
+@use "../../../styles/theme" as *;
+
+.clickArea {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+}
+
+// Ensure OSD controls sit above our click area
+:global(.videoOsdBottom) {
+    z-index: 1401;
+}
 
 .overlay {
     position: fixed;
@@ -16,7 +30,9 @@
     z-index: 1400;
     opacity: 0;
     transform: translateY(-10px);
-    transition: opacity 300ms ease, transform 300ms ease;
+    transition:
+        opacity 300ms ease,
+        transform 300ms ease;
     pointer-events: none;
 }
 
@@ -38,7 +54,9 @@
     backdrop-filter: blur(10px);
     color: #fff;
     cursor: pointer;
-    transition: background 150ms ease, transform 80ms ease;
+    transition:
+        background 150ms ease,
+        transform 80ms ease;
     flex-shrink: 0;
 
     &:hover {
