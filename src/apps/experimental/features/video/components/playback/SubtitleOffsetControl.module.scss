@@ -1,0 +1,257 @@
+@import '../../../../styles/theme';
+
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $space-4;
+
+    &[data-entering] {
+        animation: fadeIn 200ms;
+    }
+
+    &[data-exiting] {
+        animation: fadeOut 150ms;
+    }
+}
+
+.modal {
+    outline: none;
+    max-width: 500px;
+    width: 100%;
+
+    &[data-entering] {
+        animation: slideUp 200ms;
+    }
+
+    &[data-exiting] {
+        animation: slideDown 150ms;
+    }
+}
+
+.dialog {
+    background: $surface-menu;
+    border: 1px solid $border-subtle;
+    border-radius: $radius-lg;
+    box-shadow: $menu-shadow;
+    outline: none;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $space-4 $space-5;
+    border-bottom: 1px solid $border-subtle;
+}
+
+.title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.closeButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: $radius-md;
+    background: transparent;
+    border: none;
+    color: currentcolor;
+    cursor: pointer;
+    transition: background 120ms;
+
+    &:hover {
+        background: $hover-bg;
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+}
+
+.content {
+    padding: $space-6 $space-5;
+    display: flex;
+    flex-direction: column;
+    gap: $space-6;
+}
+
+.sliderContainer {
+    display: flex;
+    align-items: center;
+    gap: $space-4;
+}
+
+.label {
+    font-size: 13px;
+    color: $text-muted;
+    min-width: 36px;
+    text-align: center;
+}
+
+.slider {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: $border-muted;
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer;
+
+    &::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: currentcolor;
+        cursor: pointer;
+        transition: transform 120ms;
+
+        &:hover {
+            transform: scale(1.15);
+        }
+
+        &:active {
+            transform: scale(1.25);
+        }
+    }
+
+    &::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: currentcolor;
+        border: none;
+        cursor: pointer;
+        transition: transform 120ms;
+
+        &:hover {
+            transform: scale(1.15);
+        }
+
+        &:active {
+            transform: scale(1.25);
+        }
+    }
+
+    &:focus-visible {
+        outline: 2px solid $focus-ring;
+        outline-offset: 2px;
+    }
+}
+
+.inputContainer {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+}
+
+.inputLabel {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.inputWrapper {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid $border-control;
+    border-radius: $radius-md;
+    padding: $space-2 $space-3;
+    min-width: 100px;
+}
+
+.input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: currentcolor;
+    font-size: 14px;
+    outline: none;
+    width: 60px;
+    text-align: right;
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.inputSuffix {
+    font-size: 13px;
+    color: $text-muted;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+}
+
+.resetButton {
+    padding: $space-2 $space-4;
+    border-radius: $radius-md;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid $border-control;
+    color: currentcolor;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 120ms;
+
+    &:hover {
+        background: rgba(255, 255, 255, 0.15);
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+}

@@ -88,7 +88,7 @@ export const VideoOverlay: FC = () => {
         };
 
         // Sync visibility with video OSD
-        const onOsdVisibilityChange = (_e: Event, visible: boolean) => {
+        const onOsdVisibilityChange = (_e: any, visible: boolean) => {
             setIsVisible(visible);
         };
 

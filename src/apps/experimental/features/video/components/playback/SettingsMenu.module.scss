@@ -1,0 +1,92 @@
+@import '../../../../styles/theme';
+
+.iconButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: $toolbar-icon-size;
+    height: $toolbar-icon-size;
+    border-radius: $radius-md;
+    background: transparent;
+    border: none;
+    color: currentcolor;
+    cursor: pointer;
+    transition: background 120ms, transform 80ms;
+
+    &:hover {
+        background: $hover-bg;
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+
+    svg {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+.popover {
+    background: $surface-menu;
+    border: 1px solid $border-subtle;
+    border-radius: $radius-md;
+    box-shadow: $menu-shadow;
+    min-width: 220px;
+    max-height: 400px;
+    overflow: hidden;
+}
+
+.submenuPopover {
+    background: $surface-menu;
+    border: 1px solid $border-subtle;
+    border-radius: $radius-md;
+    box-shadow: $menu-shadow;
+    min-width: 180px;
+    max-height: 400px;
+    overflow: hidden;
+}
+
+.menu {
+    padding: $space-1 0;
+    outline: none;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+.menuItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-3;
+    padding: $space-2 $space-4;
+    cursor: pointer;
+    font-size: 14px;
+    outline: none;
+
+    &[data-hovered],
+    &[data-focused] {
+        background: $hover-bg-strong;
+    }
+
+    &[data-focus-visible] {
+        outline: 2px solid $focus-ring;
+        outline-offset: -2px;
+    }
+}
+
+.itemText {
+    flex: 1 1 auto;
+}
+
+.itemSecondary {
+    font-size: 12px;
+    color: $text-muted;
+    flex-shrink: 0;
+}
+
+.checkmark {
+    opacity: 0.6;
+    flex-shrink: 0;
+}

@@ -1,0 +1,68 @@
+@import "../../../styles/theme";
+
+.controls {
+    position: fixed;
+    bottom: 18px;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 16px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    padding-left: calc(16px + env(safe-area-inset-left));
+    padding-right: calc(16px + env(safe-area-inset-right));
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
+    z-index: 1400;
+    transition:
+        opacity 300ms ease,
+        transform 300ms ease;
+    pointer-events: none;
+    transform: translateY(10px);
+}
+
+.controls.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.controls.hidden {
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+}
+
+.spacer {
+    flex: 1 1 auto;
+}
+
+.iconButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: $radius-md;
+    background: transparent;
+    border: none;
+    color: currentcolor;
+    cursor: pointer;
+    transition:
+        background 120ms,
+        transform 80ms;
+    padding: 10px;
+
+    &:hover {
+        background: $hover-bg;
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+
+    svg {
+        width: 30px;
+        height: 30px;
+    }
+}
