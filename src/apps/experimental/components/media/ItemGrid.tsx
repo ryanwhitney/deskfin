@@ -1,19 +1,19 @@
-import React, { type FC, type ReactNode } from 'react';
-import type { ItemDto } from 'types/base/models/item-dto';
-import { MediaCard, type MediaCardVariant } from './MediaCard';
-import { useApi } from 'hooks/useApi';
+import React, { type FC, type ReactNode } from "react";
+import type { ItemDto } from "types/base/models/item-dto";
+import { MediaCard, type MediaCardVariant } from "./MediaCard";
+import { useApi } from "hooks/useApi";
 import {
     buildCardImageUrl,
     getCardMeta,
     getProgressPct,
-    getOverlayCount
-} from 'apps/experimental/features/home/utils/cardHelpers';
-import Loading from 'components/loading/LoadingComponent';
-import globalize from 'lib/globalize';
+    getOverlayCount,
+} from "apps/experimental/features/home/utils/cardHelpers";
+import Loading from "components/loading/LoadingComponent";
+import globalize from "lib/globalize";
 
-import styles from './ItemGrid.module.scss';
+import styles from "./ItemGrid.module.scss";
 
-export type ItemGridVariant = 'portrait' | 'landscape' | 'square' | 'banner';
+export type ItemGridVariant = "portrait" | "landscape" | "square" | "banner";
 
 export interface ItemGridProps {
     items: ItemDto[];
@@ -30,7 +30,7 @@ export interface ItemGridProps {
 
 export const ItemGrid: FC<ItemGridProps> = ({
     items,
-    variant = 'portrait',
+    variant = "portrait",
     scrollable = false,
     isLoading = false,
     emptyMessage,
@@ -38,12 +38,15 @@ export const ItemGrid: FC<ItemGridProps> = ({
     onTogglePlayed,
     onAfterAction,
     className,
-    children
+    children,
 }) => {
     const { user } = useApi();
 
     // Map variant to MediaCard variant
-    const cardVariant: MediaCardVariant = variant === 'landscape' || variant === 'banner' ? 'landscape' : 'portrait';
+    const cardVariant: MediaCardVariant =
+        variant === "landscape" || variant === "banner"
+            ? "landscape"
+            : "portrait";
 
     if (isLoading) {
         return (
@@ -67,20 +70,24 @@ export const ItemGrid: FC<ItemGridProps> = ({
     if (children) {
         if (scrollable) {
             return (
-                <div className={[styles.scrollContainer, className].filter(Boolean).join(' ')}>
-                    <div className={styles.scrollRow}>
-                        {children}
-                    </div>
+                <div
+                    className={[styles.scrollContainer, className]
+                        .filter(Boolean)
+                        .join(" ")}
+                >
+                    <div className={styles.scrollRow}>{children}</div>
                 </div>
             );
         }
 
         return (
-            <div
-                className={[styles.grid, className].filter(Boolean).join(' ')}
-                data-variant={variant}
-            >
-                {children}
+            <div className={styles.gridContainer}>
+                <div
+                    className={[styles.grid, className].filter(Boolean).join(" ")}
+                    data-variant={variant}
+                >
+                    {children}
+                </div>
             </div>
         );
     }
@@ -90,48 +97,53 @@ export const ItemGrid: FC<ItemGridProps> = ({
     const handleTogglePlayed = onTogglePlayed || (() => {});
     const handleAfterAction = onAfterAction || (() => {});
 
-    const renderCards = () => items.map((item) => {
-        const meta = getCardMeta(item);
-        const imageUrl = buildCardImageUrl(item, { variant: cardVariant });
-        const progressPct = getProgressPct(item);
-        const overlayCount = getOverlayCount(item);
+    const renderCards = () =>
+        items.map((item) => {
+            const meta = getCardMeta(item);
+            const imageUrl = buildCardImageUrl(item, { variant: cardVariant });
+            const progressPct = getProgressPct(item);
+            const overlayCount = getOverlayCount(item);
 
-        return (
-            <MediaCard
-                key={item.Id}
-                item={item}
-                user={user}
-                variant={cardVariant}
-                imageUrl={imageUrl}
-                title={meta.title}
-                titleHref={meta.titleHref}
-                subtitle={meta.subtitle}
-                subtitleHref={meta.subtitleHref}
-                progressPct={progressPct}
-                overlayCount={overlayCount}
-                onToggleFavorite={handleToggleFavorite}
-                onTogglePlayed={handleTogglePlayed}
-                onAfterAction={handleAfterAction}
-            />
-        );
-    });
+            return (
+                <MediaCard
+                    key={item.Id}
+                    item={item}
+                    user={user}
+                    variant={cardVariant}
+                    imageUrl={imageUrl}
+                    title={meta.title}
+                    titleHref={meta.titleHref}
+                    subtitle={meta.subtitle}
+                    subtitleHref={meta.subtitleHref}
+                    progressPct={progressPct}
+                    overlayCount={overlayCount}
+                    onToggleFavorite={handleToggleFavorite}
+                    onTogglePlayed={handleTogglePlayed}
+                    onAfterAction={handleAfterAction}
+                />
+            );
+        });
 
     if (scrollable) {
         return (
-            <div className={[styles.scrollContainer, className].filter(Boolean).join(' ')}>
-                <div className={styles.scrollRow}>
-                    {renderCards()}
-                </div>
+            <div
+                className={[styles.scrollContainer, className]
+                    .filter(Boolean)
+                    .join(" ")}
+            >
+                <div className={styles.scrollRow}>{renderCards()}</div>
             </div>
         );
     }
 
     return (
-        <div
-            className={[styles.grid, className].filter(Boolean).join(' ')}
-            data-variant={variant}
-        >
-            {renderCards()}
+        <div className={styles.gridContainer}>
+            <div
+                className={[styles.grid, className].filter(Boolean).join(" ")}
+                data-variant={variant}
+            >
+                {renderCards()}
+            </div>
         </div>
     );
 };

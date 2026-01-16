@@ -12,6 +12,7 @@ export interface SectionProps {
     actions?: ReactNode;
     children: ReactNode;
     className?: string;
+    variant?: 'portrait' | 'landscape';
 }
 
 export const Section: FC<SectionProps> = ({
@@ -21,7 +22,8 @@ export const Section: FC<SectionProps> = ({
     padded = false,
     actions,
     children,
-    className
+    className,
+    variant
 }) => {
     return (
         <section
@@ -46,7 +48,7 @@ export const Section: FC<SectionProps> = ({
                 ) : null}
             </div>
 
-            <div className={styles.content}>
+            <div className={styles.content} data-variant={variant}>
                 {children}
             </div>
         </section>

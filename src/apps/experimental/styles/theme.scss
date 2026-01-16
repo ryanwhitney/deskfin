@@ -79,6 +79,124 @@ $blur-strong: blur(14px);
 $menu-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
 
 // ============================================================================
+// GRID SYSTEM - Unified grid breakpoints and calculations
+// ============================================================================
+
+// Base card dimensions
+$grid-portrait-base: 150px;
+$grid-landscape-base: 240px;
+$grid-gap-base: 20px;
+
+// Gap ratios (for proportional scaling)
+$grid-portrait-gap-ratio: $grid-gap-base / $grid-portrait-base; // 0.1333 (13.33%)
+$grid-landscape-gap-ratio: $grid-gap-base / $grid-landscape-base; // 0.0833 (8.33%)
+
+// Calculate max-width for N columns that fits both variants edge-to-edge
+// Formula: max_width = max(portrait_width, landscape_width)
+// Where: width = N * card_base + (N-1) * gap_base
+@function grid-calculate-max-width($columns) {
+    $portrait-width: $columns * $grid-portrait-base + ($columns - 1) * $grid-gap-base;
+    $landscape-width: $columns * $grid-landscape-base + ($columns - 1) * $grid-gap-base;
+    @return max($portrait-width, $landscape-width);
+}
+
+// Unified breakpoints - container max-widths that work for both variants
+$grid-breakpoints: (
+    1: grid-calculate-max-width(1),   // 240px
+    2: grid-calculate-max-width(2),   // 500px
+    3: grid-calculate-max-width(3),   // 760px
+    4: grid-calculate-max-width(4),   // 1020px
+    5: grid-calculate-max-width(5),   // 1280px
+    6: grid-calculate-max-width(6),   // 1540px
+    7: grid-calculate-max-width(7),   // 1800px
+    8: grid-calculate-max-width(8)    // 2060px
+);
+
+// Grid container wrapper (for container queries)
+@mixin grid-container {
+    width: 100%;
+    container-type: inline-size;
+    container-name: card-grid;
+}
+
+// Mixin for unified grid width (ensures consistent max-width and centering)
+// Uses container queries - for elements INSIDE a grid-container
+@mixin grid-width {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+
+    @each $columns, $max-width in $grid-breakpoints {
+        @container card-grid (min-width: $max-width) {
+            max-width: $max-width;
+        }
+    }
+
+    @container card-grid (max-width: #{grid-calculate-max-width(1) - 1px}) {
+        max-width: $grid-portrait-base;
+    }
+}
+
+// Mixin for grid width using viewport/media queries
+// For elements that ARE containers themselves (like sections)
+@mixin grid-width-viewport {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+
+    // Use media queries instead of container queries
+    @each $columns, $max-width in $grid-breakpoints {
+        @media (min-width: $max-width) {
+            max-width: $max-width;
+        }
+    }
+
+    @media (max-width: #{grid-calculate-max-width(1) - 1px}) {
+        max-width: $grid-portrait-base;
+    }
+}
+
+// Shared mixin for grid layout (portrait variant)
+@mixin grid-layout-portrait {
+    display: grid;
+    justify-content: start; // Items align left
+    grid-template-columns: repeat(auto-fill, minmax($grid-portrait-base, 1fr));
+    gap: $grid-gap-base;
+
+    @each $columns, $max-width in $grid-breakpoints {
+        @container card-grid (min-width: $max-width) {
+            grid-template-columns: repeat($columns, 1fr);
+            gap: calc((#{$max-width} - #{$columns} * #{$grid-portrait-base}) / #{$columns - 1});
+        }
+    }
+
+    @container card-grid (max-width: #{grid-calculate-max-width(1) - 1px}) {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+}
+
+// Shared mixin for grid layout (landscape variant)
+@mixin grid-layout-landscape {
+    display: grid;
+    justify-content: start; // Items align left
+    grid-template-columns: repeat(auto-fill, minmax($grid-landscape-base, 1fr));
+    gap: $grid-gap-base;
+
+    @each $columns, $max-width in $grid-breakpoints {
+        @container card-grid (min-width: $max-width) {
+            grid-template-columns: repeat($columns, 1fr);
+            gap: calc((#{$max-width} - #{$columns} * #{$grid-landscape-base}) / #{$columns - 1});
+        }
+    }
+
+    @container card-grid (max-width: #{grid-calculate-max-width(1) - 1px}) {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+}
+
+// ============================================================================
 // GLOBAL STYLES
 // ============================================================================
 

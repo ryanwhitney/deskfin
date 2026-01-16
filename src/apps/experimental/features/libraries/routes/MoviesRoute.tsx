@@ -1,24 +1,25 @@
-import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
-import React, { FC } from 'react';
-import useCurrentTab from 'hooks/useCurrentTab';
-import { useTitle } from 'apps/experimental/utils/useTitle';
-import { formatLibraryTitle } from 'apps/experimental/utils/titleUtils';
-import Page from 'components/Page';
-import PageTabContent from '../components/ui/PageTabContent';
-import { LibraryViewMenu } from 'apps/experimental/components/library';
-import { LibraryTab } from 'types/libraryTab';
-import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
-import { LibraryTabContent, LibraryTabMapping } from 'types/libraryTabContent';
-import { MovieSuggestionsSectionsView } from 'types/sections';
+import { BaseItemKind } from "@jellyfin/sdk/lib/generated-client/models/base-item-kind";
+import React, { FC } from "react";
+import useCurrentTab from "hooks/useCurrentTab";
+import { useTitle } from "apps/experimental/utils/useTitle";
+import { formatLibraryTitle } from "apps/experimental/utils/titleUtils";
+import Page from "components/Page";
+import PageTabContent from "../components/ui/PageTabContent";
+import { LibraryViewMenu } from "apps/experimental/components/library";
+import { LibraryTab } from "types/libraryTab";
+import { CollectionType } from "@jellyfin/sdk/lib/generated-client/models/collection-type";
+import { LibraryTabContent, LibraryTabMapping } from "types/libraryTabContent";
+import { MovieSuggestionsSectionsView } from "types/sections";
 
-import layoutStyles from '../components/ui/PageLayout.module.scss';
+import layoutStyles from "../components/ui/PageLayout.module.scss";
+import globalize from "lib/globalize";
 
 const moviesTabContent: LibraryTabContent = {
     viewType: LibraryTab.Movies,
     collectionType: CollectionType.Movies,
     isBtnPlayAllEnabled: true,
     isBtnShuffleEnabled: true,
-    itemType: [BaseItemKind.Movie]
+    itemType: [BaseItemKind.Movie],
 };
 
 const collectionsTabContent: LibraryTabContent = {
@@ -27,25 +28,25 @@ const collectionsTabContent: LibraryTabContent = {
     isBtnFilterEnabled: false,
     isBtnNewCollectionEnabled: true,
     itemType: [BaseItemKind.BoxSet],
-    noItemsMessage: 'MessageNoCollectionsAvailable'
+    noItemsMessage: "MessageNoCollectionsAvailable",
 };
 
 const favoritesTabContent: LibraryTabContent = {
     viewType: LibraryTab.Favorites,
     collectionType: CollectionType.Movies,
-    itemType: [BaseItemKind.Movie]
+    itemType: [BaseItemKind.Movie],
 };
 
 const suggestionsTabContent: LibraryTabContent = {
     viewType: LibraryTab.Suggestions,
     collectionType: CollectionType.Movies,
-    sectionsView: MovieSuggestionsSectionsView
+    sectionsView: MovieSuggestionsSectionsView,
 };
 
 const genresTabContent: LibraryTabContent = {
     viewType: LibraryTab.Genres,
     collectionType: CollectionType.Movies,
-    itemType: [BaseItemKind.Movie]
+    itemType: [BaseItemKind.Movie],
 };
 
 const moviesTabMapping: LibraryTabMapping = {
@@ -53,7 +54,7 @@ const moviesTabMapping: LibraryTabMapping = {
     1: suggestionsTabContent,
     2: favoritesTabContent,
     3: collectionsTabContent,
-    4: genresTabContent
+    4: genresTabContent,
 };
 
 const Movies: FC = () => {
@@ -63,23 +64,30 @@ const Movies: FC = () => {
     // Set title based on current tab
     const getTitleForTab = () => {
         switch (activeTab) {
-            case 0: return undefined; // Default "Movies" tab
-            case 1: return 'Suggestions';
-            case 2: return 'Favorites';
-            case 3: return 'Collections';
-            case 4: return 'Genres';
-            default: return undefined;
+            case 0:
+                return undefined; // Default "Movies" tab
+            case 1:
+                return "Suggestions";
+            case 2:
+                return "Favorites";
+            case 3:
+                return "Collections";
+            case 4:
+                return "Genres";
+            default:
+                return undefined;
         }
     };
 
-    useTitle(formatLibraryTitle('Movies', getTitleForTab()));
+    useTitle(formatLibraryTitle("Movies", getTitleForTab()));
 
     return (
         <Page
-            id='moviesPage'
-            className='mainAnimatedPage libraryPage backdropPage collectionEditorPage pageWithAbsoluteTabs withTabs'
-            backDropType='movie'
+            id="moviesPage"
+            className="mainAnimatedPage libraryPage backdropPage collectionEditorPage pageWithAbsoluteTabs withTabs"
+            backDropType="movie"
         >
+            <h1>{globalize.translate("Movies")}</h1>
             {/* Tab bar stays mounted - never re-renders on tab change */}
             <div className={layoutStyles.toolbar}>
                 <LibraryViewMenu />

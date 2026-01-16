@@ -27,8 +27,13 @@
     }
 }
 
+// Cards scale proportionally within grid
+// Base sizes: portrait 150px, landscape 240px
+// Cards fill their grid cell (1fr)
 .portrait {
-    width: 150px;
+    width: 100%;
+    min-width: 150px;
+    max-width: 200px; // Allow some growth but keep reasonable bounds
 
     .meta {
         display: none;
@@ -36,7 +41,9 @@
 }
 
 .landscape {
-    width: 240px;
+    width: 100%;
+    min-width: 240px;
+    max-width: 320px; // Allow some growth but keep reasonable bounds
 }
 
 .thumbWrap {

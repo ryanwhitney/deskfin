@@ -1,62 +1,14 @@
-@use '../../styles/theme' as *;
+@use "../../styles/theme" as *;
 
-// Container for grid sections - enables container queries
+// Container for grid sections - constrained and centered like grids
 .section {
-    container-type: inline-size;
-    container-name: card-grid;
+    @include grid-width-viewport; // Use viewport queries since section IS the container
+    @include grid-container;
     margin-bottom: $space-6;
 }
 
-// Shared container query breakpoints for edge-to-edge grids
-// Portrait: 150px, Landscape: 240px, Gap: 20px
-@mixin gridContainerWidth {
-    max-width: 150px; // 1 portrait
-    margin-left: auto;
-    margin-right: auto;
-
-    @container card-grid (min-width: 320px) {
-        max-width: 320px; // 2 portrait
-    }
-
-    @container card-grid (min-width: 490px) {
-        max-width: 490px; // 3 portrait
-    }
-
-    @container card-grid (min-width: 660px) {
-        max-width: 660px; // 4 portrait
-    }
-
-    @container card-grid (min-width: 830px) {
-        max-width: 830px; // 5 portrait
-    }
-
-    @container card-grid (min-width: 1000px) {
-        max-width: 1000px; // 6 portrait
-    }
-
-    @container card-grid (min-width: 1170px) {
-        max-width: 1170px; // 7 portrait
-    }
-
-    @container card-grid (min-width: 1340px) {
-        max-width: 1340px; // 8 portrait
-    }
-
-    @container card-grid (min-width: 1540px) {
-        max-width: 1540px; // 9 portrait
-    }
-
-    @container card-grid (min-width: 1740px) {
-        max-width: 1740px; // 10 portrait
-    }
-
-    @container card-grid (min-width: 1960px) {
-        max-width: 1960px; // 13 portrait
-    }
-}
-
 .header {
-    @include gridContainerWidth;
+    @include grid-width; // Use container queries since header is INSIDE the section container
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -92,7 +44,9 @@
 .chevron {
     opacity: 0.5;
     transform: rotate(-90deg);
-    transition: opacity 120ms ease, transform 120ms ease;
+    transition:
+        opacity 120ms ease,
+        transform 120ms ease;
 }
 
 .titleStatic {
@@ -109,7 +63,26 @@
 }
 
 .content {
-    @include gridContainerWidth;
+    @include grid-width;
+    // Content container matches grid max-width for alignment with header
+    // ItemGrid inside handles the actual grid layout
+    // If variant is provided and no ItemGrid is used, content becomes a grid
+    display: block;
+
+    // If used as a direct grid (when variant is set and children are not ItemGrid)
+    &[data-variant] {
+        @include grid-layout-portrait;
+
+        // Landscape variant
+        &[data-variant="landscape"] {
+            @include grid-layout-landscape;
+        }
+
+        // Portrait variant (explicit)
+        &[data-variant="portrait"] {
+            @include grid-layout-portrait;
+        }
+    }
 }
 
 // Padded variant for when section is standalone
