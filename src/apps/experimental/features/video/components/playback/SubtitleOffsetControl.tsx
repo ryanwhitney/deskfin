@@ -22,6 +22,9 @@ export const SubtitleOffsetControl: FC<SubtitleOffsetControlProps> = ({ player, 
     // Load current offset when dialog opens
     useEffect(() => {
         if (isOpen && player) {
+            // Enable subtitle offset feature
+            playbackManager.enableShowingSubtitleOffset?.(player);
+
             const currentOffset = playbackManager.getPlayerSubtitleOffset?.(player) || 0;
             setOffset(currentOffset);
             setInputValue(String(currentOffset));
@@ -33,7 +36,7 @@ export const SubtitleOffsetControl: FC<SubtitleOffsetControlProps> = ({ player, 
         setOffset(value);
         setInputValue(String(value));
         if (player) {
-            playbackManager.setSubtitleOffset(value, player);
+            playbackManager.setSubtitleOffset?.(value, player);
         }
     }, [player]);
 
@@ -47,7 +50,7 @@ export const SubtitleOffsetControl: FC<SubtitleOffsetControlProps> = ({ player, 
             setOffset(value);
             setInputValue(String(value));
             if (player) {
-                playbackManager.setSubtitleOffset(value, player);
+                playbackManager.setSubtitleOffset?.(value, player);
             }
         } else {
             // Reset to current offset if invalid
@@ -68,7 +71,7 @@ export const SubtitleOffsetControl: FC<SubtitleOffsetControlProps> = ({ player, 
         setOffset(0);
         setInputValue('0');
         if (player) {
-            playbackManager.setSubtitleOffset(0, player);
+            playbackManager.setSubtitleOffset?.(0, player);
         }
     }, [player]);
 
@@ -118,7 +121,7 @@ export const SubtitleOffsetControl: FC<SubtitleOffsetControlProps> = ({ player, 
 
                         <div className={styles.inputContainer}>
                             <label htmlFor="offset-input" className={styles.inputLabel}>
-                                {globalize.translate('Offset')}:
+                                Value:
                             </label>
                             <div className={styles.inputWrapper}>
                                 <input

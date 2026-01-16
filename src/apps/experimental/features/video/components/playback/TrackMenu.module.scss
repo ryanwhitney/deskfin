@@ -90,3 +90,9 @@
     opacity: 0.6;
     flex-shrink: 0;
 }
+
+.separator {
+    height: 1px;
+    background: $border-subtle;
+    margin: $space-1 0;
+}
