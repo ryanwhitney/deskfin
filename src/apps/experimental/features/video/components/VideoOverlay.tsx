@@ -1,5 +1,5 @@
 import React, { type FC, useEffect, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import { playbackManager } from 'components/playback/playbackmanager';
 import { EventType } from 'constants/eventType';
@@ -40,6 +40,7 @@ function getDisplayTitle(item: NowPlayingItem | null): string {
 
 export const VideoOverlay: FC = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const [title, setTitle] = useState('');
     const [isVisible, setIsVisible] = useState(true);
 
@@ -53,10 +54,21 @@ export const VideoOverlay: FC = () => {
     }, []);
 
     const handleBack = useCallback(() => {
-        // Stop playback and go back
+        // Stop playback
         playbackManager.stop();
-        navigate(-1);
-    }, [navigate]);
+
+        // Check if there's history to go back to within the app
+        // location.key is 'default' when there's no previous navigation (new tab, external link)
+        const hasHistory = location.key !== 'default';
+
+        if (hasHistory) {
+            // Navigate back to the previous page in the app
+            navigate(-1);
+        } else {
+            // No app history - navigate to home
+            navigate('/home');
+        }
+    }, [navigate, location.key]);
 
     const handleVideoClick = useCallback(() => {
         playbackManager.playPause();
