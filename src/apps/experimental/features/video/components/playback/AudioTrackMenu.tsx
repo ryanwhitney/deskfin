@@ -26,7 +26,7 @@ export const AudioTrackMenu: FC<AudioTrackMenuProps> = ({ player, onUpdate }) =>
     const [audioTracks, setAudioTracks] = useState<any[]>([]);
     const [currentIndex, setCurrentIndex] = useState<number | undefined>();
     const [isOpen, setIsOpen] = useState(false);
-    const { ref: buttonRef, handlePress } = useBlurOnMousePress();
+    const { ref: buttonRef, handlePress, blurOnMenuClose } = useBlurOnMousePress();
 
     useEffect(() => {
         if (!player) return;
@@ -47,7 +47,7 @@ export const AudioTrackMenu: FC<AudioTrackMenuProps> = ({ player, onUpdate }) =>
     };
 
     return (
-        <MenuTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
+        <MenuTrigger isOpen={isOpen} onOpenChange={(open) => { setIsOpen(open); if (!open) blurOnMenuClose(); }}>
             <FocusRing focusRingClass="focus-ring">
                 <RacButton
                     ref={buttonRef}

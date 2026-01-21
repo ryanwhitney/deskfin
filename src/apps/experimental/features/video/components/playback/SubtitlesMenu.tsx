@@ -31,7 +31,7 @@ export const SubtitlesMenu: FC<SubtitlesMenuProps> = ({ player, onUpdate }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
     const [showSubtitleOffset, setShowSubtitleOffset] = useState(false);
-    const { ref: buttonRef, handlePress } = useBlurOnMousePress();
+    const { ref: buttonRef, handlePress, blurOnMenuClose } = useBlurOnMousePress();
 
     useEffect(() => {
         if (!player) return;
@@ -165,7 +165,7 @@ export const SubtitlesMenu: FC<SubtitlesMenuProps> = ({ player, onUpdate }) => {
 
     return (
         <>
-        <MenuTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
+        <MenuTrigger isOpen={isOpen} onOpenChange={(open) => { setIsOpen(open); if (!open) blurOnMenuClose(); }}>
             <FocusRing focusRingClass="focus-ring">
                 <RacButton
                     ref={buttonRef}
@@ -270,7 +270,7 @@ export const SubtitlesMenu: FC<SubtitlesMenuProps> = ({ player, onUpdate }) => {
         <SubtitleOffsetControl
             player={player}
             isOpen={showSubtitleOffset}
-            onOpenChange={setShowSubtitleOffset}
+            onOpenChange={(open) => { setShowSubtitleOffset(open); if (!open) blurOnMenuClose(); }}
         />
         </>
     );

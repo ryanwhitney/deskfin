@@ -23,7 +23,7 @@ export const VolumeControl: FC<VolumeControlProps> = ({ player }) => {
     const [volume, setVolume] = useState(100);
     const [isMuted, setIsMuted] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
-    const { ref: buttonRef, handlePress } = useBlurOnMousePress();
+    const { ref: buttonRef, handlePress, blurOnMenuClose } = useBlurOnMousePress();
 
     const updateVolume = useCallback(() => {
         if (!player) return;
@@ -82,7 +82,7 @@ export const VolumeControl: FC<VolumeControlProps> = ({ player }) => {
     };
 
     return (
-        <MenuTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
+        <MenuTrigger isOpen={isOpen} onOpenChange={(open) => { setIsOpen(open); if (!open) blurOnMenuClose(); }}>
             <FocusRing focusRingClass="focus-ring">
                 <RacButton
                     ref={buttonRef}
