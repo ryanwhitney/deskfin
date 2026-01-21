@@ -2,18 +2,18 @@
 
 // Container for grid sections - constrained and centered like grids
 .section {
-    @include grid-width-viewport; // Use viewport queries since section IS the container
-    @include grid-container;
     margin-bottom: $space-6;
+    @include grid-container;
+    @include grid-width-viewport; // Use viewport queries since section IS the container
 }
 
 .header {
-    @include grid-width; // Use container queries since header is INSIDE the section container
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: $space-3;
     margin-bottom: $space-3;
+    @include grid-width; // Use container queries since header is INSIDE the section container
 }
 
 .titleLink {
@@ -63,11 +63,11 @@
 }
 
 .content {
-    @include grid-width;
     // Content container matches grid max-width for alignment with header
     // ItemGrid inside handles the actual grid layout
     // If variant is provided and no ItemGrid is used, content becomes a grid
     display: block;
+    @include grid-width;
 
     // If used as a direct grid (when variant is set and children are not ItemGrid)
     &[data-variant] {

@@ -1,4 +1,5 @@
 // Experimental theme tokens (keep minimal; add only when used).
+@use "sass:math";
 
 // ============================================================================
 // CORE THEME COLORS - Edit these to change the app's color scheme
@@ -88,8 +89,8 @@ $grid-landscape-base: 240px;
 $grid-gap-base: 20px;
 
 // Gap ratios (for proportional scaling)
-$grid-portrait-gap-ratio: $grid-gap-base / $grid-portrait-base; // 0.1333 (13.33%)
-$grid-landscape-gap-ratio: $grid-gap-base / $grid-landscape-base; // 0.0833 (8.33%)
+$grid-portrait-gap-ratio: math.div($grid-gap-base, $grid-portrait-base); // 0.1333 (13.33%)
+$grid-landscape-gap-ratio: math.div($grid-gap-base, $grid-landscape-base); // 0.0833 (8.33%)
 
 // Calculate max-width for N columns that fits both variants edge-to-edge
 // Formula: max_width = max(portrait_width, landscape_width)

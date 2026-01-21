@@ -322,11 +322,11 @@
 
 // Grid header with item count and actions
 .gridHeader {
-    @include grid-width;
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin: 24px auto 16px;
+    @include grid-width;
 }
 
 .gridActions {
@@ -338,8 +338,8 @@
 
 // The actual grid of items - uses CSS Grid (matching ItemGrid)
 .grid {
-    @include grid-width;
     @include grid-layout-portrait;
+    @include grid-width;
 
     // Landscape variant
     &[data-variant="landscape"] {
@@ -349,9 +349,9 @@
 
 // Grid section header inside grid container - aligns with grid edges
 .gridSectionHeader {
-    @include grid-width;
     font-size: 24px;
     font-weight: 600;
     margin: 0 0 20px 0;
     color: #fff;
+    @include grid-width;
 }
