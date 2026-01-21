@@ -14,6 +14,7 @@ import SvgIcon from 'components/SvgIcon';
 import { IconSvgs } from 'assets/icons';
 import globalize from 'lib/globalize';
 
+import { useBlurOnMousePress } from './useBlurOnMousePress';
 import styles from './TrackMenu.module.scss';
 
 interface AudioTrackMenuProps {
@@ -24,6 +25,8 @@ interface AudioTrackMenuProps {
 export const AudioTrackMenu: FC<AudioTrackMenuProps> = ({ player, onUpdate }) => {
     const [audioTracks, setAudioTracks] = useState<any[]>([]);
     const [currentIndex, setCurrentIndex] = useState<number | undefined>();
+    const [isOpen, setIsOpen] = useState(false);
+    const { ref: buttonRef, handlePress } = useBlurOnMousePress();
 
     useEffect(() => {
         if (!player) return;
@@ -44,11 +47,13 @@ export const AudioTrackMenu: FC<AudioTrackMenuProps> = ({ player, onUpdate }) =>
     };
 
     return (
-        <MenuTrigger>
+        <MenuTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
             <FocusRing focusRingClass="focus-ring">
                 <RacButton
+                    ref={buttonRef}
                     className={styles.iconButton}
                     aria-label={globalize.translate('Audio')}
+                    onPress={handlePress}
                 >
                     <Audiotrack />
                 </RacButton>

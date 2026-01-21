@@ -16,6 +16,7 @@ import { IconSvgs } from 'assets/icons';
 import globalize from 'lib/globalize';
 
 import { SubtitleOffsetControl } from './SubtitleOffsetControl';
+import { useBlurOnMousePress } from './useBlurOnMousePress';
 import styles from './TrackMenu.module.scss';
 
 interface SubtitlesMenuProps {
@@ -30,6 +31,7 @@ export const SubtitlesMenu: FC<SubtitlesMenuProps> = ({ player, onUpdate }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
     const [showSubtitleOffset, setShowSubtitleOffset] = useState(false);
+    const { ref: buttonRef, handlePress } = useBlurOnMousePress();
 
     useEffect(() => {
         if (!player) return;
@@ -166,8 +168,10 @@ export const SubtitlesMenu: FC<SubtitlesMenuProps> = ({ player, onUpdate }) => {
         <MenuTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
             <FocusRing focusRingClass="focus-ring">
                 <RacButton
+                    ref={buttonRef}
                     className={styles.iconButton}
                     aria-label={globalize.translate('Subtitles')}
+                    onPress={handlePress}
                 >
                     <SvgIcon svg={IconSvgs.closedCaptioning} size={20} />
                 </RacButton>

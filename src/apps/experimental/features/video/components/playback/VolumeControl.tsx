@@ -12,6 +12,7 @@ import VolumeMute from "@mui/icons-material/VolumeMute";
 import { playbackManager } from "components/playback/playbackmanager";
 import Events from "utils/events";
 
+import { useBlurOnMousePress } from "./useBlurOnMousePress";
 import styles from "./VolumeControl.module.scss";
 
 interface VolumeControlProps {
@@ -21,6 +22,8 @@ interface VolumeControlProps {
 export const VolumeControl: FC<VolumeControlProps> = ({ player }) => {
     const [volume, setVolume] = useState(100);
     const [isMuted, setIsMuted] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const { ref: buttonRef, handlePress } = useBlurOnMousePress();
 
     const updateVolume = useCallback(() => {
         if (!player) return;
@@ -60,12 +63,13 @@ export const VolumeControl: FC<VolumeControlProps> = ({ player }) => {
         }
     };
 
-    const handleToggleMute = () => {
+    const handleToggleMute = useCallback((e: any) => {
         if (!player) return;
 
         playbackManager.toggleMute(player);
         setIsMuted(!isMuted);
-    };
+        handlePress(e);
+    }, [player, isMuted, handlePress]);
 
     const getVolumeIcon = () => {
         if (isMuted || volume === 0) {
@@ -78,9 +82,10 @@ export const VolumeControl: FC<VolumeControlProps> = ({ player }) => {
     };
 
     return (
-        <MenuTrigger>
+        <MenuTrigger isOpen={isOpen} onOpenChange={setIsOpen}>
             <FocusRing focusRingClass="focus-ring">
                 <RacButton
+                    ref={buttonRef}
                     className={styles.iconButton}
                     onPress={handleToggleMute}
                     aria-label={isMuted ? "Unmute" : "Mute"}
