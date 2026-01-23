@@ -1,0 +1,79 @@
+@use "../../../../styles/theme" as *;
+
+.meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    margin-top: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 17px;
+    letter-spacing: -1.5%;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+// Plain text items (year, runtime)
+.plainItem {
+    padding: 0 4px;
+    & + .plainItem {
+        &::before {
+            content: "•";
+
+            margin-left: -5px;
+            margin-right: 5px;
+        }
+    }
+}
+
+// Rating items (star rating, critic rating)
+.ratingItem {
+    padding: 0 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.starIcon {
+    display: inline-flex;
+    align-items: center;
+    color: #f5c518; // IMDb gold
+
+    svg {
+        width: 14px;
+        height: 14px;
+    }
+}
+
+.criticIcon {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+}
+
+// Resolution badge with knockout/mask effect (4K, 1080p, etc.)
+// SVG with mask - white background with text cut out to show underlying image
+.resolutionBadge {
+    height: 17px;
+    line-height: 1;
+    width: auto;
+    min-width: 32px;
+    margin: 0 2px;
+}
+
+// Outlined badges (HEVC, 5.1, AAC)
+.outlinedBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 17px;
+    padding: 0 6px;
+    border-radius: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    background: transparent;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 15px; // Accounting for border
+    text-transform: uppercase;
+    margin: 0 2px;
+}

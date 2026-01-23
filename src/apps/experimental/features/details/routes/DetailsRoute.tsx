@@ -8,8 +8,6 @@ import { SortOrder } from "@jellyfin/sdk/lib/generated-client/models/sort-order"
 
 import globalize from "lib/globalize";
 import Page from "components/Page";
-import PrimaryMediaInfo from "components/mediainfo/PrimaryMediaInfo";
-import MediaInfoStats from "components/mediainfo/MediaInfoStats";
 import Cards from "components/cardbuilder/Card/Cards";
 import { useItem } from "hooks/useItem";
 import { useApi } from "hooks/useApi";
@@ -27,6 +25,7 @@ import { DetailsCast } from "../components/ui/DetailsCast";
 import { SeasonsSection } from "../components/ui/SeasonsSection";
 import { EpisodesSection } from "../components/ui/EpisodesSection";
 import { DetailsMoreMenu } from "../components/ui/DetailsMoreMenu";
+import MetaInfo from "../components/ui/MetaInfo";
 import { buildImageUrl } from "../utils/imageUrl";
 
 import styles from "./DetailsRoute.module.scss";
@@ -277,28 +276,7 @@ export default function DetailsPage() {
                                             </div>
                                         )}
 
-                                    <div className={styles.meta}>
-                                        <PrimaryMediaInfo
-                                            className={styles.metaInfo}
-                                            infoclass={styles.metaPill}
-                                            item={item}
-                                            showYearInfo
-                                            showRuntimeInfo
-                                            showOfficialRatingInfo
-                                            showStarRatingInfo
-                                            showCaptionIndicatorInfo
-                                            showCriticRatingInfo
-                                        />
-                                        <MediaInfoStats
-                                            className={styles.metaInfo}
-                                            infoclass={styles.metaPill}
-                                            item={item}
-                                            showResolutionInfo
-                                            showVideoStreamCodecInfo
-                                            showAudoChannelInfo
-                                            showAudioStreamCodecInfo
-                                        />
-                                    </div>
+                                    <MetaInfo item={item} />
 
                                     {item.Overview && (
                                         <p className={styles.overview}>
