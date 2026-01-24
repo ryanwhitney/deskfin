@@ -1,16 +1,6 @@
 import React, { type FC, useState, useEffect, useCallback } from 'react';
 import { Button as RacButton } from 'react-aria-components';
 import { FocusRing } from '@react-aria/focus';
-import SkipPrevious from '@mui/icons-material/SkipPrevious';
-import FastRewind from '@mui/icons-material/FastRewind';
-import PlayArrow from '@mui/icons-material/PlayArrow';
-import Pause from '@mui/icons-material/Pause';
-import FastForward from '@mui/icons-material/FastForward';
-import SkipNext from '@mui/icons-material/SkipNext';
-import Audiotrack from '@mui/icons-material/Audiotrack';
-import PictureInPictureAlt from '@mui/icons-material/PictureInPictureAlt';
-import Fullscreen from '@mui/icons-material/Fullscreen';
-import FullscreenExit from '@mui/icons-material/FullscreenExit';
 
 import { playbackManager } from 'components/playback/playbackmanager';
 import { EventType } from 'constants/eventType';
@@ -22,6 +12,7 @@ import { SubtitlesMenu } from './playback/SubtitlesMenu';
 import { AudioTrackMenu } from './playback/AudioTrackMenu';
 import { VolumeControl } from './playback/VolumeControl';
 import { SettingsMenu } from './playback/SettingsMenu';
+import { EpisodeMenu } from './playback/EpisodeMenu';
 import { useBlurOnMousePress } from './playback/useBlurOnMousePress';
 import styles from './PlaybackControls.module.scss';
 
@@ -261,7 +252,7 @@ export const PlaybackControls: FC = () => {
                         onPress={handlePrevious}
                         aria-label="Previous track"
                     >
-                        <SkipPrevious />
+                        <SvgIcon svg={IconSvgs.backwardEnd} size={16} />
                     </RacButton>
                 </FocusRing>
             )}
@@ -274,7 +265,7 @@ export const PlaybackControls: FC = () => {
                     onPress={handleRewind}
                     aria-label="Rewind"
                 >
-                    <FastRewind />
+                    <SvgIcon svg={IconSvgs.backward} size={20} />
                 </RacButton>
             </FocusRing>
 
@@ -286,7 +277,7 @@ export const PlaybackControls: FC = () => {
                     onPress={handlePlayPause}
                     aria-label={isPaused ? 'Play' : 'Pause'}
                 >
-                    {isPaused ? <PlayArrow /> : <Pause />}
+                    {isPaused ? <SvgIcon svg={IconSvgs.play} size={20} /> : <SvgIcon svg={IconSvgs.pause} size={15} />}
                 </RacButton>
             </FocusRing>
 
@@ -298,7 +289,7 @@ export const PlaybackControls: FC = () => {
                     onPress={handleFastForward}
                     aria-label="Fast forward"
                 >
-                    <FastForward />
+                    <SvgIcon svg={IconSvgs.forward} size={20} />
                 </RacButton>
             </FocusRing>
 
@@ -311,10 +302,13 @@ export const PlaybackControls: FC = () => {
                         onPress={handleNext}
                         aria-label="Next track"
                     >
-                        <SkipNext />
+                        <SvgIcon svg={IconSvgs.forwardEnd} size={16} />
                     </RacButton>
                 </FocusRing>
             )}
+
+            {/* Episode Menu - only for TV episodes */}
+            <EpisodeMenu player={player} />
 
             {/* Spacer */}
             <div className={styles.spacer} />
@@ -344,7 +338,7 @@ export const PlaybackControls: FC = () => {
                         onPress={handleTogglePiP}
                         aria-label="Picture in Picture"
                     >
-                        <PictureInPictureAlt />
+                        <SvgIcon svg={IconSvgs.pip} size={20} />
                     </RacButton>
                 </FocusRing>
             )}
@@ -357,7 +351,7 @@ export const PlaybackControls: FC = () => {
                     onPress={handleToggleFullscreen}
                     aria-label={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
                 >
-                    {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
+                    <SvgIcon svg={IconSvgs.fullscreen} size={20} />
                 </RacButton>
             </FocusRing>
         </div>

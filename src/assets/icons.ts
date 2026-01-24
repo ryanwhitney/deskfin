@@ -34,6 +34,16 @@ import iconSignOut from './img/icons/sign out.svg';
 import iconMacMini from './img/icons/macmini.fill.small.svg';
 import iconShuffle from './img/icons/shuffle.svg';
 import iconSort from './img/icons/sort.svg';
+import iconBackwardEnd from './img/icons/backward.end.fill.svg';
+import iconBackward from './img/icons/backward.fill.svg';
+import iconForwardEnd from './img/icons/forward.end.fill.svg';
+import iconForward from './img/icons/forward.fill.svg';
+import iconListBullet from './img/icons/list.bullet.svg';
+import iconPause from './img/icons/pause.fill.svg';
+import iconPip from './img/icons/pip.svg';
+import iconFullscreen from './img/icons/arrow.down.left.and.arrow.up.right.square.svg';
+import iconSpeakerMuted from './img/icons/speaker.slash.fill.svg';
+import iconSpeaker from './img/icons/speaker.wave.2.fill.svg';
 
 import iconHomeRaw from './img/icons/home.svg?raw';
 import iconSearchRaw from './img/icons/search.svg?raw';
@@ -67,6 +77,16 @@ import iconSignOutRaw from './img/icons/sign out.svg?raw';
 import iconMacMiniRaw from './img/icons/macmini.fill.small.svg?raw';
 import iconShuffleRaw from './img/icons/shuffle.svg?raw';
 import iconSortRaw from './img/icons/sort.svg?raw';
+import iconBackwardEndRaw from './img/icons/backward.end.fill.svg?raw';
+import iconBackwardRaw from './img/icons/backward.fill.svg?raw';
+import iconForwardEndRaw from './img/icons/forward.end.fill.svg?raw';
+import iconForwardRaw from './img/icons/forward.fill.svg?raw';
+import iconListBulletRaw from './img/icons/list.bullet.svg?raw';
+import iconPauseRaw from './img/icons/pause.fill.svg?raw';
+import iconPipRaw from './img/icons/pip.svg?raw';
+import iconFullscreenRaw from './img/icons/arrow.down.left.and.arrow.up.right.square.svg?raw';
+import iconSpeakerMutedRaw from './img/icons/speaker.slash.fill.svg?raw';
+import iconSpeakerRaw from './img/icons/speaker.wave.2.fill.svg?raw';
 
 export const Icons = {
     home: iconHome,
@@ -100,7 +120,17 @@ export const Icons = {
     signOut: iconSignOut,
     macMini: iconMacMini,
     shuffle: iconShuffle,
-    sort: iconSort
+    sort: iconSort,
+    backwardEnd: iconBackwardEnd,
+    backward: iconBackward,
+    forwardEnd: iconForwardEnd,
+    forward: iconForward,
+    listBullet: iconListBullet,
+    pause: iconPause,
+    pip: iconPip,
+    fullscreen: iconFullscreen,
+    speakerMuted: iconSpeakerMuted,
+    speaker: iconSpeaker
 } as const;
 
 // Light normalization: ensure viewBox, strip width/height, tint to currentColor.
@@ -157,7 +187,17 @@ const BaseIconSvgs = {
     signOut: toCurrentColorSvg(iconSignOutRaw),
     macMini: toCurrentColorSvg(iconMacMiniRaw),
     shuffle: toCurrentColorSvg(iconShuffleRaw),
-    sort: toCurrentColorSvg(iconSortRaw)
+    sort: toCurrentColorSvg(iconSortRaw),
+    backwardEnd: toCurrentColorSvg(iconBackwardEndRaw),
+    backward: toCurrentColorSvg(iconBackwardRaw),
+    forwardEnd: toCurrentColorSvg(iconForwardEndRaw),
+    forward: toCurrentColorSvg(iconForwardRaw),
+    listBullet: toCurrentColorSvg(iconListBulletRaw),
+    pause: toCurrentColorSvg(iconPauseRaw),
+    pip: toCurrentColorSvg(iconPipRaw),
+    fullscreen: toCurrentColorSvg(iconFullscreenRaw),
+    speakerMuted: toCurrentColorSvg(iconSpeakerMutedRaw),
+    speaker: toCurrentColorSvg(iconSpeakerRaw)
 };
 
 // Manual overrides for complex multi-path icons to avoid masking/clip issues.

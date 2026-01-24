@@ -5,12 +5,11 @@ import {
     Popover,
 } from "react-aria-components";
 import { FocusRing } from "@react-aria/focus";
-import VolumeUp from "@mui/icons-material/VolumeUp";
-import VolumeOff from "@mui/icons-material/VolumeOff";
-import VolumeMute from "@mui/icons-material/VolumeMute";
 
 import { playbackManager } from "components/playback/playbackmanager";
 import Events from "utils/events";
+import { IconSvgs } from "assets/icons";
+import SvgIcon from "components/SvgIcon";
 
 import { useBlurOnMousePress } from "./useBlurOnMousePress";
 import styles from "./VolumeControl.module.scss";
@@ -73,12 +72,9 @@ export const VolumeControl: FC<VolumeControlProps> = ({ player }) => {
 
     const getVolumeIcon = () => {
         if (isMuted || volume === 0) {
-            return <VolumeOff />;
+            return <SvgIcon svg={IconSvgs.speakerMuted} size={20} />;
         }
-        if (volume < 50) {
-            return <VolumeMute />;
-        }
-        return <VolumeUp />;
+        return <SvgIcon svg={IconSvgs.speaker} size={20} />;
     };
 
     return (

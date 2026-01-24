@@ -98,7 +98,7 @@ export const MediaCard: FC<MediaCardProps> = ({
             deleteItem: true,
             positionTo: null,
         }),
-        [item, user]
+        [item, user],
     );
 
     // Load on first open.
@@ -117,7 +117,7 @@ export const MediaCard: FC<MediaCardProps> = ({
             const result = await itemContextMenu.executeCommand(
                 item,
                 id,
-                menuOptions
+                menuOptions,
             );
             if (result?.updated || result?.deleted) {
                 onAfterAction();
@@ -317,12 +317,12 @@ export const MediaCard: FC<MediaCardProps> = ({
                                                         aria-hidden="true"
                                                     >
                                                         {getLegacyCommandIcon(
-                                                            cmd.icon
+                                                            cmd.icon,
                                                         ) && (
                                                             <SvgIcon
                                                                 svg={
                                                                     getLegacyCommandIcon(
-                                                                        cmd.icon
+                                                                        cmd.icon,
                                                                     )!
                                                                 }
                                                                 size={18}

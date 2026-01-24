@@ -51,7 +51,7 @@ export default function DetailsPage() {
     useTitle(
         item
             ? formatItemTitle(item.Name, item.Type, seriesName, seasonName)
-            : undefined
+            : undefined,
     );
 
     // Build image URLs with fallback chain
@@ -60,7 +60,7 @@ export default function DetailsPage() {
             buildImageUrl(item, "Primary", 600) ||
             buildImageUrl(seasonItem, "Primary", 600) ||
             buildImageUrl(seriesItem, "Primary", 600),
-        [item, seasonItem, seriesItem]
+        [item, seasonItem, seriesItem],
     );
 
     const backdropUrl = useMemo(
@@ -71,13 +71,13 @@ export default function DetailsPage() {
             buildImageUrl(item, "Primary", 1400) ||
             buildImageUrl(seasonItem, "Primary", 1400) ||
             buildImageUrl(seriesItem, "Primary", 1400),
-        [item, seasonItem, seriesItem]
+        [item, seasonItem, seriesItem],
     );
 
     const queryKey = useMemo(
         () =>
             user?.Id ? ["User", user.Id, "Items", itemId] : ["Items", itemId],
-        [user?.Id, itemId]
+        [user?.Id, itemId],
     );
 
     // Determine item type
@@ -97,7 +97,7 @@ export default function DetailsPage() {
             imageTypeLimit: 1,
             enableImageTypes: [ImageType.Primary],
         },
-        { enabled: !!item?.Id && isSeries }
+        { enabled: !!item?.Id && isSeries },
     );
 
     // Fetch episodes for season
@@ -112,7 +112,7 @@ export default function DetailsPage() {
             enableImageTypes: [ImageType.Primary],
             fields: [ItemFields.Overview],
         },
-        { enabled: !!item?.Id && isSeason }
+        { enabled: !!item?.Id && isSeason },
     );
 
     // Fetch BoxSet items
@@ -128,7 +128,7 @@ export default function DetailsPage() {
                     ItemFields.Overview,
                 ],
             },
-            { enabled: !!item?.Id && isBoxSet }
+            { enabled: !!item?.Id && isBoxSet },
         );
 
     const seasons = seasonsResult?.Items || [];
@@ -196,19 +196,23 @@ export default function DetailsPage() {
                                         />
                                     ) : null}
                                 </div>
-                                <div>
+                                <div className={styles.heroInfo}>
                                     <h1 className={styles.title}>
-                                        {item.Name}
-                                        {item.ProductionYear && (
-                                            <span
-                                                style={{
-                                                    fontWeight: 200,
-                                                    opacity: 0.8,
-                                                    marginLeft: "8px",
-                                                }}
-                                            >
-                                                {item.ProductionYear}
-                                            </span>
+                                        {item.ImageTags?.Logo ? (
+                                            <img
+                                                src={buildImageUrl(
+                                                    item,
+                                                    "Logo",
+                                                    800,
+                                                )}
+                                                width={400}
+                                                alt={
+                                                    item.Name || "series title"
+                                                }
+                                                className={styles.titleLogo}
+                                            />
+                                        ) : (
+                                            item.Name
                                         )}
                                     </h1>
 
@@ -266,11 +270,7 @@ export default function DetailsPage() {
                                     {item.OriginalTitle &&
                                         item.OriginalTitle !== item.Name && (
                                             <div
-                                                style={{
-                                                    color: "#b8b8b8",
-                                                    fontSize: "14px",
-                                                    marginTop: "4px",
-                                                }}
+                                                className={styles.originalTitle}
                                             >
                                                 {item.OriginalTitle}
                                             </div>

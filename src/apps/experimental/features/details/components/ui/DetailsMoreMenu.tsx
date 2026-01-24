@@ -14,6 +14,7 @@ import {
     Popover,
     Separator,
 } from "react-aria-components";
+import { FocusRing } from "@react-aria/focus";
 
 import globalize from "lib/globalize";
 import { useApi } from "hooks/useApi";
@@ -106,14 +107,16 @@ export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({
 
     return (
         <MenuTrigger>
-            <Button
-                className={[iconButtonStyles.iconButton, className ?? ""]
-                    .filter(Boolean)
-                    .join(" ")}
-                aria-label={t("ButtonMore", "More")}
-            >
-                <SvgIcon svg={IconSvgs.ellipsis} size={18} />
-            </Button>
+            <FocusRing focusRingClass="focus-ring">
+                <Button
+                    className={[iconButtonStyles.iconButton, className ?? ""]
+                        .filter(Boolean)
+                        .join(" ")}
+                    aria-label={t("ButtonMore", "More")}
+                >
+                    <SvgIcon svg={IconSvgs.ellipsis} size={20} />
+                </Button>
+            </FocusRing>
 
             <Popover
                 className={ActionMenuStyles.popover}

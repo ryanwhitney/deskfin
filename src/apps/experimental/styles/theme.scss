@@ -37,6 +37,7 @@ $border-muted: rgba(255, 255, 255, 0.1);
 
 // Text
 $text-muted: rgba(255, 255, 255, 0.65);
+$grey-transparent: rgba(255, 255, 255, 0.85);
 
 // Interaction states
 $hover-bg: rgba(255, 255, 255, 0.06);
@@ -103,14 +104,21 @@ $grid-landscape-gap-ratio: math.div($grid-gap-base, $grid-landscape-base); // 0.
 
 // Unified breakpoints - container max-widths that work for both variants
 $grid-breakpoints: (
-    1: grid-calculate-max-width(1),   // 240px
-    2: grid-calculate-max-width(2),   // 500px
-    3: grid-calculate-max-width(3),   // 760px
-    4: grid-calculate-max-width(4),   // 1020px
-    5: grid-calculate-max-width(5),   // 1280px
-    6: grid-calculate-max-width(6),   // 1540px
-    7: grid-calculate-max-width(7),   // 1800px
-    8: grid-calculate-max-width(8)    // 2060px
+    1: grid-calculate-max-width(1),
+    // 240px
+    2: grid-calculate-max-width(2),
+    // 500px
+    3: grid-calculate-max-width(3),
+    // 760px
+    4: grid-calculate-max-width(4),
+    // 1020px
+    5: grid-calculate-max-width(5),
+    // 1280px
+    6: grid-calculate-max-width(6),
+    // 1540px
+    7: grid-calculate-max-width(7),
+    // 1800px
+    8: grid-calculate-max-width(8) // 2060px
 );
 
 // Grid container wrapper (for container queries)
@@ -195,6 +203,33 @@ $grid-breakpoints: (
         grid-template-columns: 1fr;
         gap: 0;
     }
+}
+
+// ============================================================================
+// COMPOSITE GRID MIXINS - For consistent grid section patterns
+// ============================================================================
+
+// Outer container: sets up container queries AND constrains by viewport
+@mixin grid-section-container {
+    @include grid-container;
+    @include grid-width-viewport;
+}
+
+// Inner content: uses container queries for width and optional grid layout
+@mixin grid-section-content {
+    @include grid-width;
+}
+
+// Grid with portrait cards
+@mixin grid-section-portrait {
+    @include grid-width;
+    @include grid-layout-portrait;
+}
+
+// Grid with landscape cards
+@mixin grid-section-landscape {
+    @include grid-width;
+    @include grid-layout-landscape;
 }
 
 // ============================================================================

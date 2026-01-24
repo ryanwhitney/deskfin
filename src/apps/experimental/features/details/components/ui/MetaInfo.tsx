@@ -51,11 +51,7 @@ function getYearDisplay(item: ItemDto): string | null {
     }
 
     // Skip year for episodes, seasons, persons
-    if (
-        Type === ItemKind.Episode ||
-        Type === ItemKind.Season ||
-        Type === ItemKind.Person
-    ) {
+    if (Type === ItemKind.Person) {
         return null;
     }
 
@@ -172,36 +168,45 @@ function getAudioCodec(item: ItemDto): string | null {
     return audioStream.Codec?.toUpperCase() ?? null;
 }
 
+// Pre-defined widths for resolution badges to avoid layout recalculation
+const RESOLUTION_WIDTHS = new Map<string, number>([
+    ["4K", 28],
+    ["1440p", 48],
+    ["1440pi", 52],
+    ["1080p", 48],
+    ["1080pi", 52],
+    ["720p", 40],
+    ["720pi", 44],
+    ["480p", 40],
+    ["480pi", 44],
+]);
+
 /**
- * Resolution badge with knockout text effect
- * Width adjusts to content, height fixed at 17px, 6px horizontal padding
+ * Resolution badge with knockout text effect using SVG mask
  */
 const ResolutionBadge: FC<{ resolution: string }> = ({ resolution }) => {
-    // Estimate width: ~7px per character at 12px bold font + 12px padding (6px each side)
-    const charWidth = 7.5;
-    const padding = 12;
-    const textWidth = resolution.length * charWidth;
-    const totalWidth = textWidth + padding;
+    const width = RESOLUTION_WIDTHS.get(resolution) ?? 48;
 
     return (
         <svg
             className={styles.resolutionBadge}
-            width={totalWidth}
+            width={width}
             height={17}
-            viewBox={`0 0 ${totalWidth} 17`}
+            aria-label={resolution}
         >
             <defs>
                 <mask id={`res-mask-${resolution}`}>
                     <rect width="100%" height="100%" fill="white" />
                     <text
                         x="50%"
-                        y="49%"
-                        dominantBaseline="central"
+                        y="9"
+                        dominantBaseline="middle"
                         textAnchor="middle"
                         fill="black"
                         fontSize="12"
                         fontWeight="700"
-                        fontFamily="system-ui, -apple-system, sans-serif"
+                        letterSpacing="-1.5%"
+                        fontFamily="system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
                     >
                         {resolution}
                     </text>

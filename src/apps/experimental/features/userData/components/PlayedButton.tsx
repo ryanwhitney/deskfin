@@ -51,10 +51,9 @@ const PlayedButton: FC<PlayedButtonProps> = ({ className, isPlayed = false, item
     return (
         <IconButton
             className={className}
-            title={getTitle(itemType, isPlayed)}
             aria-label={getTitle(itemType, isPlayed)}
             onClick={onClick}
-            icon={<SvgIcon svg={IconSvgs.checkmark} size={18} style={{ color: isPlayed ? '#4ade80' : undefined }} />}
+            icon={<SvgIcon svg={IconSvgs.checkmark} size={20} style={{ color: isPlayed ? '#4ade80' : undefined }} />}
         />
     );
 };

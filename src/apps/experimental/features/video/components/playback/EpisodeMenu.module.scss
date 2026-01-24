@@ -1,0 +1,158 @@
+@use '../../../../styles/theme' as *;
+
+.iconButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: $radius-md;
+    background: transparent;
+    border: none;
+    color: currentcolor;
+    cursor: pointer;
+    transition: background 120ms, transform 80ms;
+    padding: 10px;
+
+    &:hover {
+        background: $hover-bg;
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+
+    svg {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+.popover {
+    background: $surface-menu;
+    border: 1px solid $border-subtle;
+    border-radius: $radius-md;
+    box-shadow: $menu-shadow;
+    min-width: 280px;
+    max-width: 400px;
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    max-height: 450px;
+}
+
+.navItem {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    padding: $space-3 $space-4;
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+
+    &:hover {
+        background: $hover-bg-strong;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $focus-ring;
+        outline-offset: -2px;
+    }
+}
+
+.sectionHeader {
+    padding: $space-3 $space-4;
+    font-size: 12px;
+    font-weight: 600;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.separator {
+    height: 1px;
+    background: $border-subtle;
+    flex-shrink: 0;
+}
+
+.scrollList {
+    overflow-y: auto;
+    max-height: 380px;
+    padding: $space-1 0;
+}
+
+.listItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-3;
+    padding: $space-2 $space-4;
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+
+    &:hover {
+        background: $hover-bg-strong;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $focus-ring;
+        outline-offset: -2px;
+    }
+
+    &.current {
+        background: $hover-bg;
+    }
+}
+
+.itemText {
+    flex: 1 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.checkmark {
+    opacity: 0.6;
+    flex-shrink: 0;
+}
+
+.chevronLeft {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    margin-left: -$space-2;
+    margin-right: -$space-1;
+    color: $text-muted;
+}
+
+.chevronRight {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: $text-muted;
+}
+
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $space-6;
+}
+
+.loadingText {
+    font-size: 14px;
+    color: $text-muted;
+}

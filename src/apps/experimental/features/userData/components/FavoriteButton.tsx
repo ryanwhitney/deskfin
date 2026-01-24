@@ -45,10 +45,9 @@ const FavoriteButton: FC<FavoriteButtonProps> = ({ className, isFavorite = false
     return (
         <IconButton
             className={className}
-            title={isFavorite ? globalize.translate('Favorite') : globalize.translate('AddToFavorites')}
             aria-label={isFavorite ? globalize.translate('Favorite') : globalize.translate('AddToFavorites')}
             onClick={onClick}
-            icon={<SvgIcon svg={IconSvgs.heart} size={18} style={{ color: isFavorite ? '#ff4d6d' : undefined }} />}
+            icon={<SvgIcon svg={IconSvgs.heart} size={20} style={{ color: isFavorite ? '#ff4d6d' : undefined }} />}
         />
     );
 };

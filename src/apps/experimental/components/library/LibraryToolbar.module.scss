@@ -315,9 +315,9 @@
     accent-color: #3b82f6;
 }
 
-// Grid container with container queries for edge-to-edge layout
+// Grid container - sets up container queries AND constrains max-width (like Section)
 .gridContainer {
-    @include grid-container;
+    @include grid-section-container;
 }
 
 // Grid header with item count and actions
@@ -326,7 +326,7 @@
     align-items: center;
     justify-content: space-between;
     margin: 24px auto 16px;
-    @include grid-width;
+    @include grid-section-content;
 }
 
 .gridActions {
@@ -336,14 +336,13 @@
     padding-right: 6px;
 }
 
-// The actual grid of items - uses CSS Grid (matching ItemGrid)
+// The actual grid of items - uses container queries (like Section content)
 .grid {
-    @include grid-layout-portrait;
-    @include grid-width;
+    @include grid-section-portrait;
 
     // Landscape variant
     &[data-variant="landscape"] {
-        @include grid-layout-landscape;
+        @include grid-section-landscape;
     }
 }
 
@@ -353,5 +352,5 @@
     font-weight: 600;
     margin: 0 0 20px 0;
     color: #fff;
-    @include grid-width;
+    @include grid-section-content;
 }

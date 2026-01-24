@@ -17,6 +17,8 @@ import type { ItemDto } from 'types/base/models/item-dto';
 import { LinkButton } from 'apps/experimental/components/button/LinkButton';
 
 import { HomeRow } from '../components/HomeRow';
+import { Section } from 'apps/experimental/components/media/Section';
+import { ItemGrid } from 'apps/experimental/components/media/ItemGrid';
 import styles from './HomeRoute.module.scss';
 
 const t = (key: string, fallback: string) => globalize.tryTranslate?.(key) ?? fallback;
@@ -238,10 +240,50 @@ const Home: FC = () => {
             <div className={styles.page}>
                 {isFavoritesTab ? (
                     <>
-                        <HomeRow title={t('Movies', 'Movies')} items={favoriteMovies} {...rowProps} />
-                        <HomeRow title={t('Shows', 'Shows')} items={favoriteShows} {...rowProps} />
-                        <HomeRow title={t('Episodes', 'Episodes')} items={favoriteEpisodes} {...rowProps} />
-                        <HomeRow title={t('Collections', 'Collections')} items={favoriteCollections} {...rowProps} />
+                        {favoriteMovies.length > 0 && (
+                            <Section title={t('Movies', 'Movies')}>
+                                <ItemGrid
+                                    items={favoriteMovies}
+                                    variant="portrait"
+                                    onToggleFavorite={onToggleFavorite}
+                                    onTogglePlayed={onTogglePlayed}
+                                    onAfterAction={onAfterAction}
+                                />
+                            </Section>
+                        )}
+                        {favoriteShows.length > 0 && (
+                            <Section title={t('Shows', 'Shows')}>
+                                <ItemGrid
+                                    items={favoriteShows}
+                                    variant="portrait"
+                                    onToggleFavorite={onToggleFavorite}
+                                    onTogglePlayed={onTogglePlayed}
+                                    onAfterAction={onAfterAction}
+                                />
+                            </Section>
+                        )}
+                        {favoriteEpisodes.length > 0 && (
+                            <Section title={t('Episodes', 'Episodes')}>
+                                <ItemGrid
+                                    items={favoriteEpisodes}
+                                    variant="landscape"
+                                    onToggleFavorite={onToggleFavorite}
+                                    onTogglePlayed={onTogglePlayed}
+                                    onAfterAction={onAfterAction}
+                                />
+                            </Section>
+                        )}
+                        {favoriteCollections.length > 0 && (
+                            <Section title={t('Collections', 'Collections')}>
+                                <ItemGrid
+                                    items={favoriteCollections}
+                                    variant="portrait"
+                                    onToggleFavorite={onToggleFavorite}
+                                    onTogglePlayed={onTogglePlayed}
+                                    onAfterAction={onAfterAction}
+                                />
+                            </Section>
+                        )}
                     </>
                 ) : (
                     <>
