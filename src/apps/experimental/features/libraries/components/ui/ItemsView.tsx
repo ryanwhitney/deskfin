@@ -134,19 +134,28 @@ const ItemsView: FC<ItemsViewProps> = ({
                     reloadItems={refetch}
                     queryKey={["ItemsViewByType"]}
                 >
-                    {!items.length ? (
-                        <NoItemsMessage message={noItemsMessage} />
-                    ) : (
-                        <div className={styles.gridContainer}>
-                            {/* Header: count on left, all actions on right */}
-                            <div className={styles.gridHeader}>
-                                <div className={styles.itemCount}>
-                                    {totalRecordCount}{" "}
-                                    {totalRecordCount === 1 ? "item" : "items"}
-                                </div>
-                                <div className={styles.gridActions}>
-                                    {isBtnPlayAllEnabled && (
-                                        <PlayAllButton
+                    <div className={styles.gridContainer}>
+                        {/* Header: count on left, all actions on right */}
+                        <div className={styles.gridHeader}>
+                            <div className={styles.itemCount}>
+                                {totalRecordCount}{" "}
+                                {totalRecordCount === 1 ? "item" : "items"}
+                            </div>
+                            <div className={styles.gridActions}>
+                                {isBtnPlayAllEnabled && items.length > 0 && (
+                                    <PlayAllButton
+                                        item={item}
+                                        items={items}
+                                        viewType={viewType}
+                                        hasFilters={hasFilters}
+                                        libraryViewSettings={
+                                            libraryViewSettings
+                                        }
+                                    />
+                                )}
+                                {isBtnShuffleEnabled &&
+                                    totalRecordCount > 1 && (
+                                        <ShuffleButton
                                             item={item}
                                             items={items}
                                             viewType={viewType}
@@ -156,50 +165,41 @@ const ItemsView: FC<ItemsViewProps> = ({
                                             }
                                         />
                                     )}
-                                    {isBtnShuffleEnabled &&
-                                        totalRecordCount > 1 && (
-                                            <ShuffleButton
-                                                item={item}
-                                                items={items}
-                                                viewType={viewType}
-                                                hasFilters={hasFilters}
-                                                libraryViewSettings={
-                                                    libraryViewSettings
-                                                }
-                                            />
-                                        )}
-                                    {isBtnNewCollectionEnabled && (
-                                        <NewCollectionButton />
-                                    )}
-                                    {isBtnFilterEnabled && (
-                                        <FilterMenu
-                                            parentId={parentId}
-                                            itemType={itemType}
-                                            viewType={viewType}
-                                            hasFilters={hasFilters}
-                                            libraryViewSettings={
-                                                libraryViewSettings
-                                            }
-                                            setLibraryViewSettings={
-                                                setLibraryViewSettings
-                                            }
-                                        />
-                                    )}
-                                    {isBtnSortEnabled && (
-                                        <SortMenu
-                                            viewType={viewType}
-                                            libraryViewSettings={
-                                                libraryViewSettings
-                                            }
-                                            setLibraryViewSettings={
-                                                setLibraryViewSettings
-                                            }
-                                        />
-                                    )}
-                                </div>
+                                {isBtnNewCollectionEnabled && (
+                                    <NewCollectionButton />
+                                )}
+                                {isBtnFilterEnabled && (
+                                    <FilterMenu
+                                        parentId={parentId}
+                                        itemType={itemType}
+                                        viewType={viewType}
+                                        hasFilters={hasFilters}
+                                        libraryViewSettings={
+                                            libraryViewSettings
+                                        }
+                                        setLibraryViewSettings={
+                                            setLibraryViewSettings
+                                        }
+                                    />
+                                )}
+                                {isBtnSortEnabled && (
+                                    <SortMenu
+                                        viewType={viewType}
+                                        libraryViewSettings={
+                                            libraryViewSettings
+                                        }
+                                        setLibraryViewSettings={
+                                            setLibraryViewSettings
+                                        }
+                                    />
+                                )}
                             </div>
+                        </div>
 
-                            {/* Grid - items left-aligned within centered container */}
+                        {/* Grid or empty message */}
+                        {!items.length ? (
+                            <NoItemsMessage message={noItemsMessage} />
+                        ) : (
                             <div
                                 className={styles.grid}
                                 data-variant={cardVariant}
@@ -231,8 +231,8 @@ const ItemsView: FC<ItemsViewProps> = ({
                                     />
                                 ))}
                             </div>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </ItemsContainer>
             )}
         </>
