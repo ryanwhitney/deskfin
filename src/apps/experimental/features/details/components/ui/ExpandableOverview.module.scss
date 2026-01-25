@@ -1,0 +1,187 @@
+@use "../../../../styles/theme" as *;
+
+.wrapper {
+    position: relative;
+    max-width: 72ch;
+}
+
+.container {
+    overflow: hidden;
+}
+
+.truncated {
+    // Two-layer mask:
+    // 1. Solid black for all lines except the last (fully visible)
+    // 2. Horizontal fade for just the last line - fades then goes fully transparent
+    mask-image:
+        linear-gradient(black, black),
+        linear-gradient(to right, black calc(100% - 110px), transparent calc(100% - 40px), transparent);
+    mask-size:
+        100% calc(100% - var(--line-height)),
+        100% var(--line-height);
+    mask-position:
+        0 0,
+        0 100%;
+    mask-repeat: no-repeat;
+    mask-composite: add;
+}
+
+.text {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+.moreButton {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    border: none;
+    color: rgba(255, 255, 255, 0.85);
+    cursor: pointer;
+    line-height: 1.5;
+    background: rgba(58, 58, 58, 0.87);
+    backdrop-filter: blur(4px);
+    border-radius: 100px;
+    padding: 2px 8px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: -1.5%;
+
+    &:hover {
+        color: #fff;
+    }
+
+    &[data-focused] {
+        outline: 2px solid white;
+        outline-offset: 2px;
+        border-radius: 2px;
+    }
+}
+
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+
+    &[data-entering] {
+        animation: fade-in 200ms ease-out;
+    }
+
+    &[data-exiting] {
+        animation: fade-out 150ms ease-in;
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fade-out {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.modal {
+    background: $surface-menu;
+    border-radius: $radius-lg;
+    max-width: 600px;
+    max-height: 80vh;
+    margin: 24px;
+    overflow: hidden;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+
+    &[data-entering] {
+        animation: modal-in 200ms ease-out;
+    }
+
+    &[data-exiting] {
+        animation: modal-out 150ms ease-in;
+    }
+}
+
+@keyframes modal-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes modal-out {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+}
+
+.dialog {
+    padding: 24px;
+    outline: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modalTitle {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.fullText {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    font-size: 15px;
+    overflow-y: auto;
+    max-height: 60vh;
+}
+
+.closeButton {
+    align-self: flex-end;
+    background: $hover-bg;
+    border: none;
+    border-radius: $radius-md;
+    padding: 10px 20px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 120ms;
+
+    &:hover,
+    &[data-hovered] {
+        background: $hover-bg-strong;
+    }
+
+    &[data-focused] {
+        outline: 2px solid white;
+        outline-offset: 2px;
+    }
+}

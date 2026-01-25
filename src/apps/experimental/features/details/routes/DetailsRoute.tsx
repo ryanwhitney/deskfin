@@ -25,6 +25,7 @@ import { DetailsCast } from "../components/ui/DetailsCast";
 import { SeasonsSection } from "../components/ui/SeasonsSection";
 import { EpisodesSection } from "../components/ui/EpisodesSection";
 import { DetailsMoreMenu } from "../components/ui/DetailsMoreMenu";
+import { ExpandableOverview } from "../components/ui/ExpandableOverview";
 import MetaInfo from "../components/ui/MetaInfo";
 import { buildImageUrl } from "../utils/imageUrl";
 
@@ -279,9 +280,7 @@ export default function DetailsPage() {
                                     <MetaInfo item={item} />
 
                                     {item.Overview && (
-                                        <p className={styles.overview}>
-                                            {item.Overview}
-                                        </p>
+                                        <ExpandableOverview text={item.Overview} />
                                     )}
 
                                     <div className={styles.actions}>
