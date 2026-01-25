@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { BaseItemKind } from "@jellyfin/sdk/lib/generated-client/models/base-item-kind";
 import { ImageType } from "@jellyfin/sdk/lib/generated-client/models/image-type";
@@ -8,14 +8,13 @@ import { SortOrder } from "@jellyfin/sdk/lib/generated-client/models/sort-order"
 
 import globalize from "lib/globalize";
 import Page from "components/Page";
-import Cards from "components/cardbuilder/Card/Cards";
 import { useItem } from "hooks/useItem";
 import { useApi } from "hooks/useApi";
-import { useGetItems } from "hooks/useFetchItems";
+import { useGetItems, useToggleFavoriteMutation, useTogglePlayedMutation } from "hooks/useFetchItems";
 import { useTitle } from "apps/experimental/utils/useTitle";
 import { formatItemTitle } from "apps/experimental/utils/titleUtils";
-import { CardShape } from "utils/card";
 import { ItemKind } from "types/base/models/item-kind";
+import { ItemGrid } from "apps/experimental/components/media/ItemGrid";
 
 import FavoriteButton from "apps/experimental/features/userData/components/FavoriteButton";
 import PlayedButton from "apps/experimental/features/userData/components/PlayedButton";
@@ -135,6 +134,24 @@ export default function DetailsPage() {
     const seasons = seasonsResult?.Items || [];
     const episodes = episodesResult?.Items || [];
     const boxSetItems = boxSetItemsResult?.Items || [];
+
+    // Mutations for ItemGrid actions
+    const { mutateAsync: toggleFavorite } = useToggleFavoriteMutation();
+    const { mutateAsync: togglePlayed } = useTogglePlayedMutation();
+
+    const handleToggleFavorite = useCallback((targetItem: typeof boxSetItems[0]) => {
+        void toggleFavorite({
+            itemId: targetItem.Id!,
+            isFavorite: !!targetItem.UserData?.IsFavorite
+        });
+    }, [toggleFavorite]);
+
+    const handleTogglePlayed = useCallback((targetItem: typeof boxSetItems[0]) => {
+        void togglePlayed({
+            itemId: targetItem.Id!,
+            isPlayed: !!targetItem.UserData?.Played
+        });
+    }, [togglePlayed]);
 
     // Loading state
     if (isLoading) {
@@ -336,25 +353,14 @@ export default function DetailsPage() {
                             <h2 className={styles.sectionTitle}>
                                 {globalize.tryTranslate?.("Items") ?? "Items"}
                             </h2>
-                            {isBoxSetItemsPending ? null : boxSetItems.length ? (
-                                <div className={styles.itemsGrid}>
-                                    <Cards
-                                        items={boxSetItems}
-                                        cardOptions={{
-                                            shape: CardShape.PortraitOverflow,
-                                            context: "movies",
-                                            showTitle: true,
-                                            showYear: true,
-                                            centerText: true,
-                                            coverImage: true,
-                                        }}
-                                    />
-                                </div>
-                            ) : (
-                                <div className={styles.meta}>
-                                    No items available
-                                </div>
-                            )}
+                            <ItemGrid
+                                items={boxSetItems}
+                                variant="portrait"
+                                isLoading={isBoxSetItemsPending}
+                                emptyMessage="No items available"
+                                onToggleFavorite={handleToggleFavorite}
+                                onTogglePlayed={handleTogglePlayed}
+                            />
                         </div>
                     )}
 
