@@ -70,7 +70,12 @@ export const MediaCard: FC<MediaCardProps> = ({
     const onOpenDetails: React.MouseEventHandler = (e) => {
         const el = e.target as HTMLElement | null;
         if (el?.closest('a,button,[role="menu"],[role="menuitem"]')) return;
-        window.location.href = titleHref;
+
+        if (e.metaKey || e.ctrlKey) {
+            window.open(titleHref, '_blank');
+        } else {
+            window.location.href = titleHref;
+        }
     };
 
     const onPlay: React.MouseEventHandler = (e) => {
