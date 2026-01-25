@@ -159,37 +159,29 @@ export const SortMenu: FC<SortMenuProps> = ({
         }));
     }, [setLibraryViewSettings]);
 
+    // Find current sort option label
+    const currentSortOption = sortOptions.find((opt) => opt.value === currentSortBy);
+    const currentSortLabel = currentSortOption
+        ? globalize.translate(currentSortOption.label)
+        : globalize.translate('Sort');
+
+    const isAscending = currentSortOrder === SortOrder.Ascending;
+
     return (
         <MenuTrigger>
             <Button
                 className={styles.toolbarButton}
-                aria-label={globalize.translate('Sort')}
+                aria-label={`${globalize.translate('Sort')}: ${currentSortLabel}, ${isAscending ? globalize.translate('Ascending') : globalize.translate('Descending')}`}
             >
-                <SvgIcon svg={IconSvgs.sort} size={18} />
-                <span>{globalize.translate('Sort')}</span>
+                <SvgIcon
+                    svg={IconSvgs.chevronDown}
+                    size={14}
+                    className={isAscending ? styles.sortArrowUp : styles.sortArrowDown}
+                />
+                <span>{currentSortLabel}</span>
             </Button>
             <Popover className={styles.popover} placement='bottom start' offset={4}>
                 <Menu className={styles.menu} aria-label='Sort options'>
-                    <Section>
-                        <Header className={styles.sectionHeader}>
-                            {globalize.translate('LabelSortBy')}
-                        </Header>
-                        {sortOptions.map((option) => (
-                            <MenuItem
-                                key={option.value}
-                                id={`sort-${option.value}`}
-                                className={styles.menuItem}
-                                onAction={() => onSortBySelect(option.value)}
-                            >
-                                <span className={styles.menuItemText}>
-                                    {globalize.translate(option.label)}
-                                </span>
-                                {option.value === currentSortBy && (
-                                    <SvgIcon svg={IconSvgs.checkmark} size={16} className={styles.menuItemCheck} />
-                                )}
-                            </MenuItem>
-                        ))}
-                    </Section>
                     <Section>
                         <Header className={styles.sectionHeader}>
                             {globalize.translate('LabelSortOrder')}
@@ -214,6 +206,26 @@ export const SortMenu: FC<SortMenuProps> = ({
                                 <SvgIcon svg={IconSvgs.checkmark} size={16} className={styles.menuItemCheck} />
                             )}
                         </MenuItem>
+                    </Section>
+                    <Section>
+                        <Header className={styles.sectionHeader}>
+                            {globalize.translate('LabelSortBy')}
+                        </Header>
+                        {sortOptions.map((option) => (
+                            <MenuItem
+                                key={option.value}
+                                id={`sort-${option.value}`}
+                                className={styles.menuItem}
+                                onAction={() => onSortBySelect(option.value)}
+                            >
+                                <span className={styles.menuItemText}>
+                                    {globalize.translate(option.label)}
+                                </span>
+                                {option.value === currentSortBy && (
+                                    <SvgIcon svg={IconSvgs.checkmark} size={16} className={styles.menuItemCheck} />
+                                )}
+                            </MenuItem>
+                        ))}
                     </Section>
                 </Menu>
             </Popover>
