@@ -175,7 +175,10 @@ export default function DetailsPage() {
     const people = item.People || [];
     const directors = people.filter((p) => p.Type === "Director");
     const writers = people.filter((p) => p.Type === "Writer");
-    const castAndCrew = people.filter((p) => p.Type !== "GuestStar");
+    const cast = people.filter((p) => p.Type === "Actor");
+    const crew = people.filter((p) =>
+        p.Type !== "Actor" && p.Type !== "GuestStar"
+    );
     const guestStars = people.filter((p) => p.Type === "GuestStar");
 
     // Series/Season breadcrumb data (variables declared above for title formatting)
@@ -364,16 +367,22 @@ export default function DetailsPage() {
                         </div>
                     )}
 
-                    {/* Cast & Crew section */}
+                    {/* Cast section */}
                     <DetailsCast
-                        title={globalize.translate("HeaderCastAndCrew")}
-                        people={castAndCrew}
+                        title="Cast"
+                        people={cast}
                     />
 
                     {/* Guest Stars section */}
                     <DetailsCast
                         title={globalize.translate("HeaderGuestCast")}
                         people={guestStars}
+                    />
+
+                    {/* Crew section */}
+                    <DetailsCast
+                        title="Crew"
+                        people={crew}
                     />
                 </div>
             </div>
