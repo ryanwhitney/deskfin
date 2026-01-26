@@ -23,7 +23,7 @@ const PersonItem: FC<{ person: Person }> = ({ person }) => {
     if (person.Id) {
         return (
             <FocusRing focusRingClass='focus-ring'>
-                <a className={styles.factItem} href={`#/person?id=${person.Id}`}>
+                <a className={styles.factItem} href={`#/details?id=${person.Id}`}>
                     {person.Name}
                 </a>
             </FocusRing>

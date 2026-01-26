@@ -111,7 +111,7 @@ export const getCardMeta = (item: ItemDto) => {
     const artistItems = (item as any).ArtistItems as Array<{ Id?: string; Name?: string }> | undefined;
     const firstArtist = artistItems?.[0];
     const subtitleText = (item.SeriesName || item.AlbumArtist || item.Artists?.[0] || firstArtist?.Name || '') as string;
-    const subtitleHref = firstArtist?.Id ? `#/person?id=${firstArtist.Id}` : detailsHref;
+    const subtitleHref = firstArtist?.Id ? `#/details?id=${firstArtist.Id}` : detailsHref;
 
     return { title: item.Name || '', titleHref: detailsHref, subtitle: subtitleText, subtitleHref };
 };
