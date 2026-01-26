@@ -376,14 +376,28 @@ const Home: FC = () => {
                             <HomeRow title={t('NextUp', 'Next Up')} items={nextUp} cardVariant="landscape" {...rowProps} />
                         )}
 
-                        {sectionOrder.includes(HomeSectionType.LatestMedia) && latestByLibrary.map(({ library, items }) => (
-                            <HomeRow
-                                key={library.Id}
-                                title={globalize.translate('LatestFromLibrary', library.Name)}
-                                items={items}
-                                {...rowProps}
-                            />
-                        ))}
+                        {sectionOrder.includes(HomeSectionType.LatestMedia) && latestByLibrary.map(({ library, items }) => {
+                            const ct = library.CollectionType;
+                            const isMovies = ct === 'movies';
+                            const isTvShows = ct === 'tvshows';
+                            const linkHref = isMovies ? `#/movies?topParentId=${library.Id}`
+                                : isTvShows ? `#/tv?topParentId=${library.Id}`
+                                : undefined;
+                            const linkText = isMovies ? 'All movies'
+                                : isTvShows ? 'All shows'
+                                : undefined;
+
+                            return (
+                                <HomeRow
+                                    key={library.Id}
+                                    title={globalize.translate('LatestFromLibrary', library.Name)}
+                                    items={items}
+                                    linkHref={linkHref}
+                                    linkText={linkText}
+                                    {...rowProps}
+                                />
+                            );
+                        })}
                     </>
                 )}
             </div>

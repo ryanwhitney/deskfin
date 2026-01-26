@@ -19,6 +19,8 @@ interface HomeRowProps {
     onToggleFavorite: (item: ItemDto) => void;
     onTogglePlayed: (item: ItemDto) => void;
     cardVariant?: 'portrait' | 'landscape';
+    linkHref?: string;
+    linkText?: string;
 }
 
 export const HomeRow: FC<HomeRowProps> = ({
@@ -28,7 +30,9 @@ export const HomeRow: FC<HomeRowProps> = ({
     onAfterAction,
     onToggleFavorite,
     onTogglePlayed,
-    cardVariant = 'portrait'
+    cardVariant = 'portrait',
+    linkHref,
+    linkText
 }) => {
     const [isVisible, setIsVisible] = useState(false);
 
@@ -49,7 +53,14 @@ export const HomeRow: FC<HomeRowProps> = ({
 
     return (
         <section className={`${styles.section} ${isVisible ? styles.visible : ''}`}>
-            <h2 className={styles.sectionTitle}>{title}</h2>
+            {linkHref ? (
+                <div className={styles.sectionHeader}>
+                    <h2 className={styles.sectionTitle}>{title}</h2>
+                    <a href={linkHref} className={styles.sectionLink}>{linkText || 'View all'} &rsaquo;</a>
+                </div>
+            ) : (
+                <h2 className={styles.sectionTitleStandalone}>{title}</h2>
+            )}
             <GridList
                 aria-label={title}
                 className={styles.row}
