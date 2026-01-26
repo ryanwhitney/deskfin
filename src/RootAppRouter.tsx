@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 
 import { DASHBOARD_APP_PATHS, DASHBOARD_APP_ROUTES } from 'apps/dashboard/routes/routes';
-import { EXPERIMENTAL_APP_ROUTES } from 'apps/experimental/routes/routes';
+import { DESKFIN_APP_ROUTES } from 'apps/deskfin/routes/routes';
 import { STABLE_APP_ROUTES } from 'apps/stable/routes/routes';
 import { WIZARD_APP_ROUTES } from 'apps/wizard/routes/routes';
 import Backdrop from 'components/Backdrop';
@@ -24,13 +24,14 @@ import appTheme from 'themes';
 import { ThemeStorageManager } from 'themes/themeStorageManager';
 
 const layoutMode = browser.tv ? LayoutMode.Tv : localStorage.getItem(LAYOUT_SETTING_KEY);
-const isExperimentalLayout = !layoutMode || layoutMode === LayoutMode.Experimental;
+// Accept both 'deskfin' and 'experimental' for backwards compatibility
+const isDeskfinLayout = !layoutMode || layoutMode === LayoutMode.Deskfin || layoutMode === LayoutMode.Experimental;
 
 const router = createHashRouter([
     {
         element: <RootAppLayout />,
         children: [
-            ...(isExperimentalLayout ? EXPERIMENTAL_APP_ROUTES : STABLE_APP_ROUTES),
+            ...(isDeskfinLayout ? DESKFIN_APP_ROUTES : STABLE_APP_ROUTES),
             ...DASHBOARD_APP_ROUTES,
             ...WIZARD_APP_ROUTES,
             {
@@ -64,7 +65,7 @@ function RootAppLayout() {
         >
             <Backdrop />
             <Suspense fallback={null}>
-                <AppHeader isHidden={isExperimentalLayout || isNewLayoutPath} />
+                <AppHeader isHidden={isDeskfinLayout || isNewLayoutPath} />
             </Suspense>
 
             <Outlet />

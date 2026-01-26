@@ -45,7 +45,7 @@ import './styles/livetv.scss';
 import './styles/dashboard.scss';
 import './styles/detailtable.scss';
 import './styles/librarybrowser.scss';
-import './apps/experimental/app/styles/AppOverrides.scss';
+import './apps/deskfin/app/styles/AppOverrides.scss';
 
 async function init() {
     // Log current version to console to help out with issue triage and debugging

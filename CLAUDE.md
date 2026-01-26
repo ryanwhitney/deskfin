@@ -6,9 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a **personal fork** of Jellyfin Web, a custom frontend implementation with personalized preferences. The strategy is:
 
-- **All custom/new code lives in** `/src/apps/experimental/`
+- **All custom/new code lives in** `/src/apps/deskfin/`
 - **Upstream code remains untouched** (dashboard, stable, wizard apps) to allow pulling changes from upstream
-- The experimental app is a complete rewrite following modern React patterns and a custom design system
+- The deskfin app is a complete rewrite following modern React patterns and a custom design system
 
 ## Development Commands
 
@@ -37,7 +37,7 @@ npm run test:watch       # Run tests in watch mode
 
 ### Core Principles
 
-The experimental app follows **[Bulletproof React](https://github.com/alan2207/bulletproof-react)** architecture:
+The deskfin app follows **[Bulletproof React](https://github.com/alan2207/bulletproof-react)** architecture:
 
 1. **Feature-based organization** - Code organized by feature, not by file type
 2. **CSS Modules** - All styles are scoped modules (`.module.scss`), no global styles
@@ -48,7 +48,7 @@ The experimental app follows **[Bulletproof React](https://github.com/alan2207/b
 ### Directory Structure
 
 ```
-src/apps/experimental/
+src/apps/deskfin/
 ├── app/
 │   ├── layout/              # App shell (drawer, topbar)
 │   │   ├── drawer/
@@ -91,7 +91,7 @@ src/apps/experimental/
 └── utils/                   # Feature utilities
 ```
 
-### Design System (`src/apps/experimental/styles/theme.scss`)
+### Design System (`src/apps/deskfin/styles/theme.scss`)
 
 **Spacing** (8px scale):
 - `$space-1` (4px) to `$space-8` (32px)
@@ -189,7 +189,7 @@ export * from './media';
 
 Use imports like:
 ```ts
-import { Button, MediaCard, ItemGrid } from 'apps/experimental/components';
+import { Button, MediaCard, ItemGrid } from 'apps/deskfin/components';
 ```
 
 ### Rules for Experimental App Development
@@ -199,11 +199,11 @@ import { Button, MediaCard, ItemGrid } from 'apps/experimental/components';
 2. **CRITICAL: Use direct imports for components with CSS modules** - Barrel exports break HMR
    ```ts
    // ✅ Good - Direct import (enables CSS HMR)
-   import { ToolbarLink } from 'apps/experimental/components/toolbar/ToolbarLink';
-   import { MediaCard } from 'apps/experimental/components/media/MediaCard';
+   import { ToolbarLink } from 'apps/deskfin/components/toolbar/ToolbarLink';
+   import { MediaCard } from 'apps/deskfin/components/media/MediaCard';
 
    // ❌ Bad - Barrel export (causes full page reload on CSS change)
-   import { ToolbarLink, MediaCard } from 'apps/experimental/components';
+   import { ToolbarLink, MediaCard } from 'apps/deskfin/components';
    ```
    **Why?** When CSS modules change, Vite's HMR can't update through barrel exports (`export *`), causing full app reloads instead of instant style updates.
 
@@ -218,7 +218,7 @@ import { Button, MediaCard, ItemGrid } from 'apps/experimental/components';
 
 ### Refactoring Status
 
-See `/src/apps/experimental/REFACTOR_PLAN.md` for completed refactoring work:
+See `/src/apps/deskfin/REFACTOR_PLAN.md` for completed refactoring work:
 - ✅ Consolidated component directories (deleted `shared/ui/`, `components/shared/`)
 - ✅ Migrated to CSS Modules (DetailsRoute, HomeRoute)
 - ✅ Component decomposition (extracted smaller components from large routes)
@@ -311,7 +311,7 @@ Run `npm run stylelint` to check styles. Key rules:
 - No browser hacks (except in legacy code)
 
 ### Global Styles (Legacy Only)
-Located in `/src/styles/` - **Do not add to these**. Use CSS Modules in experimental app.
+Located in `/src/styles/` - **Do not add to these**. Use CSS Modules in deskfin app.
 
 ## Testing
 
