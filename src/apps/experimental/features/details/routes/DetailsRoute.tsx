@@ -85,6 +85,7 @@ export default function DetailsPage() {
     const isSeries = itemType === ItemKind.Series;
     const isSeason = itemType === ItemKind.Season;
     const isBoxSet = itemType === ItemKind.BoxSet;
+    const isPerson = itemType === ItemKind.Person;
 
     // Fetch seasons for series
     const { data: seasonsResult } = useGetItems(
@@ -131,9 +132,49 @@ export default function DetailsPage() {
             { enabled: !!item?.Id && isBoxSet },
         );
 
+    // Fetch movies for person
+    const { data: personMoviesResult, isPending: isPersonMoviesPending } =
+        useGetItems(
+            {
+                personIds: itemId ? [itemId] : undefined,
+                recursive: true,
+                includeItemTypes: [BaseItemKind.Movie],
+                sortBy: [ItemSortBy.PremiereDate, ItemSortBy.SortName],
+                sortOrder: [SortOrder.Descending, SortOrder.Ascending],
+                fields: [
+                    ItemFields.PrimaryImageAspectRatio,
+                    ItemFields.MediaSourceCount,
+                ],
+                imageTypeLimit: 1,
+                enableImageTypes: [ImageType.Primary],
+            },
+            { enabled: !!item?.Id && isPerson },
+        );
+
+    // Fetch TV shows for person
+    const { data: personShowsResult, isPending: isPersonShowsPending } =
+        useGetItems(
+            {
+                personIds: itemId ? [itemId] : undefined,
+                recursive: true,
+                includeItemTypes: [BaseItemKind.Series],
+                sortBy: [ItemSortBy.PremiereDate, ItemSortBy.SortName],
+                sortOrder: [SortOrder.Descending, SortOrder.Ascending],
+                fields: [
+                    ItemFields.PrimaryImageAspectRatio,
+                    ItemFields.MediaSourceCount,
+                ],
+                imageTypeLimit: 1,
+                enableImageTypes: [ImageType.Primary],
+            },
+            { enabled: !!item?.Id && isPerson },
+        );
+
     const seasons = seasonsResult?.Items || [];
     const episodes = episodesResult?.Items || [];
     const boxSetItems = boxSetItemsResult?.Items || [];
+    const personMovies = personMoviesResult?.Items || [];
+    const personShows = personShowsResult?.Items || [];
 
     // Mutations for ItemGrid actions
     const { mutateAsync: toggleFavorite } = useToggleFavoriteMutation();
@@ -367,23 +408,63 @@ export default function DetailsPage() {
                         </div>
                     )}
 
-                    {/* Cast section */}
-                    <DetailsCast
-                        title="Cast"
-                        people={cast}
-                    />
+                    {/* Person: show movies */}
+                    {isPerson && personMovies.length > 0 && (
+                        <div className={styles.section}>
+                            <h2 className={styles.sectionTitle}>
+                                {globalize.translate("Movies")}
+                            </h2>
+                            <ItemGrid
+                                items={personMovies}
+                                variant="portrait"
+                                isLoading={isPersonMoviesPending}
+                                emptyMessage="No movies available"
+                                onToggleFavorite={handleToggleFavorite}
+                                onTogglePlayed={handleTogglePlayed}
+                            />
+                        </div>
+                    )}
 
-                    {/* Guest Stars section */}
-                    <DetailsCast
-                        title={globalize.translate("HeaderGuestCast")}
-                        people={guestStars}
-                    />
+                    {/* Person: show TV shows */}
+                    {isPerson && personShows.length > 0 && (
+                        <div className={styles.section}>
+                            <h2 className={styles.sectionTitle}>
+                                {globalize.translate("Shows")}
+                            </h2>
+                            <ItemGrid
+                                items={personShows}
+                                variant="portrait"
+                                isLoading={isPersonShowsPending}
+                                emptyMessage="No shows available"
+                                onToggleFavorite={handleToggleFavorite}
+                                onTogglePlayed={handleTogglePlayed}
+                            />
+                        </div>
+                    )}
 
-                    {/* Crew section */}
-                    <DetailsCast
-                        title="Crew"
-                        people={crew}
-                    />
+                    {/* Cast section (not for Person items) */}
+                    {!isPerson && (
+                        <DetailsCast
+                            title="Cast"
+                            people={cast}
+                        />
+                    )}
+
+                    {/* Guest Stars section (not for Person items) */}
+                    {!isPerson && (
+                        <DetailsCast
+                            title={globalize.translate("HeaderGuestCast")}
+                            people={guestStars}
+                        />
+                    )}
+
+                    {/* Crew section (not for Person items) */}
+                    {!isPerson && (
+                        <DetailsCast
+                            title="Crew"
+                            people={crew}
+                        />
+                    )}
                 </div>
             </div>
         </Page>

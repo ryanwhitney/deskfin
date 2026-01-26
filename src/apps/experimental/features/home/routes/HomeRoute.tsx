@@ -1,6 +1,7 @@
 import React, { type FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
+import { getPersonsApi } from '@jellyfin/sdk/lib/utils/api/persons-api';
 
 import globalize from 'lib/globalize';
 import { useApi } from 'hooks/useApi';
@@ -41,7 +42,7 @@ const getAllSectionsToShow = (sectionCount: number): HomeSectionType[] => {
 };
 
 const Home: FC = () => {
-    const { user, __legacyApiClient__: apiClient } = useApi();
+    const { api, user, __legacyApiClient__: apiClient } = useApi();
     const documentRef = useRef<Document>(document);
     const [searchParams] = useSearchParams();
     const isFavoritesTab = searchParams.get('tab') === '1';
@@ -66,6 +67,7 @@ const Home: FC = () => {
     const [favoriteShows, setFavoriteShows] = useState<ItemDto[]>([]);
     const [favoriteEpisodes, setFavoriteEpisodes] = useState<ItemDto[]>([]);
     const [favoriteCollections, setFavoriteCollections] = useState<ItemDto[]>([]);
+    const [favoritePeople, setFavoritePeople] = useState<ItemDto[]>([]);
 
     // Visibility state for fade-in
     const [showLibraryTiles, setShowLibraryTiles] = useState(false);
@@ -161,7 +163,7 @@ const Home: FC = () => {
     }, [apiClient, user, userViews]);
 
     const refreshFavorites = useCallback(async () => {
-        if (!apiClient || !user?.Id) return;
+        if (!apiClient || !api || !user?.Id) return;
 
         const baseOptions: any = {
             SortBy: 'SortName', SortOrder: 'Ascending', Filters: 'IsFavorite',
@@ -172,18 +174,26 @@ const Home: FC = () => {
         };
         const userId = apiClient.getCurrentUserId();
 
-        const [movies, shows, episodes, collections] = await Promise.all([
+        const [movies, shows, episodes, collections, peopleResp] = await Promise.all([
             apiClient.getItems(userId, { ...baseOptions, IncludeItemTypes: 'Movie' }),
             apiClient.getItems(userId, { ...baseOptions, IncludeItemTypes: 'Series' }),
             apiClient.getItems(userId, { ...baseOptions, IncludeItemTypes: 'Episode' }),
-            apiClient.getItems(userId, { ...baseOptions, IncludeItemTypes: 'BoxSet' })
+            apiClient.getItems(userId, { ...baseOptions, IncludeItemTypes: 'BoxSet' }),
+            getPersonsApi(api).getPersons({
+                userId: user.Id,
+                isFavorite: true,
+                limit: 24,
+                enableUserData: true,
+                imageTypeLimit: 1
+            })
         ]);
 
         setFavoriteMovies((movies?.Items || []) as ItemDto[]);
         setFavoriteShows((shows?.Items || []) as ItemDto[]);
         setFavoriteEpisodes((episodes?.Items || []) as ItemDto[]);
         setFavoriteCollections((collections?.Items || []) as ItemDto[]);
-    }, [apiClient, user?.Id]);
+        setFavoritePeople((peopleResp?.data?.Items || []) as ItemDto[]);
+    }, [api, apiClient, user?.Id]);
 
     const onAfterAction = useCallback(() => {
         if (isFavoritesTab) {
@@ -277,6 +287,17 @@ const Home: FC = () => {
                             <Section title={t('Collections', 'Collections')}>
                                 <ItemGrid
                                     items={favoriteCollections}
+                                    variant="portrait"
+                                    onToggleFavorite={onToggleFavorite}
+                                    onTogglePlayed={onTogglePlayed}
+                                    onAfterAction={onAfterAction}
+                                />
+                            </Section>
+                        )}
+                        {favoritePeople.length > 0 && (
+                            <Section title={t('People', 'People')}>
+                                <ItemGrid
+                                    items={favoritePeople}
                                     variant="portrait"
                                     onToggleFavorite={onToggleFavorite}
                                     onTogglePlayed={onTogglePlayed}
