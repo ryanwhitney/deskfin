@@ -21,3 +21,7 @@ config.json
 
 # environment related
 .envrc
+
+# Claude Code documentation (local only)
+CLAUDE.md
+UPSTREAM_MODIFICATIONS.md

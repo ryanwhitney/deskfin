@@ -1,6 +1,6 @@
 import { useLocation, useSearchParams } from 'react-router-dom';
 
-import { getDefaultViewIndex } from 'apps/deskfin/features/libraries/utils/path';
+import { getDefaultViewIndex } from 'utils/libraryPaths';
 
 const useCurrentTab = () => {
     const location = useLocation();

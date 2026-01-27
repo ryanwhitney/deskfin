@@ -2,7 +2,7 @@ import ListItem from '@mui/material/ListItem';
 import List from '@mui/material/List';
 import React, { FC } from 'react';
 
-import DrawerHeaderLink from 'apps/deskfin/app/layout/drawer/DrawerHeaderLink';
+import DrawerHeaderLink from 'components/DrawerHeaderLink';
 import ResponsiveDrawer, { ResponsiveDrawerProps } from 'components/ResponsiveDrawer';
 
 import ServerDrawerSection from './sections/ServerDrawerSection';

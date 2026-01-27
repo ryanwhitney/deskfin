@@ -5,7 +5,7 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button, Menu, MenuItem, MenuTrigger, Popover } from 'react-aria-components';
 
 import { MetaView } from 'apps/deskfin/constants/metaView';
-import { isLibraryPath } from 'apps/deskfin/features/libraries/utils/path';
+import { isLibraryPath } from 'utils/libraryPaths';
 import { appRouter } from 'components/router/appRouter';
 import { useApi } from 'hooks/useApi';
 import useCurrentTab from 'hooks/useCurrentTab';

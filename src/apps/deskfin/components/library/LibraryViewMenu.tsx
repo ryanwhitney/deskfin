@@ -9,7 +9,7 @@ import {
 } from "react-aria-components";
 import { useLocation, useSearchParams } from "react-router-dom";
 
-import { LibraryRoutes } from "apps/deskfin/features/libraries/constants/libraryRoutes";
+import { LibraryRoutes } from "utils/libraryPaths";
 import globalize from "lib/globalize";
 
 import styles from "./LibraryToolbar.module.scss";

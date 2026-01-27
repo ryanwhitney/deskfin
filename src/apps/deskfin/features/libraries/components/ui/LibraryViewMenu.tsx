@@ -6,7 +6,7 @@ import MenuItem from '@mui/material/MenuItem/MenuItem';
 import React, { FC, useCallback, useState } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 
-import { LibraryRoutes } from 'apps/deskfin/features/libraries/constants/libraryRoutes';
+import { LibraryRoutes } from 'utils/libraryPaths';
 import useCurrentTab from 'hooks/useCurrentTab';
 import globalize from 'lib/globalize';
 
