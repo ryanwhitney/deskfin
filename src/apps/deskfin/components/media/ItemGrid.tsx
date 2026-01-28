@@ -26,6 +26,10 @@ export interface ItemGridProps {
     onAfterAction?: () => void;
     className?: string;
     children?: ReactNode;
+    playlistContext?: {
+        playlistId: string;
+        playlistName: string;
+    };
 }
 
 export const ItemGrid: FC<ItemGridProps> = ({
@@ -39,6 +43,7 @@ export const ItemGrid: FC<ItemGridProps> = ({
     onAfterAction,
     className,
     children,
+    playlistContext,
 }) => {
     const { user } = useApi();
 
@@ -120,6 +125,7 @@ export const ItemGrid: FC<ItemGridProps> = ({
                     onToggleFavorite={handleToggleFavorite}
                     onTogglePlayed={handleTogglePlayed}
                     onAfterAction={handleAfterAction}
+                    playlistContext={playlistContext}
                 />
             );
         });

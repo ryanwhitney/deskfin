@@ -78,6 +78,11 @@ export const LibraryRoutes: LibraryRoute[] = [
                 index: 4,
                 label: 'Genres',
                 view: LibraryTab.Genres
+            },
+            {
+                index: 5,
+                label: 'Years',
+                view: LibraryTab.Years
             }
         ]
     },

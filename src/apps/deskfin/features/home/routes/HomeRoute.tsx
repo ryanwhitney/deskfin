@@ -18,8 +18,10 @@ import type { ItemDto } from 'types/base/models/item-dto';
 import { LinkButton } from 'apps/deskfin/components/button/LinkButton';
 
 import { HomeRow } from '../components/HomeRow';
+import { PlaylistRow } from '../components/PlaylistRow';
 import { Section } from 'apps/deskfin/components/media/Section';
 import { ItemGrid } from 'apps/deskfin/components/media/ItemGrid';
+import { useGetUserPlaylists } from 'apps/deskfin/features/watchlist/hooks/useGetUserPlaylists';
 import styles from './HomeRoute.module.scss';
 
 const t = (key: string, fallback: string) => globalize.tryTranslate?.(key) ?? fallback;
@@ -49,6 +51,8 @@ const Home: FC = () => {
 
     const { data: userViewsResp } = useUserViews(user?.Id);
     const userViews = (userViewsResp?.Items || []) as BaseItemDto[];
+
+    const { data: userPlaylists = [] } = useGetUserPlaylists({ enabled: !isFavoritesTab });
 
     const { mutateAsync: toggleFavorite } = useToggleFavoriteMutation();
     const { mutateAsync: togglePlayed } = useTogglePlayedMutation();
@@ -394,6 +398,22 @@ const Home: FC = () => {
                                     items={items}
                                     linkHref={linkHref}
                                     linkText={linkText}
+                                    {...rowProps}
+                                />
+                            );
+                        })}
+
+                        {/* User's playlists - each as its own row */}
+                        {userPlaylists.slice(0, 3).map(playlist => {
+                            if (!playlist.Id || !playlist.ChildCount || playlist.ChildCount === 0) return null;
+
+                            return (
+                                <PlaylistRow
+                                    key={playlist.Id}
+                                    playlistId={playlist.Id}
+                                    title={playlist.Name ?? 'Unnamed List'}
+                                    linkHref={`#/list?id=${playlist.Id}&serverId=${user?.ServerId}`}
+                                    linkText="View all"
                                     {...rowProps}
                                 />
                             );

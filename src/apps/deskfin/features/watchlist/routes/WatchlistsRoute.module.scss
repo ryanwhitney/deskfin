@@ -1,0 +1,143 @@
+@import '../../../styles/theme';
+
+.container {
+    padding: $space-6;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $space-6;
+    gap: $space-4;
+}
+
+.title {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+}
+
+.createButton {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    padding: $space-2 $space-4;
+    background: $focus-ring;
+    color: white;
+    border: none;
+    border-radius: $radius-sm;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s;
+
+    &:hover {
+        opacity: 0.9;
+    }
+}
+
+.loading,
+.error {
+    padding: $space-8;
+    text-align: center;
+    color: $text-muted;
+}
+
+.error {
+    color: #ff4d6d;
+}
+
+.empty {
+    padding: $space-8;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $space-3;
+    color: $text-muted;
+}
+
+.emptyText {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.emptyHint {
+    font-size: 14px;
+    margin: 0;
+    max-width: 400px;
+}
+
+.emptyButton {
+    margin-top: $space-2;
+    padding: $space-3 $space-5;
+    background: $focus-ring;
+    color: white;
+    border: none;
+    border-radius: $radius-sm;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s;
+
+    &:hover {
+        opacity: 0.9;
+    }
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: $space-4;
+}
+
+.card {
+    display: flex;
+    align-items: center;
+    gap: $space-4;
+    padding: $space-4;
+    background: $surface-raised;
+    border: 1px solid $border-subtle;
+    border-radius: $radius-md;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.15s;
+
+    &:hover {
+        background: $hover-bg;
+        border-color: $border-muted;
+    }
+}
+
+.cardIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    background: $hover-bg;
+    border-radius: $radius-sm;
+    flex-shrink: 0;
+}
+
+.cardContent {
+    flex: 1;
+    min-width: 0;
+}
+
+.cardTitle {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 $space-1 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cardMeta {
+    font-size: 13px;
+    color: $text-muted;
+    margin: 0;
+}

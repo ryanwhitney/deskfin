@@ -24,6 +24,7 @@ const MainDrawerContent = () => {
 
     const isHomeSelected = location.pathname === '/home' && (!location.search || location.search === '?tab=0');
     const isFavoritesSelected = location.pathname === '/home' && location.search === '?tab=1';
+    const isWatchlistsSelected = location.pathname === '/watchlists';
 
     return (
         <>
@@ -49,6 +50,16 @@ const MainDrawerContent = () => {
                         <SvgIcon svg={IconSvgs.heart} size={20} />
                     </span>
                     <span className={styles.label}>{globalize.translate('Favorites')}</span>
+                </Link>
+
+                <Link
+                    className={`${styles.link} ${isWatchlistsSelected ? styles.linkActive : ''}`}
+                    to="/watchlists"
+                >
+                    <span className={styles.icon}>
+                        <SvgIcon svg={IconSvgs.listBullet} size={20} />
+                    </span>
+                    <span className={styles.label}>My Lists</span>
                 </Link>
             </div>
 

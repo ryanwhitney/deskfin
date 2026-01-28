@@ -49,12 +49,19 @@ const genresTabContent: LibraryTabContent = {
     itemType: [BaseItemKind.Movie],
 };
 
+const yearsTabContent: LibraryTabContent = {
+    viewType: LibraryTab.Years,
+    collectionType: CollectionType.Movies,
+    itemType: [BaseItemKind.Movie],
+};
+
 const moviesTabMapping: LibraryTabMapping = {
     0: moviesTabContent,
     1: suggestionsTabContent,
     2: favoritesTabContent,
     3: collectionsTabContent,
     4: genresTabContent,
+    5: yearsTabContent,
 };
 
 const Movies: FC = () => {
@@ -74,6 +81,8 @@ const Movies: FC = () => {
                 return "Collections";
             case 4:
                 return "Genres";
+            case 5:
+                return "Years";
             default:
                 return undefined;
         }

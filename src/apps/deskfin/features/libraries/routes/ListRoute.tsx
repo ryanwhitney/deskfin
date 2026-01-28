@@ -1,4 +1,5 @@
 import { CollectionType } from "@jellyfin/sdk/lib/generated-client/models/collection-type";
+import { BaseItemKind } from "@jellyfin/sdk/lib/generated-client/models/base-item-kind";
 import React from "react";
 import { Navigate, useSearchParams } from "react-router-dom";
 
@@ -6,17 +7,25 @@ import Page from "components/Page";
 import globalize from "lib/globalize";
 import { ServerConnections } from "lib/jellyfin-apiclient";
 import { useItem } from "hooks/useItem";
+import { PlaylistView } from "apps/deskfin/features/watchlist/components/PlaylistView";
 
 /**
  * Compatibility route for legacy `#/list?parentId=...`.
+ * Also handles playlist viewing via `?id=...`.
  * Redirects into the correct modern library page whenever possible.
  */
 export default function ListRoute() {
     const [params] = useSearchParams();
+    const playlistId = params.get("id") || "";
     const parentId = params.get("topParentId") || params.get("parentId") || "";
     const genreId = params.get("genreId") || "";
     const musicGenreId = params.get("musicGenreId") || "";
     const studioId = params.get("studioId") || "";
+
+    // If we have a playlist ID, show the playlist view
+    if (playlistId) {
+        return <PlaylistView playlistId={playlistId} />;
+    }
 
     // If we have a genreId/studioId/musicGenreId, we need to redirect to the legacy list
     // controller which handles these special item types properly

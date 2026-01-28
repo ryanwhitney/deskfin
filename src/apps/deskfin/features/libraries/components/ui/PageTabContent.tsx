@@ -2,6 +2,7 @@ import React, { type FC } from "react";
 import SuggestionsSectionView from "./SuggestionsSectionView";
 import UpcomingView from "./UpcomingView";
 import GenresView from "./GenresView";
+import YearsView from "./YearsView";
 import NetworksView from "./NetworksView";
 import ItemsView from "./ItemsView";
 import GuideView from "./GuideView";
@@ -64,6 +65,18 @@ const PageTabContent: FC<PageTabContentProps> = ({ parentId, currentTab }) => {
         return (
             <div className={styles.content}>
                 <GenresView
+                    parentId={parentId}
+                    collectionType={currentTab.collectionType}
+                    itemType={currentTab.itemType || []}
+                />
+            </div>
+        );
+    }
+
+    if (currentTab.viewType === LibraryTab.Years) {
+        return (
+            <div className={styles.content}>
+                <YearsView
                     parentId={parentId}
                     collectionType={currentTab.collectionType}
                     itemType={currentTab.itemType || []}

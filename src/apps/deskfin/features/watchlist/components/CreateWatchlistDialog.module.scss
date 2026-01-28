@@ -1,0 +1,184 @@
+@import "../../../styles/theme";
+
+.overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $space-4;
+}
+
+.modal {
+    max-width: 500px;
+    width: 100%;
+    outline: none;
+}
+
+.dialog {
+    background: $surface-base;
+    border: 1px solid $border-subtle;
+    border-radius: $radius-lg;
+    padding: $space-6;
+    box-shadow: $menu-shadow;
+    outline: none;
+}
+
+.title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 $space-5 0;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: $space-4;
+    margin-bottom: $space-6;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+}
+
+.label {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.input {
+    padding: $space-2 $space-3;
+    border: 1px solid $border-control;
+    border-radius: $radius-sm;
+    background: transparent;
+    color: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s;
+
+    &:hover {
+        border-color: $border-muted;
+    }
+
+    &:focus {
+        border-color: $focus-ring;
+    }
+
+    &::placeholder {
+        color: $text-muted;
+    }
+}
+
+.checkbox {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkboxBox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid $border-control;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+
+    .checkbox[data-selected] & {
+        background: $focus-ring;
+        border-color: $focus-ring;
+
+        &::after {
+            content: "✓";
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+        }
+    }
+}
+
+.checkboxLabel {
+    font-size: 14px;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $space-3;
+}
+
+.button {
+    padding: $space-2 $space-4;
+    border: 1px solid $border-control;
+    border-radius: $radius-sm;
+    background: transparent;
+    color: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    outline: none;
+
+    &:hover:not([data-disabled]) {
+        background: $hover-bg;
+    }
+
+    &:focus-visible {
+        border-color: $focus-ring;
+    }
+
+    &[data-disabled] {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+.buttonPrimary {
+    background: $focus-ring;
+    border-color: $focus-ring;
+    color: white;
+
+    &:hover:not([data-disabled]) {
+        opacity: 0.9;
+        background: $focus-ring;
+    }
+}
+
+.buttonDanger {
+    background: #dc2626;
+    border-color: #dc2626;
+    color: white;
+
+    &:hover:not([data-disabled]) {
+        background: #b91c1c;
+        border-color: #b91c1c;
+    }
+}
+
+.buttonDangerOutline {
+    border-color: #dc2626;
+    color: #dc2626;
+
+    &:hover:not([data-disabled]) {
+        background: rgba(220, 38, 38, 0.1);
+    }
+}
+
+.actionsSpread {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: $space-3;
+}
+
+.actionsRight {
+    display: flex;
+    gap: $space-3;
+}

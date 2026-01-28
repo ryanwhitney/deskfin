@@ -21,6 +21,10 @@ interface HomeRowProps {
     cardVariant?: 'portrait' | 'landscape';
     linkHref?: string;
     linkText?: string;
+    playlistContext?: {
+        playlistId: string;
+        playlistName: string;
+    };
 }
 
 export const HomeRow: FC<HomeRowProps> = ({
@@ -32,7 +36,8 @@ export const HomeRow: FC<HomeRowProps> = ({
     onTogglePlayed,
     cardVariant = 'portrait',
     linkHref,
-    linkText
+    linkText,
+    playlistContext
 }) => {
     const [isVisible, setIsVisible] = useState(false);
 
@@ -98,6 +103,7 @@ export const HomeRow: FC<HomeRowProps> = ({
                                     onAfterAction={onAfterAction}
                                     onToggleFavorite={onToggleFavorite}
                                     onTogglePlayed={onTogglePlayed}
+                                    playlistContext={playlistContext}
                                 />
                             )}
                         </GridListItem>

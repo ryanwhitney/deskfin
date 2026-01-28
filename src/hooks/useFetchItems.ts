@@ -12,6 +12,7 @@ import { getGenresApi } from '@jellyfin/sdk/lib/utils/api/genres-api';
 import { getItemsApi } from '@jellyfin/sdk/lib/utils/api/items-api';
 import { getMoviesApi } from '@jellyfin/sdk/lib/utils/api/movies-api';
 import { getStudiosApi } from '@jellyfin/sdk/lib/utils/api/studios-api';
+import { getYearsApi } from '@jellyfin/sdk/lib/utils/api/years-api';
 import { getTvShowsApi } from '@jellyfin/sdk/lib/utils/api/tv-shows-api';
 import { getUserLibraryApi } from '@jellyfin/sdk/lib/utils/api/user-library-api';
 import { getPlaylistsApi } from '@jellyfin/sdk/lib/utils/api/playlists-api';
@@ -137,6 +138,42 @@ export const useGetGenres = (itemType: BaseItemKind[], parentId: ParentId) => {
         queryKey: ['Genres', parentId],
         queryFn: ({ signal }) =>
             fetchGetGenres(currentApi, itemType, parentId, { signal }),
+        enabled: !!currentApi.api && !!currentApi.user?.Id && !!parentId
+    });
+};
+
+const fetchGetYears = async (
+    currentApi: JellyfinApiContext,
+    itemType: BaseItemKind[],
+    parentId: ParentId,
+    options?: AxiosRequestConfig
+) => {
+    const { api, user } = currentApi;
+    if (api && user?.Id) {
+        const response = await getYearsApi(api).getYears(
+            {
+                userId: user.Id,
+                sortBy: [ItemSortBy.SortName],
+                sortOrder: [SortOrder.Descending],
+                includeItemTypes: itemType,
+                enableTotalRecordCount: false,
+                parentId: parentId ?? undefined,
+                recursive: true
+            },
+            {
+                signal: options?.signal
+            }
+        );
+        return response.data as ItemDtoQueryResult;
+    }
+};
+
+export const useGetYears = (itemType: BaseItemKind[], parentId: ParentId) => {
+    const currentApi = useApi();
+    return useQuery({
+        queryKey: ['Years', parentId],
+        queryFn: ({ signal }) =>
+            fetchGetYears(currentApi, itemType, parentId, { signal }),
         enabled: !!currentApi.api && !!currentApi.user?.Id && !!parentId
     });
 };

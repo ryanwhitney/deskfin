@@ -18,6 +18,9 @@ import { FocusRing } from "@react-aria/focus";
 
 import * as itemContextMenu from "components/itemContextMenu";
 import { ActionMenuStyles } from "apps/deskfin/components/menu/ActionMenu";
+import { WatchlistMenuItem } from "apps/deskfin/features/watchlist/components/WatchlistMenuItem";
+import { CreateWatchlistDialog } from "apps/deskfin/features/watchlist/components/CreateWatchlistDialog";
+import { useRemoveFromPlaylistMutation } from "apps/deskfin/features/watchlist/hooks/useRemoveFromPlaylistMutation";
 
 import styles from "./MediaCard.module.scss";
 
@@ -42,6 +45,10 @@ export type MediaCardProps = {
     onToggleFavorite: (item: ItemDto) => void;
     onTogglePlayed: (item: ItemDto) => void;
     onAfterAction: () => void;
+    playlistContext?: {
+        playlistId: string;
+        playlistName: string;
+    };
 };
 
 export const MediaCard: FC<MediaCardProps> = ({
@@ -59,10 +66,28 @@ export const MediaCard: FC<MediaCardProps> = ({
     onToggleFavorite,
     onTogglePlayed,
     onAfterAction,
+    playlistContext,
 }) => {
     const [isMoreOpen, setIsMoreOpen] = useState(false);
     const [isFocusWithin, setIsFocusWithin] = useState(false);
+    const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
     const isActive = isRovingFocused || isFocusWithin || isMoreOpen;
+
+    const { mutateAsync: removeFromPlaylist } = useRemoveFromPlaylistMutation();
+
+    const handleRemoveFromPlaylist = async () => {
+        if (!playlistContext || !item.PlaylistItemId) return;
+
+        try {
+            await removeFromPlaylist({
+                playlistId: playlistContext.playlistId,
+                entryIds: [item.PlaylistItemId]
+            });
+            onAfterAction();
+        } catch (error) {
+            console.error('[MediaCard] Failed to remove from playlist:', error);
+        }
+    };
 
     const isFavorite = !!item.UserData?.IsFavorite;
     const isPlayed = !!item.UserData?.Played;
@@ -292,6 +317,9 @@ export const MediaCard: FC<MediaCardProps> = ({
                                             />
                                         )}
                                         {commands.map((cmd, idx) => {
+                                            // Skip AddToPlaylist - we'll use WatchlistMenuItem instead
+                                            if (cmd.id === 'addtoplaylist') return null;
+
                                             if (cmd.divider)
                                                 return (
                                                     <Separator
@@ -302,7 +330,9 @@ export const MediaCard: FC<MediaCardProps> = ({
                                                     />
                                                 );
                                             if (!cmd.id) return null;
-                                            return (
+
+                                            // Render the command
+                                            const menuItem = (
                                                 <MenuItem
                                                     key={cmd.id}
                                                     className={
@@ -343,6 +373,44 @@ export const MediaCard: FC<MediaCardProps> = ({
                                                     </span>
                                                 </MenuItem>
                                             );
+
+                                            // After AddToCollection, insert our playlist options
+                                            if (cmd.id === 'addtocollection') {
+                                                return (
+                                                    <React.Fragment key={cmd.id}>
+                                                        {menuItem}
+                                                        <WatchlistMenuItem
+                                                            item={item}
+                                                            onCreateNew={() => {
+                                                                setIsMoreOpen(false);
+                                                                setIsCreateDialogOpen(true);
+                                                            }}
+                                                        />
+                                                        {playlistContext && item.PlaylistItemId && (
+                                                            <MenuItem
+                                                                className={ActionMenuStyles.item}
+                                                                textValue={`Remove from ${playlistContext.playlistName}`}
+                                                                onAction={() => void handleRemoveFromPlaylist()}
+                                                            >
+                                                                <span
+                                                                    className={ActionMenuStyles.icon}
+                                                                    aria-hidden="true"
+                                                                >
+                                                                    <SvgIcon
+                                                                        svg={IconSvgs.delete}
+                                                                        size={18}
+                                                                    />
+                                                                </span>
+                                                                <span className={ActionMenuStyles.text}>
+                                                                    Remove from {playlistContext.playlistName}
+                                                                </span>
+                                                            </MenuItem>
+                                                        )}
+                                                    </React.Fragment>
+                                                );
+                                            }
+
+                                            return menuItem;
                                         })}
                                     </Menu>
                                 </Popover>
@@ -401,6 +469,12 @@ export const MediaCard: FC<MediaCardProps> = ({
                     )
                 ) : null}
             </div>
+
+            <CreateWatchlistDialog
+                isOpen={isCreateDialogOpen}
+                onClose={() => setIsCreateDialogOpen(false)}
+                initialItem={item}
+            />
         </div>
     );
 };
