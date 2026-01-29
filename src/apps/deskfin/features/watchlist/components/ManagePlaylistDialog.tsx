@@ -1,4 +1,4 @@
-import React, { type FC, useState, useEffect } from 'react';
+import React, { type FC, useState, useEffect, useCallback } from 'react';
 import {
     Dialog,
     Modal,
@@ -11,8 +11,10 @@ import {
     Checkbox
 } from 'react-aria-components';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
+import { getPlaylistsApi } from '@jellyfin/sdk/lib/utils/api/playlists-api';
 import { useNavigate } from 'react-router-dom';
 
+import { useApi } from 'hooks/useApi';
 import { useUpdatePlaylistMutation } from '../hooks/useUpdatePlaylistMutation';
 import { useDeletePlaylistMutation } from '../hooks/useDeletePlaylistMutation';
 import globalize from 'lib/globalize';
@@ -35,22 +37,42 @@ export const ManagePlaylistDialog: FC<ManagePlaylistDialogProps> = ({
     playlist,
     onPlaylistUpdated
 }) => {
+    const { api } = useApi();
     const navigate = useNavigate();
     const [name, setName] = useState(playlist.Name ?? '');
     const [isPublic, setIsPublic] = useState(false);
+    const [isLoadingDetails, setIsLoadingDetails] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
     const { mutateAsync: updatePlaylist, isPending: isUpdating } = useUpdatePlaylistMutation();
     const { mutateAsync: deletePlaylist, isPending: isDeleting } = useDeletePlaylistMutation();
 
-    // Reset form when playlist changes
+    // Fetch playlist details to get OpenAccess (public) setting
+    const fetchPlaylistDetails = useCallback(async () => {
+        if (!api || !playlist.Id) return;
+
+        setIsLoadingDetails(true);
+        try {
+            const playlistsApi = getPlaylistsApi(api);
+            const response = await playlistsApi.getPlaylist({ playlistId: playlist.Id });
+            setIsPublic(response.data.OpenAccess ?? false);
+        } catch (error) {
+            console.error('[ManagePlaylistDialog] Failed to fetch playlist details:', error);
+            setIsPublic(false);
+        } finally {
+            setIsLoadingDetails(false);
+        }
+    }, [api, playlist.Id]);
+
+    // Reset form and fetch details when dialog opens or playlist changes
     useEffect(() => {
         setName(playlist.Name ?? '');
-        // Note: We'd need to fetch playlist details to get IsPublic
-        // For now, default to false
-        setIsPublic(false);
         setShowDeleteConfirm(false);
-    }, [playlist]);
+
+        if (isOpen && playlist.Id) {
+            void fetchPlaylistDetails();
+        }
+    }, [playlist, isOpen, fetchPlaylistDetails]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -87,14 +109,13 @@ export const ManagePlaylistDialog: FC<ManagePlaylistDialogProps> = ({
         }
     };
 
-    const handleCancel = () => {
+    const handleCancel = useCallback(() => {
         setName(playlist.Name ?? '');
-        setIsPublic(false);
         setShowDeleteConfirm(false);
         onClose();
-    };
+    }, [onClose, playlist.Name]);
 
-    const isPending = isUpdating || isDeleting;
+    const isPending = isUpdating || isDeleting || isLoadingDetails;
 
     return (
         <ModalOverlay

@@ -1,10 +1,12 @@
 import React, { type FC, useMemo, useState } from "react";
 import { Squircle } from "@squircle-js/react";
+import { getPlaylistsApi } from "@jellyfin/sdk/lib/utils/api/playlists-api";
 
 import SvgIcon from "components/SvgIcon";
 import { IconSvgs, getLegacyCommandIcon } from "assets/icons";
 import type { ItemDto } from "types/base/models/item-dto";
 import { playbackManager } from "components/playback/playbackmanager";
+import { useApi } from "hooks/useApi";
 
 import {
     Button as RacButton,
@@ -21,6 +23,7 @@ import { ActionMenuStyles } from "apps/deskfin/components/menu/ActionMenu";
 import { WatchlistMenuItem } from "apps/deskfin/features/watchlist/components/WatchlistMenuItem";
 import { CreateWatchlistDialog } from "apps/deskfin/features/watchlist/components/CreateWatchlistDialog";
 import { useRemoveFromPlaylistMutation } from "apps/deskfin/features/watchlist/hooks/useRemoveFromPlaylistMutation";
+import { useMovePlaylistItemMutation } from "apps/deskfin/features/watchlist/hooks/useMovePlaylistItemMutation";
 
 import styles from "./MediaCard.module.scss";
 
@@ -68,12 +71,14 @@ export const MediaCard: FC<MediaCardProps> = ({
     onAfterAction,
     playlistContext,
 }) => {
+    const { api, user: currentUser } = useApi();
     const [isMoreOpen, setIsMoreOpen] = useState(false);
     const [isFocusWithin, setIsFocusWithin] = useState(false);
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
     const isActive = isRovingFocused || isFocusWithin || isMoreOpen;
 
     const { mutateAsync: removeFromPlaylist } = useRemoveFromPlaylistMutation();
+    const { mutateAsync: movePlaylistItem } = useMovePlaylistItemMutation();
 
     const handleRemoveFromPlaylist = async () => {
         if (!playlistContext || !item.PlaylistItemId) return;
@@ -86,6 +91,45 @@ export const MediaCard: FC<MediaCardProps> = ({
             onAfterAction();
         } catch (error) {
             console.error('[MediaCard] Failed to remove from playlist:', error);
+        }
+    };
+
+    const handleMoveToFront = async () => {
+        if (!playlistContext || !item.PlaylistItemId) return;
+
+        try {
+            await movePlaylistItem({
+                playlistId: playlistContext.playlistId,
+                itemId: item.PlaylistItemId,
+                newIndex: 0
+            });
+            onAfterAction();
+        } catch (error) {
+            console.error('[MediaCard] Failed to move to front:', error);
+        }
+    };
+
+    const handleMoveToBack = async () => {
+        if (!playlistContext || !item.PlaylistItemId || !api || !currentUser?.Id) return;
+
+        try {
+            // Fetch the playlist item count to get the correct last index
+            const response = await getPlaylistsApi(api).getPlaylistItems({
+                playlistId: playlistContext.playlistId,
+                userId: currentUser.Id,
+                limit: 1
+            });
+            const totalCount = response.data.TotalRecordCount ?? 0;
+            if (totalCount === 0) return;
+
+            await movePlaylistItem({
+                playlistId: playlistContext.playlistId,
+                itemId: item.PlaylistItemId,
+                newIndex: totalCount - 1
+            });
+            onAfterAction();
+        } catch (error) {
+            console.error('[MediaCard] Failed to move to back:', error);
         }
     };
 
@@ -388,24 +432,63 @@ export const MediaCard: FC<MediaCardProps> = ({
                                                             }}
                                                         />
                                                         {playlistContext && item.PlaylistItemId && (
-                                                            <MenuItem
-                                                                className={ActionMenuStyles.item}
-                                                                textValue={`Remove from ${playlistContext.playlistName}`}
-                                                                onAction={() => void handleRemoveFromPlaylist()}
-                                                            >
-                                                                <span
-                                                                    className={ActionMenuStyles.icon}
-                                                                    aria-hidden="true"
+                                                            <>
+                                                                <MenuItem
+                                                                    className={ActionMenuStyles.item}
+                                                                    textValue='Move to front'
+                                                                    onAction={() => void handleMoveToFront()}
                                                                 >
-                                                                    <SvgIcon
-                                                                        svg={IconSvgs.delete}
-                                                                        size={18}
-                                                                    />
-                                                                </span>
-                                                                <span className={ActionMenuStyles.text}>
-                                                                    Remove from {playlistContext.playlistName}
-                                                                </span>
-                                                            </MenuItem>
+                                                                    <span
+                                                                        className={ActionMenuStyles.icon}
+                                                                        aria-hidden='true'
+                                                                        style={{ transform: 'rotate(180deg)' }}
+                                                                    >
+                                                                        <SvgIcon
+                                                                            svg={IconSvgs.chevronDown}
+                                                                            size={18}
+                                                                        />
+                                                                    </span>
+                                                                    <span className={ActionMenuStyles.text}>
+                                                                        Move to front
+                                                                    </span>
+                                                                </MenuItem>
+                                                                <MenuItem
+                                                                    className={ActionMenuStyles.item}
+                                                                    textValue='Move to back'
+                                                                    onAction={() => void handleMoveToBack()}
+                                                                >
+                                                                    <span
+                                                                        className={ActionMenuStyles.icon}
+                                                                        aria-hidden='true'
+                                                                    >
+                                                                        <SvgIcon
+                                                                            svg={IconSvgs.chevronDown}
+                                                                            size={18}
+                                                                        />
+                                                                    </span>
+                                                                    <span className={ActionMenuStyles.text}>
+                                                                        Move to back
+                                                                    </span>
+                                                                </MenuItem>
+                                                                <MenuItem
+                                                                    className={ActionMenuStyles.item}
+                                                                    textValue={`Remove from ${playlistContext.playlistName}`}
+                                                                    onAction={() => void handleRemoveFromPlaylist()}
+                                                                >
+                                                                    <span
+                                                                        className={ActionMenuStyles.icon}
+                                                                        aria-hidden='true'
+                                                                    >
+                                                                        <SvgIcon
+                                                                            svg={IconSvgs.delete}
+                                                                            size={18}
+                                                                        />
+                                                                    </span>
+                                                                    <span className={ActionMenuStyles.text}>
+                                                                        Remove from {playlistContext.playlistName}
+                                                                    </span>
+                                                                </MenuItem>
+                                                            </>
                                                         )}
                                                     </React.Fragment>
                                                 );

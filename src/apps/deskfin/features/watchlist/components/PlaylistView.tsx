@@ -1,4 +1,4 @@
-import React, { type FC, useEffect, useState, useMemo } from 'react';
+import React, { type FC, useEffect, useState, useMemo, useCallback } from 'react';
 import { Button, Menu, MenuItem, MenuTrigger, Popover, Section, Header } from 'react-aria-components';
 import { getPlaylistsApi } from '@jellyfin/sdk/lib/utils/api/playlists-api';
 import { getUserLibraryApi } from '@jellyfin/sdk/lib/utils/api/user-library-api';
@@ -8,7 +8,14 @@ import type { ItemDto } from 'types/base/models/item-dto';
 import { useApi } from 'hooks/useApi';
 import { useToggleFavoriteMutation, useTogglePlayedMutation } from 'hooks/useFetchItems';
 import Page from 'components/Page';
-import { ItemGrid } from 'apps/deskfin/components/media/ItemGrid';
+import { MediaCard } from 'apps/deskfin/components/media/MediaCard';
+import {
+    buildCardImageUrl,
+    getCardMeta,
+    getProgressPct,
+    getOverlayCount
+} from 'apps/deskfin/features/home/utils/cardHelpers';
+import NoItemsMessage from 'components/common/NoItemsMessage';
 import { useTitle } from 'apps/deskfin/utils/useTitle';
 import { formatLibraryTitle } from 'apps/deskfin/utils/titleUtils';
 import SvgIcon from 'components/SvgIcon';
@@ -42,7 +49,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({ playlistId }) => {
 
     useTitle(playlist?.Name ? formatLibraryTitle(playlist.Name) : 'Playlist');
 
-    const fetchPlaylist = async () => {
+    const fetchPlaylist = useCallback(async () => {
         if (!api || !user?.Id) return;
 
         setIsLoading(true);
@@ -74,11 +81,11 @@ export const PlaylistView: FC<PlaylistViewProps> = ({ playlistId }) => {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [api, playlistId, user?.Id]);
 
     useEffect(() => {
         void fetchPlaylist();
-    }, [api, playlistId, user?.Id]);
+    }, [fetchPlaylist]);
 
     // Sort items based on current sort settings
     const sortedItems = useMemo(() => {
@@ -101,25 +108,27 @@ export const PlaylistView: FC<PlaylistViewProps> = ({ playlistId }) => {
         return sortAscending ? sorted : sorted.reverse();
     }, [items, sortBy, sortAscending]);
 
-    const onToggleFavorite = async (item: ItemDto) => {
+    const onAfterAction = useCallback(() => {
+        void fetchPlaylist();
+    }, [fetchPlaylist]);
+
+    const onToggleFavorite = useCallback(async (item: ItemDto) => {
         if (!item.Id) return;
         await toggleFavorite({
             itemId: item.Id,
             isFavorite: !!item.UserData?.IsFavorite
         });
-    };
+        onAfterAction();
+    }, [onAfterAction, toggleFavorite]);
 
-    const onTogglePlayed = async (item: ItemDto) => {
+    const onTogglePlayed = useCallback(async (item: ItemDto) => {
         if (!item.Id) return;
         await togglePlayed({
             itemId: item.Id,
             isPlayed: !!item.UserData?.Played
         });
-    };
-
-    const onAfterAction = () => {
-        void fetchPlaylist();
-    };
+        onAfterAction();
+    }, [onAfterAction, togglePlayed]);
 
     const getSortLabel = () => {
         switch (sortBy) {
@@ -131,8 +140,8 @@ export const PlaylistView: FC<PlaylistViewProps> = ({ playlistId }) => {
 
     if (isLoading) {
         return (
-            <Page id="playlistPage" className="libraryPage">
-                <div className={styles.container}>
+            <Page id='playlistPage' className='libraryPage'>
+                <div className={styles.loadingContainer}>
                     {globalize.translate('Loading')}...
                 </div>
             </Page>
@@ -141,29 +150,26 @@ export const PlaylistView: FC<PlaylistViewProps> = ({ playlistId }) => {
 
     if (!playlist) {
         return (
-            <Page id="playlistPage" className="libraryPage">
-                <div className={styles.container}>
-                    {globalize.tryTranslate?.('MessageNoItemsAvailable') ?? 'Playlist not found'}
-                </div>
+            <Page id='playlistPage' className='libraryPage'>
+                <NoItemsMessage message='Playlist not found' />
             </Page>
         );
     }
 
     return (
         <Page
-            id="playlistPage"
-            className="libraryPage backdropPage pageWithAbsoluteTabs withTabs"
-            backDropType="movie"
+            id='playlistPage'
+            className='libraryPage backdropPage pageWithAbsoluteTabs withTabs'
+            backDropType='movie'
         >
-            <div className={styles.container}>
-                <h1 className={styles.title}>{playlist.Name ?? 'Unnamed List'}</h1>
-
+            <h1>{playlist.Name ?? 'Unnamed List'}</h1>
+            <div className={toolbarStyles.gridContainer}>
                 {/* Toolbar: count on left, actions on right */}
-                <div className={styles.toolbar}>
-                    <div className={styles.itemCount}>
+                <div className={toolbarStyles.gridHeader}>
+                    <div className={toolbarStyles.itemCount}>
                         {items.length} {items.length === 1 ? 'item' : 'items'}
                     </div>
-                    <div className={styles.actions}>
+                    <div className={toolbarStyles.gridActions}>
                         {/* Sort Menu */}
                         <MenuTrigger>
                             <Button
@@ -255,21 +261,32 @@ export const PlaylistView: FC<PlaylistViewProps> = ({ playlistId }) => {
                 </div>
 
                 {items.length === 0 ? (
-                    <div className={styles.empty}>
-                        {globalize.tryTranslate?.('MessageNoItemsAvailable') ?? 'No items in this list'}
-                    </div>
+                    <NoItemsMessage message='MessageNoItemsAvailable' />
                 ) : (
-                    <ItemGrid
-                        items={sortedItems}
-                        variant="portrait"
-                        onToggleFavorite={onToggleFavorite}
-                        onTogglePlayed={onTogglePlayed}
-                        onAfterAction={onAfterAction}
-                        playlistContext={{
-                            playlistId,
-                            playlistName: playlist.Name ?? 'this list'
-                        }}
-                    />
+                    <div className={toolbarStyles.grid} data-variant='portrait'>
+                        {sortedItems.map((item) => (
+                            <MediaCard
+                                key={item.Id}
+                                item={item}
+                                user={user}
+                                variant='portrait'
+                                imageUrl={buildCardImageUrl(item, { variant: 'portrait' })}
+                                title={getCardMeta(item).title}
+                                titleHref={getCardMeta(item).titleHref}
+                                subtitle={getCardMeta(item).subtitle}
+                                subtitleHref={getCardMeta(item).subtitleHref}
+                                progressPct={getProgressPct(item)}
+                                overlayCount={getOverlayCount(item)}
+                                onToggleFavorite={onToggleFavorite}
+                                onTogglePlayed={onTogglePlayed}
+                                onAfterAction={onAfterAction}
+                                playlistContext={{
+                                    playlistId,
+                                    playlistName: playlist.Name ?? 'this list'
+                                }}
+                            />
+                        ))}
+                    </div>
                 )}
             </div>
 

@@ -4,3 +4,4 @@ export * from './useCreatePlaylistMutation';
 export * from './useRemoveFromPlaylistMutation';
 export * from './useUpdatePlaylistMutation';
 export * from './useDeletePlaylistMutation';
+export * from './useMovePlaylistItemMutation';

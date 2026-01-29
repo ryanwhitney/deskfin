@@ -1,40 +1,6 @@
-@import '../../../styles/theme';
+@use '../../../styles/theme' as *;
 
-.container {
-    padding: $space-6;
-    max-width: 1400px;
-    margin: 0 auto;
-}
-
-.title {
-    font-size: 32px;
-    font-weight: 700;
-    margin: 0 0 $space-4 0;
-}
-
-.toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: $space-5;
-    gap: $space-4;
-}
-
-.itemCount {
-    color: rgba(255, 255, 255, 0.5);
-    mix-blend-mode: plus-lighter;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: -1%;
-}
-
-.actions {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-}
-
-.empty {
+.loadingContainer {
     padding: $space-8;
     text-align: center;
     color: $text-muted;
