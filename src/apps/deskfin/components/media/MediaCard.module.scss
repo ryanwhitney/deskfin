@@ -147,6 +147,33 @@
     transition: all 100ms ease-in;
 }
 
+.watchedBadge {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 999px;
+    background: rgba(25, 215, 0, 0.5);
+    color: #ffffff;
+    backdrop-filter: blur(5px) brightness(0.77);
+    pointer-events: none;
+    transition: all 200ms ease;
+
+    & > span {
+        height: 10px !important;
+        width: 10px !important;
+        opacity: 0.8;
+        & > svg {
+            stroke-width: 1px;
+            stroke: currentcolor;
+        }
+    }
+}
+
 .progress {
     height: 3px;
     background: rgba(255, 255, 255, 0.1);
@@ -246,6 +273,24 @@
 
 .iconBtn:hover {
     background: $hover-bg;
+}
+
+.watched {
+    img {
+        filter: saturate(0);
+        opacity: 0.8;
+    }
+    &:hover,
+    &:focus,
+    &:focus-visible {
+        img {
+            filter: saturate(1);
+            opacity: 1;
+        }
+        .watchedBadge {
+            opacity: 0;
+        }
+    }
 }
 
 .gridItem[data-focus-visible="true"] {

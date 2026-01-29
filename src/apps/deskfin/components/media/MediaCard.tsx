@@ -163,6 +163,7 @@ export const MediaCard: FC<MediaCardProps> = ({
                 styles.card,
                 variant === "landscape" ? styles.landscape : styles.portrait,
                 isActive ? styles.active : "",
+                isPlayed ? styles.watched : "",
             ]
                 .filter(Boolean)
                 .join(" ")}
@@ -416,6 +417,19 @@ export const MediaCard: FC<MediaCardProps> = ({
                                 </Popover>
                             </MenuTrigger>
                         </div>
+
+                        {isPlayed && (
+                            <div
+                                className={styles.watchedBadge}
+                                aria-label="Watched"
+                                title="Watched"
+                            >
+                                <SvgIcon
+                                    svg={IconSvgs.checkmark}
+                                    size={12}
+                                />
+                            </div>
+                        )}
                     </div>
 
                     {playbackManager.canPlay(item) ? (
