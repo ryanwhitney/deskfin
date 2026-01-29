@@ -34,6 +34,8 @@ import { setBackdropTransparency, TRANSPARENCY_LEVEL } from '../../../components
 import { pluginManager } from '../../../components/pluginManager';
 import { PluginType } from '../../../types/plugin.ts';
 
+const ENABLE_VOLUME_SCROLL = false;
+
 function getOpenedDialog() {
     return document.querySelector('.dialogContainer .dialog.opened');
 }
@@ -1435,6 +1437,7 @@ export default function (view) {
     }
 
     function onWheel(e) {
+        if (!ENABLE_VOLUME_SCROLL) return;
         if (getOpenedDialog()) return;
         if (e.deltaY < 0) {
             playbackManager.volumeUp(currentPlayer);
