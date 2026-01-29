@@ -438,6 +438,11 @@ class AppRouter {
 
             const layoutMode = localStorage.getItem('layout');
 
+            if (layoutMode === LayoutMode.Experimental && item.CollectionType == CollectionType.Playlists) {
+                url = '#/playlists';
+                return url;
+            }
+
             if (layoutMode === LayoutMode.Experimental && item.CollectionType == CollectionType.Homevideos) {
                 url = '#/homevideos?topParentId=' + item.Id;
 

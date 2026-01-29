@@ -18,5 +18,5 @@ export const ASYNC_USER_ROUTES: AsyncRoute[] = [
     { path: 'search' },
     { path: 'tv', page: 'shows', type: AppType.Deskfin },
     { path: 'userprofile', page: 'user/userprofile' },
-    { path: 'watchlists', type: AppType.Deskfin }
+    { path: 'playlists', type: AppType.Deskfin }
 ];

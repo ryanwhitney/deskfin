@@ -3,3 +3,4 @@ export * from './CreateWatchlistDialog';
 export * from './ManagePlaylistDialog';
 export * from './SelectPlaylistDialog';
 export * from './PlaylistView';
+export * from './PlaylistCard';

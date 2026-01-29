@@ -10,7 +10,11 @@ import globalize from "lib/globalize";
 import Page from "components/Page";
 import { useItem } from "hooks/useItem";
 import { useApi } from "hooks/useApi";
-import { useGetItems, useToggleFavoriteMutation, useTogglePlayedMutation } from "hooks/useFetchItems";
+import {
+    useGetItems,
+    useToggleFavoriteMutation,
+    useTogglePlayedMutation,
+} from "hooks/useFetchItems";
 import { useTitle } from "apps/deskfin/utils/useTitle";
 import { formatItemTitle } from "apps/deskfin/utils/titleUtils";
 import { ItemKind } from "types/base/models/item-kind";
@@ -180,19 +184,25 @@ export default function DetailsPage() {
     const { mutateAsync: toggleFavorite } = useToggleFavoriteMutation();
     const { mutateAsync: togglePlayed } = useTogglePlayedMutation();
 
-    const handleToggleFavorite = useCallback((targetItem: typeof boxSetItems[0]) => {
-        void toggleFavorite({
-            itemId: targetItem.Id!,
-            isFavorite: !!targetItem.UserData?.IsFavorite
-        });
-    }, [toggleFavorite]);
+    const handleToggleFavorite = useCallback(
+        (targetItem: (typeof boxSetItems)[0]) => {
+            void toggleFavorite({
+                itemId: targetItem.Id!,
+                isFavorite: !!targetItem.UserData?.IsFavorite,
+            });
+        },
+        [toggleFavorite],
+    );
 
-    const handleTogglePlayed = useCallback((targetItem: typeof boxSetItems[0]) => {
-        void togglePlayed({
-            itemId: targetItem.Id!,
-            isPlayed: !!targetItem.UserData?.Played
-        });
-    }, [togglePlayed]);
+    const handleTogglePlayed = useCallback(
+        (targetItem: (typeof boxSetItems)[0]) => {
+            void togglePlayed({
+                itemId: targetItem.Id!,
+                isPlayed: !!targetItem.UserData?.Played,
+            });
+        },
+        [togglePlayed],
+    );
 
     // Loading state
     if (isLoading) {
@@ -217,8 +227,8 @@ export default function DetailsPage() {
     const directors = people.filter((p) => p.Type === "Director");
     const writers = people.filter((p) => p.Type === "Writer");
     const cast = people.filter((p) => p.Type === "Actor");
-    const crew = people.filter((p) =>
-        p.Type !== "Actor" && p.Type !== "GuestStar"
+    const crew = people.filter(
+        (p) => p.Type !== "Actor" && p.Type !== "GuestStar",
     );
     const guestStars = people.filter((p) => p.Type === "GuestStar");
 
@@ -230,7 +240,7 @@ export default function DetailsPage() {
     return (
         <Page
             id="itemDetailsPage"
-            className={`${styles.page} selfBackdropPage`}
+            className={`${styles.page} ${itemType?.toLowerCase()} selfBackdropPage`}
             backDropType="movie,series,book"
         >
             <div>
@@ -341,7 +351,9 @@ export default function DetailsPage() {
                                     <MetaInfo item={item} />
 
                                     {item.Overview && (
-                                        <ExpandableOverview text={item.Overview} />
+                                        <ExpandableOverview
+                                            text={item.Overview}
+                                        />
                                     )}
 
                                     <div className={styles.actions}>
@@ -443,12 +455,7 @@ export default function DetailsPage() {
                     )}
 
                     {/* Cast section (not for Person items) */}
-                    {!isPerson && (
-                        <DetailsCast
-                            title="Cast"
-                            people={cast}
-                        />
-                    )}
+                    {!isPerson && <DetailsCast title="Cast" people={cast} />}
 
                     {/* Guest Stars section (not for Person items) */}
                     {!isPerson && (
@@ -459,12 +466,7 @@ export default function DetailsPage() {
                     )}
 
                     {/* Crew section (not for Person items) */}
-                    {!isPerson && (
-                        <DetailsCast
-                            title="Crew"
-                            people={crew}
-                        />
-                    )}
+                    {!isPerson && <DetailsCast title="Crew" people={crew} />}
                 </div>
             </div>
         </Page>

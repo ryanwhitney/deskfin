@@ -4,6 +4,13 @@
     color: #eee;
 }
 
+:global(.page.person) {
+    .heroImg {
+        filter: blur(100px);
+        -webkit-filter: blur(100px);
+    }
+}
+
 .hero {
     position: relative;
     background: #0f0f0f;
@@ -272,6 +279,7 @@
     border-radius: 14px;
     background: #1f1f1f;
     overflow: hidden;
+    cursor: pointer;
 }
 
 .personPlaceholder {
@@ -292,6 +300,7 @@
 
 .personMeta {
     padding: 8px 4px 0;
+    cursor: pointer;
 }
 
 .personName {
