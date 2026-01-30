@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import useCurrentTab from 'hooks/useCurrentTab';
-import { useTitle } from 'apps/deskfin/utils/useTitle';
+import { useTitle } from 'apps/deskfin/hooks/useTitle';
 import { formatLibraryTitle } from 'apps/deskfin/utils/titleUtils';
 import Page from 'components/Page';
 import PageTabContent from '../components/ui/PageTabContent';

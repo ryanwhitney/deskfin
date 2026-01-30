@@ -11,7 +11,7 @@ import NoItemsMessage from 'components/common/NoItemsMessage';
 import globalize from 'lib/globalize';
 import SvgIcon from 'components/SvgIcon';
 import { IconSvgs } from 'assets/icons';
-import { useTitle } from 'apps/deskfin/utils/useTitle';
+import { useTitle } from 'apps/deskfin/hooks/useTitle';
 
 import toolbarStyles from 'apps/deskfin/components/library/LibraryToolbar.module.scss';
 

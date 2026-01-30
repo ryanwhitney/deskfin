@@ -7,7 +7,7 @@ import globalize from 'lib/globalize';
 import { useApi } from 'hooks/useApi';
 import { useUserViews } from 'hooks/useUserViews';
 import { useToggleFavoriteMutation, useTogglePlayedMutation } from 'hooks/useFetchItems';
-import { useTitle } from 'apps/deskfin/utils/useTitle';
+import { useTitle } from 'apps/deskfin/hooks/useTitle';
 import { formatLibraryTitle } from 'apps/deskfin/utils/titleUtils';
 import * as userSettings from 'scripts/settings/userSettings';
 import { clearBackdrop } from 'components/backdrop/backdrop';

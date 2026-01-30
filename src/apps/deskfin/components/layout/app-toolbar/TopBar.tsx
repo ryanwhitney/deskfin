@@ -5,14 +5,14 @@ import SvgIcon from 'components/SvgIcon';
 import { IconSvgs } from 'assets/icons';
 
 import SearchButton from './SearchButton';
-import ExperimentalUserMenuButton from './ExperimentalUserMenuButton';
+import UserMenuButton from './UserMenuButton';
 import UserViewNav from './userViews/UserViewNav';
 import { ToolbarIconButton } from 'apps/deskfin/components/toolbar/ToolbarIconButton';
 import { ToolbarIconLink } from 'apps/deskfin/components/toolbar/ToolbarIconLink';
 
-import styles from './ExperimentalTopBar.module.scss';
+import styles from './TopBar.module.scss';
 
-interface ExperimentalTopBarProps {
+interface TopBarProps {
     isDrawerAvailable: boolean;
     isDrawerOpen: boolean;
     onDrawerButtonClick: (event: React.MouseEvent<HTMLElement>) => void;
@@ -35,7 +35,7 @@ const MenuIcon = () => (
 const TITLE = 'desk';
 const SUBTITLE = '';
 
-export const ExperimentalTopBar: FC<ExperimentalTopBarProps> = ({
+export const TopBar: FC<TopBarProps> = ({
     isDrawerAvailable,
     isDrawerOpen,
     onDrawerButtonClick
@@ -84,7 +84,7 @@ export const ExperimentalTopBar: FC<ExperimentalTopBarProps> = ({
                 {!isPublicPath ? (
                     <>
                         <SearchButton />
-                        <ExperimentalUserMenuButton />
+                        <UserMenuButton />
                     </>
                 ) : (
                     <ToolbarIconLink aria-label="Home" to="/home">

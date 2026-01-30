@@ -19,7 +19,7 @@ import {
     useToggleFavoriteMutation,
     useTogglePlayedMutation,
 } from "hooks/useFetchItems";
-import { useTitle } from "apps/deskfin/utils/useTitle";
+import { useTitle } from "apps/deskfin/hooks/useTitle";
 import { formatItemTitle } from "apps/deskfin/utils/titleUtils";
 
 import type { ItemDto } from "types/base/models/item-dto";

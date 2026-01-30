@@ -16,7 +16,7 @@ import {
     getOverlayCount
 } from 'apps/deskfin/features/home/utils/cardHelpers';
 import NoItemsMessage from 'components/common/NoItemsMessage';
-import { useTitle } from 'apps/deskfin/utils/useTitle';
+import { useTitle } from 'apps/deskfin/hooks/useTitle';
 import { formatLibraryTitle } from 'apps/deskfin/utils/titleUtils';
 import SvgIcon from 'components/SvgIcon';
 import { IconSvgs } from 'assets/icons';

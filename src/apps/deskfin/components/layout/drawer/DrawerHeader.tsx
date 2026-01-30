@@ -4,9 +4,9 @@ import { Link } from 'react-router-dom';
 import SvgIcon from 'components/SvgIcon';
 import { IconSvgs } from 'assets/icons';
 
-import styles from './ExperimentalDrawerHeader.module.scss';
+import styles from './DrawerHeader.module.scss';
 
-export function ExperimentalDrawerHeader() {
+export function DrawerHeader() {
     return (
         <Link className={styles.root} to="/home">
             <span className={styles.logo} aria-hidden="true">

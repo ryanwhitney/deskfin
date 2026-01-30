@@ -1,5 +1,5 @@
 import React, { type FC } from 'react';
-import { ExperimentalTopBar } from './ExperimentalTopBar';
+import { TopBar } from './TopBar';
 
 interface AppToolbarProps {
     isDrawerAvailable: boolean
@@ -7,13 +7,13 @@ interface AppToolbarProps {
     onDrawerButtonClick: (event: React.MouseEvent<HTMLElement>) => void
 }
 
-const ExperimentalAppToolbar: FC<AppToolbarProps> = ({
+const AppToolbar: FC<AppToolbarProps> = ({
     isDrawerAvailable,
     isDrawerOpen,
     onDrawerButtonClick
 }) => {
     return (
-        <ExperimentalTopBar
+        <TopBar
             isDrawerAvailable={isDrawerAvailable}
             isDrawerOpen={isDrawerOpen}
             onDrawerButtonClick={onDrawerButtonClick}
@@ -21,4 +21,4 @@ const ExperimentalAppToolbar: FC<AppToolbarProps> = ({
     );
 };
 
-export default ExperimentalAppToolbar;
+export default AppToolbar;

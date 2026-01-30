@@ -1,16 +1,16 @@
 import React, { type FC, type PropsWithChildren, useEffect } from 'react';
 
-import { useMatchMedia } from 'apps/deskfin/utils/useMatchMedia';
+import { useMatchMedia } from 'apps/deskfin/hooks/useMatchMedia';
 
-import styles from './ExperimentalResponsiveDrawer.module.scss';
+import styles from './ResponsiveDrawer.module.scss';
 
-export interface ExperimentalResponsiveDrawerProps {
+export interface ResponsiveDrawerProps {
     open: boolean;
     onClose: () => void;
     onOpen: () => void;
 }
 
-export const ExperimentalResponsiveDrawer: FC<PropsWithChildren<ExperimentalResponsiveDrawerProps>> = ({
+export const ResponsiveDrawer: FC<PropsWithChildren<ResponsiveDrawerProps>> = ({
     children,
     open,
     onClose

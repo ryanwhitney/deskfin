@@ -6,7 +6,7 @@ import { useSearchParams } from "react-router-dom";
 import Page from "components/Page";
 import globalize from "lib/globalize";
 import { LibraryTab } from "types/libraryTab";
-import { useTitle } from "apps/deskfin/utils/useTitle";
+import { useTitle } from "apps/deskfin/hooks/useTitle";
 import { formatLibraryTitle } from "apps/deskfin/utils/titleUtils";
 import ItemsView from "../components/ui/ItemsView";
 

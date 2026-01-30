@@ -22,7 +22,7 @@ import Dashboard from "utils/dashboard";
 
 import toolbarIconStyles from "apps/deskfin/components/toolbar/ToolbarIconButton.module.scss";
 
-const ExperimentalUserMenuButton = () => {
+const UserMenuButton = () => {
     const navigate = useNavigate();
     const { user } = useApi();
     const { data: isQuickConnectEnabled } = useQuickConnectEnabled();
@@ -270,4 +270,4 @@ const ExperimentalUserMenuButton = () => {
     );
 };
 
-export default ExperimentalUserMenuButton;
+export default UserMenuButton;

@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 
-import { ExperimentalResponsiveDrawer, type ExperimentalResponsiveDrawerProps } from './ExperimentalResponsiveDrawer';
+import { ResponsiveDrawer, type ResponsiveDrawerProps } from './ResponsiveDrawer';
 
 import { ASYNC_USER_ROUTES } from 'apps/deskfin/app/routes/asyncRoutes/user';
 import { LEGACY_USER_ROUTES } from 'apps/deskfin/app/routes/legacyRoutes/user';
@@ -21,18 +21,18 @@ export const isDrawerPath = (path: string) => (
     MAIN_DRAWER_ROUTES.some(route => route.path === path || `/${route.path}` === path)
 );
 
-const AppDrawer: FC<ExperimentalResponsiveDrawerProps> = ({
+const AppDrawer: FC<ResponsiveDrawerProps> = ({
     open = false,
     onClose,
     onOpen
 }) => (
-    <ExperimentalResponsiveDrawer
+    <ResponsiveDrawer
         open={open}
         onClose={onClose}
         onOpen={onOpen}
     >
         <MainDrawerContent />
-    </ExperimentalResponsiveDrawer>
+    </ResponsiveDrawer>
 );
 
 export default AppDrawer;

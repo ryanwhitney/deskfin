@@ -11,7 +11,7 @@ import globalize from 'lib/globalize';
 import LibraryIcon from 'apps/deskfin/components/icons/LibraryIcon';
 import SvgIcon from 'components/SvgIcon';
 import { IconSvgs } from 'assets/icons';
-import { ExperimentalDrawerHeader } from './ExperimentalDrawerHeader';
+import { DrawerHeader } from './DrawerHeader';
 
 import styles from './MainDrawerContent.module.scss';
 
@@ -30,7 +30,7 @@ const MainDrawerContent = () => {
         <>
             {/* MAIN LINKS */}
             <div className={styles.section}>
-                <ExperimentalDrawerHeader />
+                <DrawerHeader />
 
                 <Link
                     className={`${styles.link} ${isHomeSelected ? styles.linkActive : ''}`}

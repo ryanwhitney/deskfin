@@ -6,9 +6,9 @@ import CustomCss from 'components/CustomCss';
 import ThemeCss from 'components/ThemeCss';
 import { useApi } from 'hooks/useApi';
 
-import { ExperimentalTopBar } from '../../components/layout/toolbar/ExperimentalTopBar';
+import { TopBar } from '../../components/layout/app-toolbar/TopBar';
 import AppDrawer, { isDrawerPath } from '../../components/layout/drawer/AppDrawer';
-import { useMatchMedia } from 'apps/deskfin/utils/useMatchMedia';
+import { useMatchMedia } from 'apps/deskfin/hooks/useMatchMedia';
 
 export const Component = () => {
     const [ isDrawerActive, setIsDrawerActive ] = useState(false);
@@ -27,7 +27,7 @@ export const Component = () => {
         <>
             <div style={{ position: 'relative', display: 'flex', height: '100%' }}>
                 <StrictMode>
-                    <ExperimentalTopBar
+                    <TopBar
                         isDrawerAvailable={!isMediumScreen && isDrawerAvailable}
                         isDrawerOpen={isDrawerOpen}
                         onDrawerButtonClick={onToggleDrawer}
