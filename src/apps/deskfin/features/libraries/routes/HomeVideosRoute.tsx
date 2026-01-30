@@ -5,7 +5,7 @@ import { useTitle } from 'apps/deskfin/utils/useTitle';
 import { formatLibraryTitle } from 'apps/deskfin/utils/titleUtils';
 import Page from 'components/Page';
 import PageTabContent from '../components/ui/PageTabContent';
-import { LibraryViewMenu } from 'apps/deskfin/components/library';
+import { LibraryViewMenu } from 'apps/deskfin/components/library/LibraryViewMenu';
 import { LibraryTab } from 'types/libraryTab';
 import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
 import { LibraryTabContent, LibraryTabMapping } from 'types/libraryTabContent';

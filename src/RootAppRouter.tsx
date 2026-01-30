@@ -8,7 +8,7 @@ import {
 } from 'react-router-dom';
 
 import { DASHBOARD_APP_PATHS, DASHBOARD_APP_ROUTES } from 'apps/dashboard/routes/routes';
-import { DESKFIN_APP_ROUTES } from 'apps/deskfin/routes/routes';
+import { DESKFIN_APP_ROUTES } from 'apps/deskfin/app/routes/routes';
 import { STABLE_APP_ROUTES } from 'apps/stable/routes/routes';
 import { WIZARD_APP_ROUTES } from 'apps/wizard/routes/routes';
 import Backdrop from 'components/Backdrop';

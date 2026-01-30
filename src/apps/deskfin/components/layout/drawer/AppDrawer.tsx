@@ -2,8 +2,8 @@ import React, { FC } from 'react';
 
 import { ExperimentalResponsiveDrawer, type ExperimentalResponsiveDrawerProps } from './ExperimentalResponsiveDrawer';
 
-import { ASYNC_USER_ROUTES } from 'apps/deskfin/routes/asyncRoutes';
-import { LEGACY_USER_ROUTES } from 'apps/deskfin/routes/legacyRoutes';
+import { ASYNC_USER_ROUTES } from 'apps/deskfin/app/routes/asyncRoutes/user';
+import { LEGACY_USER_ROUTES } from 'apps/deskfin/app/routes/legacyRoutes/user';
 
 import MainDrawerContent from './MainDrawerContent';
 

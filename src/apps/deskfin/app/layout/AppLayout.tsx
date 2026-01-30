@@ -6,8 +6,8 @@ import CustomCss from 'components/CustomCss';
 import ThemeCss from 'components/ThemeCss';
 import { useApi } from 'hooks/useApi';
 
-import { ExperimentalTopBar } from './toolbar/ExperimentalTopBar';
-import AppDrawer, { isDrawerPath } from './drawer/AppDrawer';
+import { ExperimentalTopBar } from '../../components/layout/toolbar/ExperimentalTopBar';
+import AppDrawer, { isDrawerPath } from '../../components/layout/drawer/AppDrawer';
 import { useMatchMedia } from 'apps/deskfin/utils/useMatchMedia';
 
 export const Component = () => {

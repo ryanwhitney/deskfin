@@ -2,7 +2,7 @@ import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client';
 import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
 import React, { FC } from 'react';
 
-import { MetaView } from 'apps/deskfin/constants/metaView';
+import { MetaView } from 'apps/deskfin/app/navigation/metaView';
 import SvgIcon from 'components/SvgIcon';
 import { IconSvgs } from 'assets/icons';
 

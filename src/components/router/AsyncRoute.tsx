@@ -16,7 +16,7 @@ export interface AsyncRoute {
 
 // Use Vite's glob imports to pre-bundle all route modules
 const dashboardRoutes = import.meta.glob('../../apps/dashboard/routes/**/*.tsx');
-const deskfinRoutes = import.meta.glob('../../apps/deskfin/routes/**/*.tsx');
+const deskfinRoutes = import.meta.glob('../../apps/deskfin/features/**/routes/*.tsx');
 const stableRoutes = import.meta.glob('../../apps/stable/routes/**/*.tsx');
 
 interface RouteModule {
@@ -36,7 +36,7 @@ const importRoute = (page: string, type: AppType): Promise<RouteModule> => {
             break;
         case AppType.Deskfin:
             routes = deskfinRoutes;
-            basePath = '../../apps/deskfin/routes/';
+            basePath = '../../apps/deskfin/features/';
             break;
         case AppType.Stable:
         default:
