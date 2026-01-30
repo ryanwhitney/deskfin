@@ -13,7 +13,7 @@ export const SeasonsSection: FC<SeasonsSectionProps> = ({ seasons }) => {
     if (!seasons.length) return null;
 
     return (
-        <div className={styles.section}>
+        <div className={styles.scrollSection}>
             <h2 className={styles.sectionTitle}>{globalize.translate('HeaderSeasons')}</h2>
             <div className={styles.cardRow}>
                 {seasons.map(s => {

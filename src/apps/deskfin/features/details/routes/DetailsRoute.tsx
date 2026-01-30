@@ -27,10 +27,12 @@ import { DetailsFacts } from "../components/ui/DetailsFacts";
 import { DetailsCast } from "../components/ui/DetailsCast";
 import { SeasonsSection } from "../components/ui/SeasonsSection";
 import { EpisodesSection } from "../components/ui/EpisodesSection";
+import { ExtrasSection } from "../components/ui/ExtrasSection";
 import { DetailsMoreMenu } from "../components/ui/DetailsMoreMenu";
 import { ExpandableOverview } from "../components/ui/ExpandableOverview";
 import MetaInfo from "../components/ui/MetaInfo";
 import { buildImageUrl } from "../utils/imageUrl";
+import { useSpecialFeatures } from "../hooks/useSpecialFeatures";
 
 import styles from "./DetailsRoute.module.scss";
 
@@ -179,6 +181,13 @@ export default function DetailsPage() {
     const boxSetItems = boxSetItemsResult?.Items || [];
     const personMovies = personMoviesResult?.Items || [];
     const personShows = personShowsResult?.Items || [];
+
+    // Fetch special features/extras
+    const hasExtras = (item?.SpecialFeatureCount ?? 0) > 0;
+    const { data: extras = [] } = useSpecialFeatures(
+        item?.Id,
+        hasExtras && !isPerson
+    );
 
     // Mutations for ItemGrid actions
     const { mutateAsync: toggleFavorite } = useToggleFavoriteMutation();
@@ -452,6 +461,11 @@ export default function DetailsPage() {
                                 onTogglePlayed={handleTogglePlayed}
                             />
                         </div>
+                    )}
+
+                    {/* Extras/Special Features section */}
+                    {!isPerson && extras.length > 0 && (
+                        <ExtrasSection extras={extras} />
                     )}
 
                     {/* Cast section (not for Person items) */}

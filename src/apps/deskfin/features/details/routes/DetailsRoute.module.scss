@@ -224,12 +224,25 @@
     margin-top: 28px;
 }
 
+// Section variant for horizontal scrolling content (cast, crew, etc.)
+.scrollSection {
+    margin-top: 28px;
+    // Break out of container padding for edge-to-edge scrolling
+    margin-left: -48px;
+    margin-right: -48px;
+}
+
 .sectionTitle {
     margin: 0 0 16px;
     font-size: 20px;
     font-weight: 600;
     font-variation-settings: "wdth" 105;
     color: #f5f5f5;
+}
+
+// Title inside scroll section needs left padding
+.scrollSection .sectionTitle {
+    padding-left: 48px;
 }
 
 .episodeList {
@@ -253,6 +266,16 @@
     gap: 16px;
     overflow-x: auto;
     padding-bottom: 10px;
+
+    // Left padding on first item only
+    > *:first-child {
+        margin-left: 48px;
+    }
+
+    // Right margin on last item for scroll end spacing
+    > *:last-child {
+        margin-right: 48px;
+    }
 }
 
 .personCard {
@@ -327,6 +350,16 @@
     gap: 12px;
     overflow-x: auto;
     padding-bottom: 4px;
+
+    // Left padding on first item only
+    > *:first-child {
+        margin-left: 48px;
+    }
+
+    // Right margin on last item for scroll end spacing
+    > *:last-child {
+        margin-right: 48px;
+    }
 }
 
 .itemsGrid {
@@ -354,6 +387,26 @@
 @media (max-width: 600px) {
     .container {
         padding: 16px;
+    }
+
+    .scrollSection {
+        margin-left: -16px;
+        margin-right: -16px;
+    }
+
+    .scrollSection .sectionTitle {
+        padding-left: 16px;
+    }
+
+    .peopleRow,
+    .cardRow {
+        > *:first-child {
+            margin-left: 16px;
+        }
+
+        > *:last-child {
+            margin-right: 16px;
+        }
     }
 
     .factRow {

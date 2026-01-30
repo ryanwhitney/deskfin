@@ -32,7 +32,7 @@ export const DetailsCast: FC<DetailsCastProps> = ({ title, people }) => {
     if (!people.length) return null;
 
     return (
-        <div className={styles.section}>
+        <div className={styles.scrollSection}>
             <h2 className={styles.sectionTitle}>{title}</h2>
             <div className={styles.peopleRow}>
                 {people.map((p, idx) => {
