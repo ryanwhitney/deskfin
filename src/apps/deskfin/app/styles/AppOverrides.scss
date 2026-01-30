@@ -18,6 +18,12 @@ $mui-bp-xl: 1536px;
 
 #reactRoot {
     height: 100%;
+    // TODO -- find a better way. this prevents scroll jumpts from react aria menus.
+    position: fixed;
+    width: 100%;
+    top: 0;
+    bottom: 0;
+    overflow-x: auto;
 }
 
 .libraryPage h1:not(.MuiTypography-h1) {
