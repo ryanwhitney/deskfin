@@ -2046,20 +2046,19 @@ export class PlaybackManager {
             return new Promise(function (resolve, reject) {
                 const apiClient = ServerConnections.getApiClient(firstItem.ServerId);
 
-                const { SeriesId, Id } = firstItem;
+                const { SeriesId } = firstItem;
                 if (!SeriesId) {
                     resolve(null);
                     return;
                 }
 
+                // DESKFIN: Fetch all episodes (no startItemId, no limit) to enable
+                // prev/next navigation across all seasons.
                 apiClient.getEpisodes(SeriesId, {
                     IsVirtualUnaired: false,
                     IsMissing: false,
                     UserId: apiClient.getCurrentUserId(),
-                    Fields: ['Chapters', 'Trickplay'],
-                    // limit to loading 100 episodes to avoid loading too large payload
-                    limit: 100,
-                    startItemId: Id
+                    Fields: ['Chapters', 'Trickplay']
                 }).then(function (episodesResult) {
                     resolve(filterEpisodes(episodesResult, firstItem, options));
                 }, reject);
@@ -2067,6 +2066,8 @@ export class PlaybackManager {
         }
 
         function filterEpisodes(episodesResult, firstItem, options) {
+            // DESKFIN: Find current episode index. We keep all episodes in the playlist
+            // (no windowing) to enable unlimited prev/next navigation across all seasons.
             for (const [index, e] of episodesResult.Items.entries()) {
                 if (e.Id === firstItem.Id) {
                     episodesResult.StartIndex = index;

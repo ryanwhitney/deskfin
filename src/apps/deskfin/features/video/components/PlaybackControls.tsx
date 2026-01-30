@@ -13,6 +13,7 @@ import { AudioTrackMenu } from './playback/AudioTrackMenu';
 import { VolumeControl } from './playback/VolumeControl';
 import { SettingsMenu } from './playback/SettingsMenu';
 import { EpisodeMenu } from './playback/EpisodeMenu';
+import { TrackPreview } from './playback/TrackPreview';
 import { useBlurOnMousePress } from './playback/useBlurOnMousePress';
 import styles from './PlaybackControls.module.scss';
 
@@ -28,6 +29,10 @@ export const PlaybackControls: FC = () => {
     const [hasSubtitles, setHasSubtitles] = useState(false);
     const [hasMultipleAudio, setHasMultipleAudio] = useState(false);
     const [supportsPiP, setSupportsPiP] = useState(false);
+
+    // Track preview states
+    const [showPreviousPreview, setShowPreviousPreview] = useState(false);
+    const [showNextPreview, setShowNextPreview] = useState(false);
 
     // Ref to track visibility for event handlers (avoids stale closure)
     const isVisibleRef = React.useRef(isVisible);
@@ -237,6 +242,12 @@ export const PlaybackControls: FC = () => {
         pipBlur.handlePress(e);
     }, [player, pipBlur]);
 
+    // Track preview handlers
+    const showPrevPreview = useCallback(() => setShowPreviousPreview(true), []);
+    const hidePrevPreview = useCallback(() => setShowPreviousPreview(false), []);
+    const showNextPrev = useCallback(() => setShowNextPreview(true), []);
+    const hideNextPrev = useCallback(() => setShowNextPreview(false), []);
+
     if (!player) {
         return null;
     }
@@ -245,16 +256,25 @@ export const PlaybackControls: FC = () => {
         <div ref={controlsRef} className={`${styles.controls} ${isVisible ? styles.visible : styles.hidden}`}>
             {/* Previous Track */}
             {hasPrevious && (
-                <FocusRing focusRingClass="focus-ring">
-                    <RacButton
-                        ref={previousBlur.ref}
-                        className={styles.iconButton}
-                        onPress={handlePrevious}
-                        aria-label="Previous track"
-                    >
-                        <SvgIcon svg={IconSvgs.backwardEnd} size={16} />
-                    </RacButton>
-                </FocusRing>
+                <div
+                    className={styles.trackButtonWrapper}
+                    onMouseEnter={showPrevPreview}
+                    onMouseLeave={hidePrevPreview}
+                >
+                    <FocusRing focusRingClass='focus-ring'>
+                        <RacButton
+                            ref={previousBlur.ref}
+                            className={styles.iconButton}
+                            onPress={handlePrevious}
+                            onFocus={showPrevPreview}
+                            onBlur={hidePrevPreview}
+                            aria-label='Previous track'
+                        >
+                            <SvgIcon svg={IconSvgs.backwardEnd} size={16} />
+                        </RacButton>
+                    </FocusRing>
+                    <TrackPreview direction='previous' isVisible={showPreviousPreview} />
+                </div>
             )}
 
             {/* Rewind 10s */}
@@ -295,16 +315,25 @@ export const PlaybackControls: FC = () => {
 
             {/* Next Track */}
             {hasNext && (
-                <FocusRing focusRingClass="focus-ring">
-                    <RacButton
-                        ref={nextBlur.ref}
-                        className={styles.iconButton}
-                        onPress={handleNext}
-                        aria-label="Next track"
-                    >
-                        <SvgIcon svg={IconSvgs.forwardEnd} size={16} />
-                    </RacButton>
-                </FocusRing>
+                <div
+                    className={styles.trackButtonWrapper}
+                    onMouseEnter={showNextPrev}
+                    onMouseLeave={hideNextPrev}
+                >
+                    <FocusRing focusRingClass='focus-ring'>
+                        <RacButton
+                            ref={nextBlur.ref}
+                            className={styles.iconButton}
+                            onPress={handleNext}
+                            onFocus={showNextPrev}
+                            onBlur={hideNextPrev}
+                            aria-label='Next track'
+                        >
+                            <SvgIcon svg={IconSvgs.forwardEnd} size={16} />
+                        </RacButton>
+                    </FocusRing>
+                    <TrackPreview direction='next' isVisible={showNextPreview} />
+                </div>
             )}
 
             {/* Episode Menu - only for TV episodes */}
