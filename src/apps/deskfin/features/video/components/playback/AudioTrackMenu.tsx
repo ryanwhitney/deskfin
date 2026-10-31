@@ -6,12 +6,12 @@ import {
     MenuTrigger,
     Popover
 } from 'react-aria-components';
-import { FocusRing } from '@react-aria/focus';
+import { FocusRing } from 'react-aria';
 import Audiotrack from '@mui/icons-material/Audiotrack';
 
 import { playbackManager } from 'components/playback/playbackmanager';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 import globalize from 'lib/globalize';
 
 import { useBlurOnMousePress } from './useBlurOnMousePress';
@@ -48,7 +48,7 @@ export const AudioTrackMenu: FC<AudioTrackMenuProps> = ({ player, onUpdate }) =>
 
     return (
         <MenuTrigger isOpen={isOpen} onOpenChange={(open) => { setIsOpen(open); if (!open) blurOnMenuClose(); }}>
-            <FocusRing focusRingClass="focus-ring">
+            <FocusRing focusRingClass='focus-ring'>
                 <RacButton
                     ref={buttonRef}
                     className={styles.iconButton}
@@ -61,7 +61,7 @@ export const AudioTrackMenu: FC<AudioTrackMenuProps> = ({ player, onUpdate }) =>
 
             <Popover
                 className={styles.popover}
-                placement="top end"
+                placement='top end'
                 offset={8}
             >
                 <Menu className={styles.menu} onAction={(key) => handleSelectTrack(Number(key))}>

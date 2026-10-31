@@ -1,13 +1,13 @@
-import React, { type FC, useMemo, useState } from "react";
-import { Squircle } from "@squircle-js/react";
-import { getPlaylistApi } from "@jellyfin/sdk/lib/utils/api/playlist-api";
+import React, { type FC, useMemo, useState } from 'react';
+import { Squircle } from 'apps/deskfin/components/squircle/Squircle';
+import { getPlaylistApi } from '@jellyfin/sdk/lib/utils/api/playlist-api';
 
-import SvgIcon from "components/SvgIcon";
-import { IconSvgs, getLegacyCommandIcon } from "assets/icons";
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs, getLegacyCommandIcon } from 'apps/deskfin/assets/icons';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
-import type { ItemDto } from "types/base/models/item-dto";
-import { playbackManager } from "components/playback/playbackmanager";
-import { useApi } from "hooks/useApi";
+import type { ItemDto } from 'types/base/models/item-dto';
+import { playbackManager } from 'components/playback/playbackmanager';
+import { useApi } from 'hooks/useApi';
 
 import {
     Button as RacButton,
@@ -15,22 +15,22 @@ import {
     MenuItem,
     MenuTrigger,
     Popover,
-    Separator,
-} from "react-aria-components";
-import { FocusRing } from "@react-aria/focus";
+    Separator
+} from 'react-aria-components';
+import { FocusRing } from 'react-aria';
 
-import * as itemContextMenu from "components/itemContextMenu";
-import { ActionMenuStyles } from "apps/deskfin/components/menu/ActionMenu";
-import { WatchlistMenuItem } from "apps/deskfin/features/watchlist/components/WatchlistMenuItem";
-import { CreateWatchlistDialog } from "apps/deskfin/features/watchlist/components/CreateWatchlistDialog";
-import { useRemoveFromPlaylistMutation } from "apps/deskfin/features/watchlist/hooks/useRemoveFromPlaylistMutation";
-import { useMovePlaylistItemMutation } from "apps/deskfin/features/watchlist/hooks/useMovePlaylistItemMutation";
+import * as itemContextMenu from 'components/itemContextMenu';
+import { ActionMenuStyles } from 'apps/deskfin/components/menu/ActionMenu';
+import { WatchlistMenuItem } from 'apps/deskfin/features/watchlist/components/WatchlistMenuItem';
+import { CreateWatchlistDialog } from 'apps/deskfin/features/watchlist/components/CreateWatchlistDialog';
+import { useRemoveFromPlaylistMutation } from 'apps/deskfin/features/watchlist/hooks/useRemoveFromPlaylistMutation';
+import { useMovePlaylistItemMutation } from 'apps/deskfin/features/watchlist/hooks/useMovePlaylistItemMutation';
 
-import styles from "./MediaCard.module.scss";
+import styles from './MediaCard.module.scss';
 
 type Command = { name?: string; id?: string; icon?: string; divider?: boolean };
 
-export type MediaCardVariant = "portrait" | "landscape";
+export type MediaCardVariant = 'portrait' | 'landscape';
 
 export const MediaCardStyles = styles;
 
@@ -39,6 +39,8 @@ export type MediaCardProps = {
     user: any;
     variant?: MediaCardVariant;
     imageUrl?: string;
+    /** Load this card's image right away at high priority (cards visible at first paint); others load lazily. */
+    isImagePriority?: boolean;
     overlayCount?: number;
     progressPct?: number;
     title: string;
@@ -58,8 +60,9 @@ export type MediaCardProps = {
 export const MediaCard: FC<MediaCardProps> = ({
     item,
     user,
-    variant = "portrait",
+    variant = 'portrait',
     imageUrl,
+    isImagePriority = false,
     overlayCount,
     progressPct = 0,
     title,
@@ -70,7 +73,7 @@ export const MediaCard: FC<MediaCardProps> = ({
     onToggleFavorite,
     onTogglePlayed,
     onAfterAction,
-    playlistContext,
+    playlistContext
 }) => {
     const { api, user: currentUser } = useApi();
     const [isMoreOpen, setIsMoreOpen] = useState(false);
@@ -153,7 +156,7 @@ export const MediaCard: FC<MediaCardProps> = ({
         e.stopPropagation();
         void playbackManager.play({
             items: [item],
-            startPositionTicks: item.UserData?.PlaybackPositionTicks || 0,
+            startPositionTicks: item.UserData?.PlaybackPositionTicks || 0
         });
     };
 
@@ -171,9 +174,9 @@ export const MediaCard: FC<MediaCardProps> = ({
             editImages: true,
             editSubtitles: true,
             deleteItem: true,
-            positionTo: null,
+            positionTo: null
         }),
-        [item, user],
+        [item, user]
     );
 
     // Load on first open.
@@ -192,13 +195,13 @@ export const MediaCard: FC<MediaCardProps> = ({
             const result = await itemContextMenu.executeCommand(
                 item,
                 id,
-                menuOptions,
+                menuOptions
             );
             if (result?.updated || result?.deleted) {
                 onAfterAction();
             }
         } catch (e) {
-            console.error("[MediaCard] command failed", id, e);
+            console.error('[MediaCard] command failed', id, e);
         }
     };
 
@@ -206,12 +209,12 @@ export const MediaCard: FC<MediaCardProps> = ({
         <div
             className={[
                 styles.card,
-                variant === "landscape" ? styles.landscape : styles.portrait,
-                isActive ? styles.active : "",
-                isPlayed ? styles.watched : "",
+                variant === 'landscape' ? styles.landscape : styles.portrait,
+                isActive ? styles.active : '',
+                isPlayed ? styles.watched : ''
             ]
                 .filter(Boolean)
-                .join(" ")}
+                .join(' ')}
             onClick={onOpenDetails}
             onFocusCapture={() => setIsFocusWithin(true)}
             onBlurCapture={(e) => {
@@ -222,39 +225,41 @@ export const MediaCard: FC<MediaCardProps> = ({
             }}
         >
             <Squircle
-                cornerRadius={16}
-                cornerSmoothing={1}
+                radius={16}
                 className={styles.thumbBorder}
             >
                 <Squircle
-                    cornerRadius={14}
-                    cornerSmoothing={1}
+                    radius={14}
                     className={styles.thumbWrap}
                 >
                     <div
                         className={[
                             styles.thumb,
-                            variant === "landscape"
-                                ? styles.thumbLandscape
-                                : "",
+                            variant === 'landscape' ?
+                                styles.thumbLandscape :
+                                ''
                         ]
                             .filter(Boolean)
-                            .join(" ")}
+                            .join(' ')}
                     >
                         {imageUrl ? (
                             <img
                                 src={imageUrl}
                                 alt={title}
                                 className={styles.thumbImg}
+                                loading={isImagePriority ? 'eager' : 'lazy'}
+                                decoding='async'
+                                // Lowercase attribute: React 18 doesn't know `fetchPriority` yet
+                                {...(isImagePriority ? { fetchpriority: 'high' } : {})}
                             />
                         ) : (
                             <div className={styles.thumbPlaceholder} />
                         )}
 
-                        {typeof overlayCount === "number" ? (
+                        {typeof overlayCount === 'number' ? (
                             <div
                                 className={styles.countBadge}
-                                aria-hidden="true"
+                                aria-hidden='true'
                             >
                                 {overlayCount}
                             </div>
@@ -265,10 +270,10 @@ export const MediaCard: FC<MediaCardProps> = ({
                                 isOpen={isMoreOpen}
                                 onOpenChange={onOpenChange}
                             >
-                                <FocusRing focusRingClass="focus-ring">
+                                <FocusRing focusRingClass='focus-ring'>
                                     <RacButton
                                         className={styles.iconBtn}
-                                        aria-label="More"
+                                        aria-label='More'
                                     >
                                         <SvgIcon
                                             svg={IconSvgs.ellipsis}
@@ -279,14 +284,14 @@ export const MediaCard: FC<MediaCardProps> = ({
                                 <Popover className={ActionMenuStyles.popover}>
                                     <Menu
                                         className={ActionMenuStyles.menu}
-                                        aria-label="More options"
+                                        aria-label='More options'
                                     >
                                         <MenuItem
                                             className={ActionMenuStyles.item}
                                             textValue={
-                                                isFavorite
-                                                    ? "Remove from favorites"
-                                                    : "Add to favorites"
+                                                isFavorite ?
+                                                    'Remove from favorites' :
+                                                    'Add to favorites'
                                             }
                                             onAction={() =>
                                                 onToggleFavorite(item)
@@ -296,11 +301,11 @@ export const MediaCard: FC<MediaCardProps> = ({
                                                 className={
                                                     ActionMenuStyles.icon
                                                 }
-                                                aria-hidden="true"
+                                                aria-hidden='true'
                                                 style={{
-                                                    color: isFavorite
-                                                        ? "#ff4d6d"
-                                                        : undefined,
+                                                    color: isFavorite ?
+                                                        '#ff4d6d' :
+                                                        undefined
                                                 }}
                                             >
                                                 <SvgIcon
@@ -313,17 +318,17 @@ export const MediaCard: FC<MediaCardProps> = ({
                                                     ActionMenuStyles.text
                                                 }
                                             >
-                                                {isFavorite
-                                                    ? "Remove from favorites"
-                                                    : "Add to favorites"}
+                                                {isFavorite ?
+                                                    'Remove from favorites' :
+                                                    'Add to favorites'}
                                             </span>
                                         </MenuItem>
                                         <MenuItem
                                             className={ActionMenuStyles.item}
                                             textValue={
-                                                isPlayed
-                                                    ? "Mark as unwatched"
-                                                    : "Mark as watched"
+                                                isPlayed ?
+                                                    'Mark as unwatched' :
+                                                    'Mark as watched'
                                             }
                                             onAction={() =>
                                                 onTogglePlayed(item)
@@ -333,11 +338,11 @@ export const MediaCard: FC<MediaCardProps> = ({
                                                 className={
                                                     ActionMenuStyles.icon
                                                 }
-                                                aria-hidden="true"
+                                                aria-hidden='true'
                                                 style={{
-                                                    color: isPlayed
-                                                        ? "#4ade80"
-                                                        : undefined,
+                                                    color: isPlayed ?
+                                                        '#4ade80' :
+                                                        undefined
                                                 }}
                                             >
                                                 <SvgIcon
@@ -350,9 +355,9 @@ export const MediaCard: FC<MediaCardProps> = ({
                                                     ActionMenuStyles.text
                                                 }
                                             >
-                                                {isPlayed
-                                                    ? "Mark as unwatched"
-                                                    : "Mark as watched"}
+                                                {isPlayed ?
+                                                    'Mark as unwatched' :
+                                                    'Mark as watched'}
                                             </span>
                                         </MenuItem>
                                         {commands.length > 0 && (
@@ -366,7 +371,7 @@ export const MediaCard: FC<MediaCardProps> = ({
                                             // Skip AddToPlaylist - we'll use WatchlistMenuItem instead
                                             if (cmd.id === 'addtoplaylist') return null;
 
-                                            if (cmd.divider)
+                                            if (cmd.divider) {
                                                 return (
                                                     <Separator
                                                         key={`div-${idx}`}
@@ -375,6 +380,7 @@ export const MediaCard: FC<MediaCardProps> = ({
                                                         }
                                                     />
                                                 );
+                                            }
                                             if (!cmd.id) return null;
 
                                             // Render the command
@@ -395,15 +401,15 @@ export const MediaCard: FC<MediaCardProps> = ({
                                                         className={
                                                             ActionMenuStyles.icon
                                                         }
-                                                        aria-hidden="true"
+                                                        aria-hidden='true'
                                                     >
                                                         {getLegacyCommandIcon(
-                                                            cmd.icon,
+                                                            cmd.icon
                                                         ) && (
                                                             <SvgIcon
                                                                 svg={
                                                                     getLegacyCommandIcon(
-                                                                        cmd.icon,
+                                                                        cmd.icon
                                                                     )!
                                                                 }
                                                                 size={18}
@@ -505,8 +511,8 @@ export const MediaCard: FC<MediaCardProps> = ({
                         {isPlayed && (
                             <div
                                 className={styles.watchedBadge}
-                                aria-label="Watched"
-                                title="Watched"
+                                aria-label='Watched'
+                                title='Watched'
                             >
                                 <SvgIcon
                                     svg={IconSvgs.checkmark}
@@ -517,9 +523,9 @@ export const MediaCard: FC<MediaCardProps> = ({
                     </div>
 
                     {playbackManager.canPlay(item) ? (
-                        <FocusRing focusRingClass="focus-ring">
+                        <FocusRing focusRingClass='focus-ring'>
                             <button
-                                type="button"
+                                type='button'
                                 className={styles.playOverlay}
                                 aria-label={`Play ${title}`}
                                 title={`Play ${title}`}
@@ -542,7 +548,7 @@ export const MediaCard: FC<MediaCardProps> = ({
             ) : null}
 
             <div className={styles.meta}>
-                <FocusRing focusRingClass="focus-ring">
+                <FocusRing focusRingClass='focus-ring'>
                     <a
                         className={styles.title}
                         href={titleHref}
@@ -553,7 +559,7 @@ export const MediaCard: FC<MediaCardProps> = ({
                 </FocusRing>
                 {subtitle ? (
                     subtitleHref ? (
-                        <FocusRing focusRingClass="focus-ring">
+                        <FocusRing focusRingClass='focus-ring'>
                             <a
                                 className={styles.subTitle}
                                 href={subtitleHref}

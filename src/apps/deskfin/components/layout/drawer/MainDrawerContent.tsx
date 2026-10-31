@@ -1,16 +1,15 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 
-import { Link } from 'react-router-dom';
 import { appRouter } from 'components/router/appRouter';
 import { useApi } from 'hooks/useApi';
-import { useUserViews } from 'hooks/api/useUserViews';
+import { useUserViews } from 'apps/deskfin/hooks/api/useUserViews';
 import { useWebConfig } from 'hooks/useWebConfig';
 import globalize from 'lib/globalize';
 
 import LibraryIcon from 'apps/deskfin/components/icons/LibraryIcon';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 import { DrawerHeader } from './DrawerHeader';
 
 import styles from './MainDrawerContent.module.scss';
@@ -34,7 +33,7 @@ const MainDrawerContent = () => {
 
                 <Link
                     className={`${styles.link} ${isHomeSelected ? styles.linkActive : ''}`}
-                    to="/home"
+                    to='/home'
                 >
                     <span className={styles.icon}>
                         <SvgIcon svg={IconSvgs.home} size={20} />
@@ -44,7 +43,7 @@ const MainDrawerContent = () => {
 
                 <Link
                     className={`${styles.link} ${isFavoritesSelected ? styles.linkActive : ''}`}
-                    to="/home?tab=1"
+                    to='/home?tab=1'
                 >
                     <span className={styles.icon}>
                         <SvgIcon svg={IconSvgs.heart} size={20} />
@@ -54,7 +53,7 @@ const MainDrawerContent = () => {
 
                 <Link
                     className={`${styles.link} ${isPlaylistsSelected ? styles.linkActive : ''}`}
-                    to="/playlists"
+                    to='/playlists'
                 >
                     <span className={styles.icon}>
                         <SvgIcon svg={IconSvgs.listBullet} size={20} />
@@ -73,8 +72,8 @@ const MainDrawerContent = () => {
                                 key={`${menuLink.name}_${menuLink.url}`}
                                 className={styles.link}
                                 href={menuLink.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                                target='_blank'
+                                rel='noopener noreferrer'
                             >
                                 <span className={styles.icon}>
                                     <span className={styles.materialIcon}>{menuLink.icon ?? 'link'}</span>
@@ -90,10 +89,10 @@ const MainDrawerContent = () => {
             {userViews.length > 0 && (
                 <>
                     <div className={styles.divider} />
-                    <div className={styles.heading} id="libraries-subheader">
+                    <div className={styles.heading} id='libraries-subheader'>
                         {globalize.translate('HeaderLibraries')}
                     </div>
-                    <div className={styles.section} aria-labelledby="libraries-subheader">
+                    <div className={styles.section} aria-labelledby='libraries-subheader'>
                         {userViews.map(view => (
                             <Link
                                 key={view.Id}

@@ -1,19 +1,19 @@
-import React, { type FC, type ReactNode } from "react";
-import type { ItemDto } from "types/base/models/item-dto";
-import { MediaCard, type MediaCardVariant } from "./MediaCard";
-import { useApi } from "hooks/useApi";
+import React, { type FC, type ReactNode } from 'react';
+import type { ItemDto } from 'types/base/models/item-dto';
+import { MediaCard, type MediaCardVariant } from './MediaCard';
+import { useApi } from 'hooks/useApi';
 import {
     buildCardImageUrl,
     getCardMeta,
     getProgressPct,
-    getOverlayCount,
-} from "apps/deskfin/features/home/utils/cardHelpers";
-import Loading from "components/loading/LoadingComponent";
-import globalize from "lib/globalize";
+    getOverlayCount
+} from 'apps/deskfin/features/home/utils/cardHelpers';
+import Loading from 'components/loading/LoadingComponent';
+import globalize from 'lib/globalize';
 
-import styles from "./ItemGrid.module.scss";
+import styles from './ItemGrid.module.scss';
 
-export type ItemGridVariant = "portrait" | "landscape" | "square" | "banner";
+export type ItemGridVariant = 'portrait' | 'landscape' | 'square' | 'banner';
 
 export interface ItemGridProps {
     items: ItemDto[];
@@ -34,7 +34,7 @@ export interface ItemGridProps {
 
 export const ItemGrid: FC<ItemGridProps> = ({
     items,
-    variant = "portrait",
+    variant = 'portrait',
     scrollable = false,
     isLoading = false,
     emptyMessage,
@@ -43,15 +43,15 @@ export const ItemGrid: FC<ItemGridProps> = ({
     onAfterAction,
     className,
     children,
-    playlistContext,
+    playlistContext
 }) => {
     const { user } = useApi();
 
     // Map variant to MediaCard variant
     const cardVariant: MediaCardVariant =
-        variant === "landscape" || variant === "banner"
-            ? "landscape"
-            : "portrait";
+        variant === 'landscape' || variant === 'banner' ?
+            'landscape' :
+            'portrait';
 
     if (isLoading) {
         return (
@@ -78,7 +78,7 @@ export const ItemGrid: FC<ItemGridProps> = ({
                 <div
                     className={[styles.scrollContainer, className]
                         .filter(Boolean)
-                        .join(" ")}
+                        .join(' ')}
                 >
                     <div className={styles.scrollRow}>{children}</div>
                 </div>
@@ -88,7 +88,7 @@ export const ItemGrid: FC<ItemGridProps> = ({
         return (
             <div className={styles.gridContainer}>
                 <div
-                    className={[styles.grid, className].filter(Boolean).join(" ")}
+                    className={[styles.grid, className].filter(Boolean).join(' ')}
                     data-variant={variant}
                 >
                     {children}
@@ -135,7 +135,7 @@ export const ItemGrid: FC<ItemGridProps> = ({
             <div
                 className={[styles.scrollContainer, className]
                     .filter(Boolean)
-                    .join(" ")}
+                    .join(' ')}
             >
                 <div className={styles.scrollRow}>{renderCards()}</div>
             </div>
@@ -145,7 +145,7 @@ export const ItemGrid: FC<ItemGridProps> = ({
     return (
         <div className={styles.gridContainer}>
             <div
-                className={[styles.grid, className].filter(Boolean).join(" ")}
+                className={[styles.grid, className].filter(Boolean).join(' ')}
                 data-variant={variant}
             >
                 {renderCards()}

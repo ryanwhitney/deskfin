@@ -3,27 +3,27 @@ import React, {
     useCallback,
     useEffect,
     useMemo,
-    useState,
-} from "react";
-import { useQueryClient } from "@tanstack/react-query";
+    useState
+} from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import {
     Button,
     Menu,
     MenuItem,
     MenuTrigger,
     Popover,
-    Separator,
-} from "react-aria-components";
-import { FocusRing } from "@react-aria/focus";
+    Separator
+} from 'react-aria-components';
+import { FocusRing } from 'react-aria';
 
-import globalize from "lib/globalize";
-import { useApi } from "hooks/useApi";
-import * as itemContextMenu from "components/itemContextMenu";
-import type { ItemDto } from "types/base/models/item-dto";
-import SvgIcon from "components/SvgIcon";
-import { IconSvgs, getLegacyCommandIcon } from "assets/icons";
-import { ActionMenuStyles } from "apps/deskfin/components/menu/ActionMenu";
-import iconButtonStyles from "apps/deskfin/components/button/Button.module.scss";
+import { useApi } from 'hooks/useApi';
+import * as itemContextMenu from 'components/itemContextMenu';
+import type { ItemDto } from 'types/base/models/item-dto';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs, getLegacyCommandIcon } from 'apps/deskfin/assets/icons';
+import { ActionMenuStyles } from 'apps/deskfin/components/menu/ActionMenu';
+import iconButtonStyles from 'apps/deskfin/components/button/Button.module.scss';
+import { translateOr } from 'apps/deskfin/utils/translate';
 
 interface DetailsMoreMenuProps {
     item: ItemDto;
@@ -38,14 +38,12 @@ type Command = {
     divider?: boolean;
 };
 
-const t = (key: string, fallback: string) => {
-    return globalize.tryTranslate?.(key) ?? fallback;
-};
+const t = translateOr;
 
 export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({
     item,
     queryKey,
-    className,
+    className
 }) => {
     const queryClient = useQueryClient();
     const { user } = useApi();
@@ -65,7 +63,7 @@ export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({
             editSubtitles: true,
             deleteItem: true,
             // We don't show multiselect here (details page), but keep a positionTo for parity.
-            positionTo: null,
+            positionTo: null
         };
     }, [item, user]);
 
@@ -76,7 +74,7 @@ export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({
                 const cmds = await itemContextMenu.getCommands(menuOptions);
                 setCommands(cmds as Command[]);
             } catch (e) {
-                console.error("[DetailsMoreMenu] failed to get commands", e);
+                console.error('[DetailsMoreMenu] failed to get commands', e);
                 setCommands([]);
             }
         };
@@ -94,12 +92,12 @@ export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({
                 if (result?.updated || result?.deleted) {
                     await queryClient.invalidateQueries({
                         queryKey,
-                        type: "all",
-                        refetchType: "active",
+                        type: 'all',
+                        refetchType: 'active'
                     });
                 }
             } catch (e) {
-                console.error("[DetailsMoreMenu] command failed", commandId, e);
+                console.error('[DetailsMoreMenu] command failed', commandId, e);
             }
         },
         [item, menuOptions, queryClient, queryKey]
@@ -107,12 +105,12 @@ export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({
 
     return (
         <MenuTrigger>
-            <FocusRing focusRingClass="focus-ring">
+            <FocusRing focusRingClass='focus-ring'>
                 <Button
-                    className={[iconButtonStyles.iconButton, className ?? ""]
+                    className={[iconButtonStyles.iconButton, className ?? '']
                         .filter(Boolean)
-                        .join(" ")}
-                    aria-label={t("ButtonMore", "More")}
+                        .join(' ')}
+                    aria-label={t('ButtonMore', 'More')}
                 >
                     <SvgIcon svg={IconSvgs.ellipsis} size={20} />
                 </Button>
@@ -120,16 +118,15 @@ export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({
 
             <Popover
                 className={ActionMenuStyles.popover}
-                placement="bottom end"
+                placement='bottom end'
                 offset={6}
             >
                 <Menu
                     className={ActionMenuStyles.menu}
-                    aria-label={t("ButtonMore", "More")}
+                    aria-label={t('ButtonMore', 'More')}
                 >
                     {commands.map((cmd, idx) => {
                         if (cmd.divider) {
-                            // eslint-disable-next-line react/no-array-index-key
                             return (
                                 <Separator
                                     key={`div-${idx}`}
@@ -138,9 +135,9 @@ export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({
                             );
                         }
                         if (!cmd.id) return null;
-                        const icon = cmd.icon
-                            ? getLegacyCommandIcon(cmd.icon)
-                            : undefined;
+                        const icon = cmd.icon ?
+                            getLegacyCommandIcon(cmd.icon) :
+                            undefined;
                         return (
                             <MenuItem
                                 key={cmd.id}
@@ -153,14 +150,14 @@ export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({
                                 {icon ? (
                                     <span
                                         className={ActionMenuStyles.icon}
-                                        aria-hidden="true"
+                                        aria-hidden='true'
                                     >
                                         <SvgIcon svg={icon} size={18} />
                                     </span>
                                 ) : (
                                     <span
                                         className={ActionMenuStyles.icon}
-                                        aria-hidden="true"
+                                        aria-hidden='true'
                                     />
                                 )}
                                 <span className={ActionMenuStyles.text}>

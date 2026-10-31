@@ -6,7 +6,7 @@ import MenuItem from '@mui/material/MenuItem/MenuItem';
 import React, { FC, useCallback, useState } from 'react';
 import { useLocation, useSearchParams } from 'react-router-dom';
 
-import { LibraryRoutes } from 'utils/libraryPaths';
+import { LibraryRoutes } from 'apps/deskfin/features/libraries/constants/libraryRoutes';
 import useCurrentTab from 'hooks/useCurrentTab';
 import globalize from 'lib/globalize';
 
@@ -57,7 +57,7 @@ const LibraryViewMenu: FC = () => {
                 {currentRoute?.views.map(tab => (
                     <MenuItem
                         key={tab.view}
-                        // eslint-disable-next-line react/jsx-no-bind
+
                         onClick={() => {
                             searchParams.set('tab', `${tab.index}`);
                             setSearchParams(searchParams);

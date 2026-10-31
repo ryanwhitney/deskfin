@@ -16,7 +16,7 @@ import '../../elements/emby-select/emby-select';
 import '../../elements/emby-input/emby-input';
 import '../../elements/emby-textarea/emby-textarea';
 import './style.scss';
-import template from './libraryoptionseditor.template.js';
+import template from './libraryoptionseditor.template.html';
 
 function populateLanguages(parent) {
     return ServerConnections.currentApiClient().getCultures().then(languages => {

@@ -1,17 +1,17 @@
 import React, { type FC, useState, useEffect, useCallback, useRef } from 'react';
 import { Button as RacButton, DialogTrigger, Popover } from 'react-aria-components';
-import { FocusRing } from '@react-aria/focus';
+import { FocusRing } from 'react-aria';
 import ChevronLeft from '@mui/icons-material/ChevronLeft';
 import ChevronRight from '@mui/icons-material/ChevronRight';
 
 import { playbackManager } from 'components/playback/playbackmanager';
-import { useGetItems } from 'hooks/useFetchItems';
+import { useGetItems } from 'apps/deskfin/hooks/api/useGetItems';
 import { useApi } from 'hooks/useApi';
 import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
 import { ItemSortBy } from '@jellyfin/sdk/lib/generated-client/models/item-sort-by';
 import { SortOrder } from '@jellyfin/sdk/lib/generated-client/models/sort-order';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 import globalize from 'lib/globalize';
 import type { ItemDto } from 'types/base/models/item-dto';
 
@@ -126,7 +126,7 @@ export const EpisodeMenu: FC<EpisodeMenuProps> = ({ player }) => {
 
     return (
         <DialogTrigger isOpen={isOpen} onOpenChange={handleOpenChange}>
-            <FocusRing focusRingClass="focus-ring">
+            <FocusRing focusRingClass='focus-ring'>
                 <RacButton
                     ref={buttonRef}
                     className={styles.iconButton}
@@ -139,7 +139,7 @@ export const EpisodeMenu: FC<EpisodeMenuProps> = ({ player }) => {
 
             <Popover
                 className={styles.popover}
-                placement="top"
+                placement='top'
                 offset={8}
             >
                 <div className={styles.container}>
@@ -149,7 +149,7 @@ export const EpisodeMenu: FC<EpisodeMenuProps> = ({ player }) => {
                             {/* Season selector header - looks like "back" action if multiple seasons */}
                             {hasMultipleSeasons && (
                                 <button
-                                    type="button"
+                                    type='button'
                                     className={styles.navItem}
                                     onClick={handleShowSeasons}
                                 >
@@ -179,15 +179,15 @@ export const EpisodeMenu: FC<EpisodeMenuProps> = ({ player }) => {
                                     {episodes.map((episode) => {
                                         const episodeNum = (episode as any).IndexNumber;
                                         const episodeName = episode.Name;
-                                        const displayText = episodeNum
-                                            ? `${episodeNum}. ${episodeName}`
-                                            : episodeName;
+                                        const displayText = episodeNum ?
+                                            `${episodeNum}. ${episodeName}` :
+                                            episodeName;
                                         const isCurrent = episode.Id === currentEpisodeId;
 
                                         return (
                                             <button
                                                 key={episode.Id}
-                                                type="button"
+                                                type='button'
                                                 className={`${styles.listItem} ${isCurrent ? styles.current : ''}`}
                                                 onClick={() => handleEpisodeSelect(episode)}
                                                 data-current={isCurrent}
@@ -229,7 +229,7 @@ export const EpisodeMenu: FC<EpisodeMenuProps> = ({ player }) => {
                                         return (
                                             <button
                                                 key={season.Id}
-                                                type="button"
+                                                type='button'
                                                 className={`${styles.listItem} ${isSelected ? styles.current : ''}`}
                                                 onClick={() => handleSeasonSelect(season.Id!)}
                                             >

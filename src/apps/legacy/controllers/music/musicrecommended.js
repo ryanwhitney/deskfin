@@ -305,7 +305,7 @@ export default function (view, params) {
                 break;
         }
 
-        import(`../music/${depends}.js`).then(({ default: ControllerFactory }) => {
+        import(`../music/${depends}`).then(({ default: ControllerFactory }) => {
             let tabContent;
 
             if (index == 1) {

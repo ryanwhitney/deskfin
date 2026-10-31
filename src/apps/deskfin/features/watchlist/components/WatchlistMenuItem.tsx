@@ -4,8 +4,8 @@ import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base
 
 import { useGetUserPlaylists } from '../hooks/useGetUserPlaylists';
 import { useAddToPlaylistMutation } from '../hooks/useAddToPlaylistMutation';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 import { ActionMenuStyles } from 'apps/deskfin/components/menu/ActionMenu';
 import globalize from 'lib/globalize';
 
@@ -37,21 +37,21 @@ export const WatchlistMenuItem: FC<WatchlistMenuItemProps> = ({ item, onCreateNe
 
     return (
         <SubmenuTrigger>
-            <MenuItem className={ActionMenuStyles.item} textValue="Add to list">
-                <span className={ActionMenuStyles.icon} aria-hidden="true">
+            <MenuItem className={ActionMenuStyles.item} textValue='Add to list'>
+                <span className={ActionMenuStyles.icon} aria-hidden='true'>
                     <SvgIcon svg={IconSvgs.addTo} size={18} />
                 </span>
                 <span className={ActionMenuStyles.text}>
                     {globalize.translate('AddToPlaylist')}
                 </span>
-                <span className={ActionMenuStyles.endAdornment} aria-hidden="true">
+                <span className={ActionMenuStyles.endAdornment} aria-hidden='true'>
                     ›
                 </span>
             </MenuItem>
             <Popover className={ActionMenuStyles.popover}>
                 <Menu
                     className={ActionMenuStyles.menu}
-                    aria-label="Select playlist"
+                    aria-label='Select playlist'
                     onAction={(key) => {
                         if (key === 'create-new') {
                             onCreateNew();
@@ -61,12 +61,12 @@ export const WatchlistMenuItem: FC<WatchlistMenuItemProps> = ({ item, onCreateNe
                     }}
                 >
                     <MenuItem
-                        key="create-new"
-                        id="create-new"
+                        key='create-new'
+                        id='create-new'
                         className={ActionMenuStyles.item}
-                        textValue="Create new list"
+                        textValue='Create new list'
                     >
-                        <span className={ActionMenuStyles.icon} aria-hidden="true">
+                        <span className={ActionMenuStyles.icon} aria-hidden='true'>
                             <SvgIcon svg={IconSvgs.addTo} size={18} />
                         </span>
                         <span className={ActionMenuStyles.text}>
@@ -77,7 +77,7 @@ export const WatchlistMenuItem: FC<WatchlistMenuItemProps> = ({ item, onCreateNe
                     {isPending && (
                         <MenuItem
                             className={ActionMenuStyles.item}
-                            textValue="Loading..."
+                            textValue='Loading...'
                         >
                             <span className={ActionMenuStyles.text}>
                                 Loading...
@@ -92,7 +92,7 @@ export const WatchlistMenuItem: FC<WatchlistMenuItemProps> = ({ item, onCreateNe
                     {!isPending && playlists.length === 0 && (
                         <MenuItem
                             className={ActionMenuStyles.item}
-                            textValue="No lists yet"
+                            textValue='No lists yet'
                         >
                             <span className={ActionMenuStyles.text}>
                                 No lists yet
@@ -108,7 +108,7 @@ export const WatchlistMenuItem: FC<WatchlistMenuItemProps> = ({ item, onCreateNe
                             textValue={playlist.Name ?? 'Unnamed list'}
                             isDisabled={isAdding}
                         >
-                            <span className={ActionMenuStyles.icon} aria-hidden="true">
+                            <span className={ActionMenuStyles.icon} aria-hidden='true'>
                                 <SvgIcon svg={IconSvgs.listBullet} size={18} />
                             </span>
                             <span className={ActionMenuStyles.text}>

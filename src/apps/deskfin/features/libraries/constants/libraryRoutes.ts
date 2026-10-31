@@ -1,4 +1,4 @@
-import { LibraryTab } from 'types/libraryTab';
+import { LibraryTab } from 'apps/deskfin/types/libraryTab';
 
 import { LibraryRoute } from '../types/LibraryRoute';
 
@@ -67,6 +67,11 @@ export const LibraryRoutes: LibraryRoute[] = [
                 index: 4,
                 label: 'Genres',
                 view: LibraryTab.Genres
+            },
+            {
+                index: 5,
+                label: 'HeaderYears',
+                view: LibraryTab.Years
             }
         ]
     },

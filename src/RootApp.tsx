@@ -1,6 +1,6 @@
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
-import React, { StrictMode } from 'react';
+import React from 'react';
 
 import QueryClientEventHandler from 'components/QueryClientEventHandler';
 import { ApiProvider } from 'hooks/useApi';
@@ -15,27 +15,25 @@ const useReactQueryDevtools = window.Proxy // '@tanstack/query-devtools' require
     && !browser.tv; // Don't use devtools on the TV as the navigation is weird
 
 const RootApp = () => (
-    <StrictMode>
-        <PersistQueryClientProvider
-            client={queryClient}
-            persistOptions={{
-                buster: __JF_BUILD_VERSION__,
-                persister
-            }}
-        >
-            <ApiProvider>
-                <UserSettingsProvider>
-                    <WebConfigProvider>
-                        <QueryClientEventHandler />
-                        <RootAppRouter />
-                    </WebConfigProvider>
-                </UserSettingsProvider>
-            </ApiProvider>
-            {useReactQueryDevtools && (
-                <ReactQueryDevtools initialIsOpen={false} />
-            )}
-        </PersistQueryClientProvider>
-    </StrictMode>
+    <PersistQueryClientProvider
+        client={queryClient}
+        persistOptions={{
+            buster: __JF_BUILD_VERSION__,
+            persister
+        }}
+    >
+        <ApiProvider>
+            <UserSettingsProvider>
+                <WebConfigProvider>
+                    <QueryClientEventHandler />
+                    <RootAppRouter />
+                </WebConfigProvider>
+            </UserSettingsProvider>
+        </ApiProvider>
+        {useReactQueryDevtools && (
+            <ReactQueryDevtools initialIsOpen={false} />
+        )}
+    </PersistQueryClientProvider>
 );
 
 export default RootApp;

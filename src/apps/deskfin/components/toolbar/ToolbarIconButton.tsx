@@ -1,6 +1,6 @@
 import React, { type FC } from 'react';
 import { Button as RacButton, type ButtonProps as RacButtonProps } from 'react-aria-components';
-import { FocusRing } from '@react-aria/focus';
+import { FocusRing } from 'react-aria';
 
 import styles from './ToolbarIconButton.module.scss';
 
@@ -17,7 +17,7 @@ export const ToolbarIconButton: FC<ToolbarIconButtonProps> = ({
     ...props
 }) => {
     return (
-        <FocusRing focusRingClass="focus-ring">
+        <FocusRing focusRingClass='focus-ring'>
             <RacButton
                 {...props}
                 className={cx(

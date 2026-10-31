@@ -5,8 +5,8 @@ import { ItemFilter } from '@jellyfin/sdk/lib/generated-client/models/item-filte
 import { SeriesStatus } from '@jellyfin/sdk/lib/generated-client/models/series-status';
 
 import globalize from 'lib/globalize';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 import { useGetQueryFiltersLegacy, useGetStudios } from 'hooks/useFetchItems';
 import {
     type LibraryViewSettings,
@@ -16,7 +16,7 @@ import {
     EpisodeFilter,
     VideoBasicFilter
 } from 'types/library';
-import { LibraryTab } from 'types/libraryTab';
+import { LibraryTab } from 'apps/deskfin/types/libraryTab';
 
 import styles from './LibraryToolbar.module.scss';
 
@@ -32,7 +32,7 @@ const AccordionSection: FC<AccordionSectionProps> = ({ title, defaultOpen = fals
     return (
         <div className={styles.accordionSection}>
             <button
-                type="button"
+                type='button'
                 className={styles.accordionHeader}
                 onClick={() => setIsOpen(!isOpen)}
                 aria-expanded={isOpen}
@@ -60,7 +60,7 @@ interface CheckboxOptionProps {
 const CheckboxOption: FC<CheckboxOptionProps> = ({ label, checked, onChange }) => (
     <label className={styles.checkboxLabel}>
         <input
-            type="checkbox"
+            type='checkbox'
             className={styles.checkbox}
             checked={checked}
             onChange={(e) => onChange(e.target.checked)}
@@ -109,81 +109,81 @@ export const FilterMenu: FC<FilterMenuProps> = ({
     // Toggle array filter helpers
     const toggleStatusFilter = useCallback((value: ItemFilter) => {
         const current = filters.Status || [];
-        const updated = current.includes(value)
-            ? current.filter((v) => v !== value)
-            : [...current, value];
+        const updated = current.includes(value) ?
+            current.filter((v) => v !== value) :
+            [...current, value];
         updateFilter('Status', updated.length > 0 ? updated : undefined);
     }, [filters.Status, updateFilter]);
 
     const toggleSeriesStatusFilter = useCallback((value: SeriesStatus) => {
         const current = filters.SeriesStatus || [];
-        const updated = current.includes(value)
-            ? current.filter((v) => v !== value)
-            : [...current, value];
+        const updated = current.includes(value) ?
+            current.filter((v) => v !== value) :
+            [...current, value];
         updateFilter('SeriesStatus', updated.length > 0 ? updated : undefined);
     }, [filters.SeriesStatus, updateFilter]);
 
     const toggleEpisodeFilter = useCallback((value: EpisodeFilter) => {
         const current = filters.EpisodeFilter || [];
-        const updated = current.includes(value)
-            ? current.filter((v) => v !== value)
-            : [...current, value];
+        const updated = current.includes(value) ?
+            current.filter((v) => v !== value) :
+            [...current, value];
         updateFilter('EpisodeFilter', updated.length > 0 ? updated : undefined);
     }, [filters.EpisodeFilter, updateFilter]);
 
     const toggleFeatureFilter = useCallback((value: FeatureFilters) => {
         const current = filters.Features || [];
-        const updated = current.includes(value)
-            ? current.filter((v) => v !== value)
-            : [...current, value];
+        const updated = current.includes(value) ?
+            current.filter((v) => v !== value) :
+            [...current, value];
         updateFilter('Features', updated.length > 0 ? updated : undefined);
     }, [filters.Features, updateFilter]);
 
     const toggleVideoBasicFilter = useCallback((value: VideoBasicFilter) => {
         const current = filters.VideoBasicFilter || [];
-        const updated = current.includes(value)
-            ? current.filter((v) => v !== value)
-            : [...current, value];
+        const updated = current.includes(value) ?
+            current.filter((v) => v !== value) :
+            [...current, value];
         updateFilter('VideoBasicFilter', updated.length > 0 ? updated : undefined);
     }, [filters.VideoBasicFilter, updateFilter]);
 
     const toggleGenreFilter = useCallback((value: string) => {
         const current = filters.Genres || [];
-        const updated = current.includes(value)
-            ? current.filter((v) => v !== value)
-            : [...current, value];
+        const updated = current.includes(value) ?
+            current.filter((v) => v !== value) :
+            [...current, value];
         updateFilter('Genres', updated.length > 0 ? updated : undefined);
     }, [filters.Genres, updateFilter]);
 
     const toggleRatingFilter = useCallback((value: string) => {
         const current = filters.OfficialRatings || [];
-        const updated = current.includes(value)
-            ? current.filter((v) => v !== value)
-            : [...current, value];
+        const updated = current.includes(value) ?
+            current.filter((v) => v !== value) :
+            [...current, value];
         updateFilter('OfficialRatings', updated.length > 0 ? updated : undefined);
     }, [filters.OfficialRatings, updateFilter]);
 
     const toggleTagFilter = useCallback((value: string) => {
         const current = filters.Tags || [];
-        const updated = current.includes(value)
-            ? current.filter((v) => v !== value)
-            : [...current, value];
+        const updated = current.includes(value) ?
+            current.filter((v) => v !== value) :
+            [...current, value];
         updateFilter('Tags', updated.length > 0 ? updated : undefined);
     }, [filters.Tags, updateFilter]);
 
     const toggleYearFilter = useCallback((value: number) => {
         const current = filters.Years || [];
-        const updated = current.includes(value)
-            ? current.filter((v) => v !== value)
-            : [...current, value];
+        const updated = current.includes(value) ?
+            current.filter((v) => v !== value) :
+            [...current, value];
         updateFilter('Years', updated.length > 0 ? updated : undefined);
     }, [filters.Years, updateFilter]);
 
     const toggleStudioFilter = useCallback((value: string) => {
         const current = filters.StudioIds || [];
-        const updated = current.includes(value)
-            ? current.filter((v) => v !== value)
-            : [...current, value];
+        const updated = current.includes(value) ?
+            current.filter((v) => v !== value) :
+            [...current, value];
         updateFilter('StudioIds', updated.length > 0 ? updated : undefined);
     }, [filters.StudioIds, updateFilter]);
 
@@ -211,7 +211,7 @@ export const FilterMenu: FC<FilterMenuProps> = ({
                 </span>
                 <span>{globalize.translate('Filter')}</span>
             </Button>
-            <Popover className={styles.popover} placement="bottom start" offset={4}>
+            <Popover className={styles.popover} placement='bottom start' offset={4}>
                 <div style={{ maxHeight: '60vh', overflow: 'auto' }}>
                     {/* Status filters */}
                     {showStatusFilters && (
@@ -315,22 +315,22 @@ export const FilterMenu: FC<FilterMenuProps> = ({
                         <AccordionSection title={globalize.translate('HeaderVideoType')}>
                             <div className={styles.checkboxGroup}>
                                 <CheckboxOption
-                                    label="4K"
+                                    label='4K'
                                     checked={(filters.VideoBasicFilter || []).includes(VideoBasicFilter.Is4K)}
                                     onChange={() => toggleVideoBasicFilter(VideoBasicFilter.Is4K)}
                                 />
                                 <CheckboxOption
-                                    label="HD"
+                                    label='HD'
                                     checked={(filters.VideoBasicFilter || []).includes(VideoBasicFilter.IsHD)}
                                     onChange={() => toggleVideoBasicFilter(VideoBasicFilter.IsHD)}
                                 />
                                 <CheckboxOption
-                                    label="SD"
+                                    label='SD'
                                     checked={(filters.VideoBasicFilter || []).includes(VideoBasicFilter.IsSD)}
                                     onChange={() => toggleVideoBasicFilter(VideoBasicFilter.IsSD)}
                                 />
                                 <CheckboxOption
-                                    label="3D"
+                                    label='3D'
                                     checked={(filters.VideoBasicFilter || []).includes(VideoBasicFilter.Is3D)}
                                     onChange={() => toggleVideoBasicFilter(VideoBasicFilter.Is3D)}
                                 />

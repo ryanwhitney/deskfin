@@ -20,7 +20,7 @@ import Typography from '@mui/material/Typography';
 
 import globalize from 'lib/globalize';
 import { LibraryViewSettings, ViewMode } from 'types/library';
-import { LibraryTab } from 'types/libraryTab';
+import { LibraryTab } from 'apps/deskfin/types/libraryTab';
 
 const IMAGE_TYPE_EXCLUDED_VIEWS = [
     LibraryTab.Episodes,

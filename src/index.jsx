@@ -48,6 +48,7 @@ import './styles/dashboard.scss';
 import './styles/detailtable.scss';
 import './styles/librarybrowser.scss';
 import './apps/deskfin/styles/app-overrides.scss';
+import './apps/deskfin/app/queryDefaults';
 
 async function init() {
     // Log current version to console to help out with issue triage and debugging
@@ -184,6 +185,11 @@ async function loadPlugins() {
         list = list.concat(window.NativeShell.getPlugins());
     }
 
+    // Chromecast pulls Google's cast_sender.js from gstatic.com; load it once startup is done so it
+    // doesn't compete with the first screen.
+    const deferred = list.filter(plugin => plugin.startsWith('chromecastPlayer'));
+    list = list.filter(plugin => !plugin.startsWith('chromecastPlayer'));
+
     try {
         await Promise.all(list.map(plugin => pluginManager.loadPlugin(plugin)));
         console.debug('finished loading plugins');
@@ -192,6 +198,15 @@ async function loadPlugins() {
     }
 
     console.groupEnd('loading installed plugins');
+
+    if (deferred.length) {
+        const loadDeferred = () => Promise.all(deferred.map(plugin => pluginManager.loadPlugin(plugin)))
+            .catch(e => console.warn('failed loading deferred plugins', e));
+        // "Idle" arrives early while the first screen waits on the server, so wait for the page to finish loading.
+        const afterLoad = () => setTimeout(loadDeferred, 2000);
+        if (document.readyState === 'complete') afterLoad();
+        else window.addEventListener('load', afterLoad, { once: true });
+    }
 }
 
 function loadPlatformFeatures() {

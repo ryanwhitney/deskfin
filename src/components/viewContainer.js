@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import { importModule } from '@uupaa/dynamic-import-polyfill';
 
 import { ServerConnections } from 'lib/jellyfin-apiclient';
 import Dashboard from 'utils/dashboard';
@@ -23,9 +24,8 @@ function setControllerClass(view, options) {
 
         controllerUrl = Dashboard.getPluginUrl(controllerUrl);
         const apiUrl = ServerConnections.currentApiClient().getUrl('/web/' + controllerUrl);
-        // Use native dynamic import instead of polyfill
-        return import(/* @vite-ignore */ apiUrl).then((module) => {
-            options.controllerFactory = module.default || module;
+        return importModule(apiUrl).then((ControllerFactory) => {
+            options.controllerFactory = ControllerFactory;
         });
     }
 
@@ -225,6 +225,7 @@ function triggerDestroy(view) {
 }
 
 export function reset() {
+    console.debug('[viewContainer] resetting view cache');
     allPages = [];
     currentUrls = [];
     const mainAnimatedPages = getMainAnimatedPages();

@@ -19,7 +19,7 @@ const CardText: FC<CardTextProps> = ({ className, textLine }) => {
         <Box className={className}>
             {titleAction ? (
                 ensureArray(titleAction).map((action, i, arr) => (
-                    <React.Fragment key={action.url || `${action.title}-${i}`}>
+                    <React.Fragment key={action.title}>
                         <a
                             className='itemAction textActionButton'
                             href={action.url}

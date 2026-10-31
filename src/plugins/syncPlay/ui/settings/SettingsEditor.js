@@ -55,7 +55,7 @@ class SettingsEditor {
         this.context = dialogHelper.createDialog(dialogOptions);
         this.context.classList.add('formDialog');
 
-        const { default: editorTemplate } = await import('./editor');
+        const { default: editorTemplate } = await import('./editor.html');
         this.context.innerHTML = globalize.translateHtml(editorTemplate, 'core');
 
         // Set callbacks for form submission

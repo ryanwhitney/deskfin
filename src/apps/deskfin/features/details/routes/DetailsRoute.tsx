@@ -1,44 +1,45 @@
-import React, { useCallback, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
-import { BaseItemKind } from "@jellyfin/sdk/lib/generated-client/models/base-item-kind";
-import { ImageType } from "@jellyfin/sdk/lib/generated-client/models/image-type";
-import { ItemFields } from "@jellyfin/sdk/lib/generated-client/models/item-fields";
-import { ItemSortBy } from "@jellyfin/sdk/lib/generated-client/models/item-sort-by";
-import { SortOrder } from "@jellyfin/sdk/lib/generated-client/models/sort-order";
+import React, { useCallback, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
+import { ImageType } from '@jellyfin/sdk/lib/generated-client/models/image-type';
+import { ItemFields } from '@jellyfin/sdk/lib/generated-client/models/item-fields';
+import { ItemSortBy } from '@jellyfin/sdk/lib/generated-client/models/item-sort-by';
+import { SortOrder } from '@jellyfin/sdk/lib/generated-client/models/sort-order';
 
-import globalize from "lib/globalize";
-import Page from "components/Page";
-import { useItem } from "hooks/useItem";
-import { useApi } from "hooks/useApi";
+import globalize from 'lib/globalize';
+import Page from 'components/Page';
+import { useItem } from 'hooks/useItem';
+import { useApi } from 'hooks/useApi';
 import {
-    useGetItems,
     useToggleFavoriteMutation,
-    useTogglePlayedMutation,
-} from "hooks/useFetchItems";
-import { useTitle } from "apps/deskfin/hooks/useTitle";
-import { formatItemTitle } from "apps/deskfin/utils/titleUtils";
-import { ItemKind } from "types/base/models/item-kind";
-import { ItemGrid } from "apps/deskfin/components/media/ItemGrid";
+    useTogglePlayedMutation
+} from 'hooks/useFetchItems';
+import { useGetItems } from 'apps/deskfin/hooks/api/useGetItems';
+import { useTitle } from 'apps/deskfin/hooks/useTitle';
+import { formatItemTitle } from 'apps/deskfin/utils/titleUtils';
+import { ItemKind } from 'types/base/models/item-kind';
+import { ItemGrid } from 'apps/deskfin/components/media/ItemGrid';
 
-import FavoriteButton from "apps/deskfin/features/userData/components/FavoriteButton";
-import PlayedButton from "apps/deskfin/features/userData/components/PlayedButton";
-import PlayOrResumeButton from "../components/buttons/PlayOrResumeButton";
-import { DetailsFacts } from "../components/ui/DetailsFacts";
-import { DetailsCast } from "../components/ui/DetailsCast";
-import { SeasonsSection } from "../components/ui/SeasonsSection";
-import { EpisodesSection } from "../components/ui/EpisodesSection";
-import { ExtrasSection } from "../components/ui/ExtrasSection";
-import { DetailsMoreMenu } from "../components/ui/DetailsMoreMenu";
-import { ExpandableOverview } from "../components/ui/ExpandableOverview";
-import MetaInfo from "../components/ui/MetaInfo";
-import { buildImageUrl } from "../utils/imageUrl";
-import { useSpecialFeatures } from "../hooks/useSpecialFeatures";
+import FavoriteButton from 'apps/deskfin/features/userData/components/FavoriteButton';
+import PlayedButton from 'apps/deskfin/features/userData/components/PlayedButton';
+import PlayOrResumeButton from '../components/buttons/PlayOrResumeButton';
+import { DetailsFacts } from '../components/ui/DetailsFacts';
+import { DetailsCast } from '../components/ui/DetailsCast';
+import { SeasonsSection } from '../components/ui/SeasonsSection';
+import { EpisodesSection } from '../components/ui/EpisodesSection';
+import { ExtrasSection } from '../components/ui/ExtrasSection';
+import { DetailsMoreMenu } from '../components/ui/DetailsMoreMenu';
+import { ExpandableOverview } from '../components/ui/ExpandableOverview';
+import MetaInfo from '../components/ui/MetaInfo';
+import { buildImageUrl } from '../utils/imageUrl';
+import { useSpecialFeatures } from '../hooks/useSpecialFeatures';
 
-import styles from "./DetailsRoute.module.scss";
+import styles from './DetailsRoute.module.scss';
+import { translateOr } from 'apps/deskfin/utils/translate';
 
 export default function DetailsPage() {
     const [params] = useSearchParams();
-    const itemId = params.get("id") || "";
+    const itemId = params.get('id') || '';
 
     const { user } = useApi();
     const { data: item, isLoading, error } = useItem(itemId);
@@ -55,35 +56,35 @@ export default function DetailsPage() {
 
     // Set title with proper formatting for episodes/seasons
     useTitle(
-        item
-            ? formatItemTitle(item.Name, item.Type, seriesName, seasonName)
-            : undefined,
+        item ?
+            formatItemTitle(item.Name, item.Type, seriesName, seasonName) :
+            undefined
     );
 
     // Build image URLs with fallback chain
     const primaryUrl = useMemo(
         () =>
-            buildImageUrl(item, "Primary", 600) ||
-            buildImageUrl(seasonItem, "Primary", 600) ||
-            buildImageUrl(seriesItem, "Primary", 600),
-        [item, seasonItem, seriesItem],
+            buildImageUrl(item, 'Primary', 600)
+            || buildImageUrl(seasonItem, 'Primary', 600)
+            || buildImageUrl(seriesItem, 'Primary', 600),
+        [item, seasonItem, seriesItem]
     );
 
     const backdropUrl = useMemo(
         () =>
-            buildImageUrl(item, "Backdrop", 1400) ||
-            buildImageUrl(seasonItem, "Backdrop", 1400) ||
-            buildImageUrl(seriesItem, "Backdrop", 1400) ||
-            buildImageUrl(item, "Primary", 1400) ||
-            buildImageUrl(seasonItem, "Primary", 1400) ||
-            buildImageUrl(seriesItem, "Primary", 1400),
-        [item, seasonItem, seriesItem],
+            buildImageUrl(item, 'Backdrop', 1400)
+            || buildImageUrl(seasonItem, 'Backdrop', 1400)
+            || buildImageUrl(seriesItem, 'Backdrop', 1400)
+            || buildImageUrl(item, 'Primary', 1400)
+            || buildImageUrl(seasonItem, 'Primary', 1400)
+            || buildImageUrl(seriesItem, 'Primary', 1400),
+        [item, seasonItem, seriesItem]
     );
 
     const queryKey = useMemo(
         () =>
-            user?.Id ? ["User", user.Id, "Items", itemId] : ["Items", itemId],
-        [user?.Id, itemId],
+            user?.Id ? ['User', user.Id, 'Items', itemId] : ['Items', itemId],
+        [user?.Id, itemId]
     );
 
     // Determine item type
@@ -102,9 +103,9 @@ export default function DetailsPage() {
             sortOrder: [SortOrder.Ascending],
             enableTotalRecordCount: false,
             imageTypeLimit: 1,
-            enableImageTypes: [ImageType.Primary],
+            enableImageTypes: [ImageType.Primary]
         },
-        { enabled: !!item?.Id && isSeries },
+        { enabled: !!item?.Id && isSeries }
     );
 
     // Fetch episodes for season
@@ -117,9 +118,9 @@ export default function DetailsPage() {
             enableTotalRecordCount: false,
             imageTypeLimit: 1,
             enableImageTypes: [ImageType.Primary],
-            fields: [ItemFields.Overview],
+            fields: [ItemFields.Overview]
         },
-        { enabled: !!item?.Id && isSeason },
+        { enabled: !!item?.Id && isSeason }
     );
 
     // Fetch BoxSet items
@@ -132,10 +133,10 @@ export default function DetailsPage() {
                 fields: [
                     ItemFields.PrimaryImageAspectRatio,
                     ItemFields.MediaSourceCount,
-                    ItemFields.Overview,
-                ],
+                    ItemFields.Overview
+                ]
             },
-            { enabled: !!item?.Id && isBoxSet },
+            { enabled: !!item?.Id && isBoxSet }
         );
 
     // Fetch movies for person
@@ -149,12 +150,12 @@ export default function DetailsPage() {
                 sortOrder: [SortOrder.Descending, SortOrder.Ascending],
                 fields: [
                     ItemFields.PrimaryImageAspectRatio,
-                    ItemFields.MediaSourceCount,
+                    ItemFields.MediaSourceCount
                 ],
                 imageTypeLimit: 1,
-                enableImageTypes: [ImageType.Primary],
+                enableImageTypes: [ImageType.Primary]
             },
-            { enabled: !!item?.Id && isPerson },
+            { enabled: !!item?.Id && isPerson }
         );
 
     // Fetch TV shows for person
@@ -168,12 +169,12 @@ export default function DetailsPage() {
                 sortOrder: [SortOrder.Descending, SortOrder.Ascending],
                 fields: [
                     ItemFields.PrimaryImageAspectRatio,
-                    ItemFields.MediaSourceCount,
+                    ItemFields.MediaSourceCount
                 ],
                 imageTypeLimit: 1,
-                enableImageTypes: [ImageType.Primary],
+                enableImageTypes: [ImageType.Primary]
             },
-            { enabled: !!item?.Id && isPerson },
+            { enabled: !!item?.Id && isPerson }
         );
 
     const seasons = seasonsResult?.Items || [];
@@ -197,34 +198,34 @@ export default function DetailsPage() {
         (targetItem: (typeof boxSetItems)[0]) => {
             void toggleFavorite({
                 itemId: targetItem.Id!,
-                isFavorite: !!targetItem.UserData?.IsFavorite,
+                isFavorite: !!targetItem.UserData?.IsFavorite
             });
         },
-        [toggleFavorite],
+        [toggleFavorite]
     );
 
     const handleTogglePlayed = useCallback(
         (targetItem: (typeof boxSetItems)[0]) => {
             void togglePlayed({
                 itemId: targetItem.Id!,
-                isPlayed: !!targetItem.UserData?.Played,
+                isPlayed: !!targetItem.UserData?.Played
             });
         },
-        [togglePlayed],
+        [togglePlayed]
     );
 
     // Loading state
     if (isLoading) {
-        return <Page id="itemDetailsPage" className={styles.page} />;
+        return <Page id='itemDetailsPage' className={styles.page} />;
     }
 
     // Error state
     if (error || !item) {
         return (
-            <Page id="itemDetailsPage" className={styles.page}>
+            <Page id='itemDetailsPage' className={styles.page}>
                 <div className={styles.container}>
                     <div className={styles.error}>
-                        {globalize.tryTranslate?.("Error") ?? "Error"}
+                        Error
                     </div>
                 </div>
             </Page>
@@ -233,13 +234,13 @@ export default function DetailsPage() {
 
     // Extract people data
     const people = item.People || [];
-    const directors = people.filter((p) => p.Type === "Director");
-    const writers = people.filter((p) => p.Type === "Writer");
-    const cast = people.filter((p) => p.Type === "Actor");
+    const directors = people.filter((p) => p.Type === 'Director');
+    const writers = people.filter((p) => p.Type === 'Writer');
+    const cast = people.filter((p) => p.Type === 'Actor');
     const crew = people.filter(
-        (p) => p.Type !== "Actor" && p.Type !== "GuestStar",
+        (p) => p.Type !== 'Actor' && p.Type !== 'GuestStar'
     );
-    const guestStars = people.filter((p) => p.Type === "GuestStar");
+    const guestStars = people.filter((p) => p.Type === 'GuestStar');
 
     // Series/Season breadcrumb data (variables declared above for title formatting)
 
@@ -248,7 +249,7 @@ export default function DetailsPage() {
 
     return (
         <Page
-            id="itemDetailsPage"
+            id='itemDetailsPage'
             className={`${styles.page} ${itemType?.toLowerCase()} selfBackdropPage`}
             backDropType={[BaseItemKind.Movie, BaseItemKind.Series, BaseItemKind.Book]}
         >
@@ -258,12 +259,12 @@ export default function DetailsPage() {
                         <div
                             className={styles.heroImg}
                             style={{
-                                backgroundImage: backdropUrl
-                                    ? `url(${backdropUrl})`
-                                    : undefined,
+                                backgroundImage: backdropUrl ?
+                                    `url(${backdropUrl})` :
+                                    undefined
                             }}
                         >
-                            {" "}
+                            {' '}
                             <div className={styles.heroOverlay} />
                         </div>
                         <div className={styles.container}>
@@ -272,7 +273,7 @@ export default function DetailsPage() {
                                     {primaryUrl ? (
                                         <img
                                             src={primaryUrl}
-                                            alt={item.Name || ""}
+                                            alt={item.Name || ''}
                                             className={styles.posterImg}
                                         />
                                     ) : null}
@@ -283,12 +284,12 @@ export default function DetailsPage() {
                                             <img
                                                 src={buildImageUrl(
                                                     item,
-                                                    "Logo",
-                                                    800,
+                                                    'Logo',
+                                                    800
                                                 )}
                                                 width={400}
                                                 alt={
-                                                    item.Name || "series title"
+                                                    item.Name || 'series title'
                                                 }
                                                 className={styles.titleLogo}
                                             />
@@ -348,14 +349,14 @@ export default function DetailsPage() {
                                         </div>
                                     )}
 
-                                    {item.OriginalTitle &&
-                                        item.OriginalTitle !== item.Name && (
-                                            <div
-                                                className={styles.originalTitle}
-                                            >
-                                                {item.OriginalTitle}
-                                            </div>
-                                        )}
+                                    {item.OriginalTitle
+                                        && item.OriginalTitle !== item.Name && (
+                                        <div
+                                            className={styles.originalTitle}
+                                        >
+                                            {item.OriginalTitle}
+                                        </div>
+                                    )}
 
                                     <MetaInfo item={item} />
 
@@ -407,7 +408,7 @@ export default function DetailsPage() {
                     {isSeason && (
                         <EpisodesSection
                             episodes={episodes}
-                            queryKey={[...queryKey, "SeasonEpisodes"]}
+                            queryKey={[...queryKey, 'SeasonEpisodes']}
                             showSeriesAndSeason={false}
                         />
                     )}
@@ -416,13 +417,13 @@ export default function DetailsPage() {
                     {isBoxSet && (
                         <div className={styles.section}>
                             <h2 className={styles.sectionTitle}>
-                                {globalize.tryTranslate?.("Items") ?? "Items"}
+                                {translateOr('Items', 'Items')}
                             </h2>
                             <ItemGrid
                                 items={boxSetItems}
-                                variant="portrait"
+                                variant='portrait'
                                 isLoading={isBoxSetItemsPending}
-                                emptyMessage="No items available"
+                                emptyMessage='No items available'
                                 onToggleFavorite={handleToggleFavorite}
                                 onTogglePlayed={handleTogglePlayed}
                             />
@@ -433,13 +434,13 @@ export default function DetailsPage() {
                     {isPerson && personMovies.length > 0 && (
                         <div className={styles.section}>
                             <h2 className={styles.sectionTitle}>
-                                {globalize.translate("Movies")}
+                                {globalize.translate('Movies')}
                             </h2>
                             <ItemGrid
                                 items={personMovies}
-                                variant="portrait"
+                                variant='portrait'
                                 isLoading={isPersonMoviesPending}
-                                emptyMessage="No movies available"
+                                emptyMessage='No movies available'
                                 onToggleFavorite={handleToggleFavorite}
                                 onTogglePlayed={handleTogglePlayed}
                             />
@@ -450,13 +451,13 @@ export default function DetailsPage() {
                     {isPerson && personShows.length > 0 && (
                         <div className={styles.section}>
                             <h2 className={styles.sectionTitle}>
-                                {globalize.translate("Shows")}
+                                {globalize.translate('Shows')}
                             </h2>
                             <ItemGrid
                                 items={personShows}
-                                variant="portrait"
+                                variant='portrait'
                                 isLoading={isPersonShowsPending}
-                                emptyMessage="No shows available"
+                                emptyMessage='No shows available'
                                 onToggleFavorite={handleToggleFavorite}
                                 onTogglePlayed={handleTogglePlayed}
                             />
@@ -469,18 +470,18 @@ export default function DetailsPage() {
                     )}
 
                     {/* Cast section (not for Person items) */}
-                    {!isPerson && <DetailsCast title="Cast" people={cast} />}
+                    {!isPerson && <DetailsCast title='Cast' people={cast} />}
 
                     {/* Guest Stars section (not for Person items) */}
                     {!isPerson && (
                         <DetailsCast
-                            title={globalize.translate("HeaderGuestCast")}
+                            title={globalize.translate('HeaderGuestCast')}
                             people={guestStars}
                         />
                     )}
 
                     {/* Crew section (not for Person items) */}
-                    {!isPerson && <DetailsCast title="Crew" people={crew} />}
+                    {!isPerson && <DetailsCast title='Crew' people={crew} />}
                 </div>
             </div>
         </Page>

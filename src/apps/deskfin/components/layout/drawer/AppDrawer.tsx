@@ -14,7 +14,7 @@ const DRAWERLESS_ROUTES = [
 const MAIN_DRAWER_ROUTES = [
     ...ASYNC_USER_ROUTES,
     ...LEGACY_USER_ROUTES
-].filter(route => !DRAWERLESS_ROUTES.includes(route.path));
+].filter(route => !DRAWERLESS_ROUTES.includes(route.path ?? ''));
 
 /** Utility function to check if a path has a drawer. */
 export const isDrawerPath = (path: string) => (

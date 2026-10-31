@@ -1,10 +1,10 @@
 import React, { type FC, useState, useEffect, useCallback } from 'react';
-import { Button as RacButton, Dialog, DialogTrigger, Modal, ModalOverlay } from 'react-aria-components';
-import { FocusRing } from '@react-aria/focus';
+import { Button as RacButton, Dialog, Modal, ModalOverlay } from 'react-aria-components';
+import { FocusRing } from 'react-aria';
 
 import { playbackManager } from 'components/playback/playbackmanager';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 import globalize from 'lib/globalize';
 
 import styles from './SubtitleOffsetControl.module.scss';
@@ -92,11 +92,11 @@ export const SubtitleOffsetControl: FC<SubtitleOffsetControlProps> = ({ player, 
                         <h2 className={styles.title}>
                             {globalize.translate('SubtitleOffset')}
                         </h2>
-                        <FocusRing focusRingClass="focus-ring">
+                        <FocusRing focusRingClass='focus-ring'>
                             <RacButton
                                 className={styles.closeButton}
                                 onPress={handleClose}
-                                aria-label="Close"
+                                aria-label='Close'
                             >
                                 <SvgIcon svg={IconSvgs.close} size={20} />
                             </RacButton>
@@ -107,39 +107,39 @@ export const SubtitleOffsetControl: FC<SubtitleOffsetControlProps> = ({ player, 
                         <div className={styles.sliderContainer}>
                             <span className={styles.label}>-30s</span>
                             <input
-                                type="range"
-                                min="-30"
-                                max="30"
-                                step="0.1"
+                                type='range'
+                                min='-30'
+                                max='30'
+                                step='0.1'
                                 value={offset}
                                 onChange={handleSliderChange}
                                 className={styles.slider}
-                                aria-label="Subtitle offset slider"
+                                aria-label='Subtitle offset slider'
                             />
                             <span className={styles.label}>+30s</span>
                         </div>
 
                         <div className={styles.inputContainer}>
-                            <label htmlFor="offset-input" className={styles.inputLabel}>
+                            <label htmlFor='offset-input' className={styles.inputLabel}>
                                 Value:
                             </label>
                             <div className={styles.inputWrapper}>
                                 <input
-                                    id="offset-input"
-                                    type="text"
+                                    id='offset-input'
+                                    type='text'
                                     value={inputValue}
                                     onChange={handleInputChange}
                                     onBlur={handleInputBlur}
                                     onKeyDown={handleInputKeyDown}
                                     className={styles.input}
-                                    aria-label="Subtitle offset input"
+                                    aria-label='Subtitle offset input'
                                 />
                                 <span className={styles.inputSuffix}>s</span>
                             </div>
                         </div>
 
                         <div className={styles.actions}>
-                            <FocusRing focusRingClass="focus-ring">
+                            <FocusRing focusRingClass='focus-ring'>
                                 <RacButton
                                     className={styles.resetButton}
                                     onPress={handleReset}

@@ -8,11 +8,7 @@ interface ThemeCssProps {
     dashboard?: boolean
 }
 
-const getThemeUrl = (id: string) => (
-    import.meta.env.DEV
-        ? `/src/themes/${id}/theme.scss`
-        : `themes/${id}/theme.css`
-);
+const getThemeUrl = (id: string) => `themes/${id}/theme.css`;;
 
 const DEFAULT_THEME_URL = getThemeUrl(getDefaultTheme().id);
 

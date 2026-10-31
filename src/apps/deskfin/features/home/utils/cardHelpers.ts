@@ -59,9 +59,9 @@ export const buildCardImageUrl = (
     }
 
     // Landscape cards prefer landscape imagery; portrait prefer primary
-    const ordered = variant === 'landscape'
-        ? candidates
-        : [
+    const ordered = variant === 'landscape' ?
+        candidates :
+        [
             ...candidates.filter(c => c.type === 'Primary'),
             ...candidates.filter(c => c.type !== 'Primary')
         ];
@@ -125,10 +125,10 @@ export const getProgressPct = (item: ItemDto): number => {
 
 export const getOverlayCount = (item: ItemDto): number | undefined => {
     const raw =
-        (item as any).ChildCount ??
-        (item as any).RecursiveItemCount ??
-        (item as any).SeriesCount ??
-        (item as any).EpisodeCount;
+        (item as any).ChildCount
+        ?? (item as any).RecursiveItemCount
+        ?? (item as any).SeriesCount
+        ?? (item as any).EpisodeCount;
 
     const n = typeof raw === 'number' ? raw : (typeof raw === 'string' ? parseInt(raw, 10) : 0);
     if (!Number.isFinite(n) || n <= 0) return undefined;

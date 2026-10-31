@@ -1,4 +1,4 @@
-import { LibraryTab } from 'types/libraryTab';
+import { LibraryTab } from 'apps/deskfin/types/libraryTab';
 
 interface LibraryViewDefinition {
     index: number

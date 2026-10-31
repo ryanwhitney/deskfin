@@ -5,11 +5,11 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Button, Menu, MenuItem, MenuTrigger, Popover } from 'react-aria-components';
 
 import { MetaView } from 'apps/deskfin/app/navigation/metaView';
-import { isLibraryPath } from 'utils/libraryPaths';
+import { isLibraryPath } from 'apps/deskfin/features/libraries/utils/path';
 import { appRouter } from 'components/router/appRouter';
 import { useApi } from 'hooks/useApi';
 import useCurrentTab from 'hooks/useCurrentTab';
-import { useUserViews } from 'hooks/api/useUserViews';
+import { useUserViews } from 'apps/deskfin/hooks/api/useUserViews';
 import { useWebConfig } from 'hooks/useWebConfig';
 import globalize from 'lib/globalize';
 
@@ -85,7 +85,7 @@ const UserViewNav = () => {
     return (
         <>
             <ToolbarLink
-                to="/home?tab=1"
+                to='/home?tab=1'
                 aria-label={globalize.translate(MetaView.Favorites.Name)}
                 isActive={isFavorites}
             >
@@ -130,7 +130,7 @@ const UserViewNav = () => {
                                     >
                                         <span className={ActionMenuStyles.text}>{view.Name}</span>
                                         {view.Id === currentUserView?.Id ? (
-                                            <span className={ActionMenuStyles.endAdornment} aria-hidden="true">•</span>
+                                            <span className={ActionMenuStyles.endAdornment} aria-hidden='true'>•</span>
                                         ) : null}
                                     </MenuItem>
                                 );

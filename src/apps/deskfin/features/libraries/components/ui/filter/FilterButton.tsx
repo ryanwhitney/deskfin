@@ -28,7 +28,7 @@ import FiltersVideoTypes from './FiltersVideoTypes';
 import FiltersYears from './FiltersYears';
 
 import { LibraryViewSettings, ParentId } from 'types/library';
-import { LibraryTab } from 'types/libraryTab';
+import { LibraryTab } from 'apps/deskfin/types/libraryTab';
 
 const Accordion = styled((props: AccordionProps) => (
     <MuiAccordion

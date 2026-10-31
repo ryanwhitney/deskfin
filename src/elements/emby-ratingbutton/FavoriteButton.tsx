@@ -5,8 +5,8 @@ import IconButton from '@mui/material/IconButton';
 import { ItemAction } from 'constants/itemAction';
 import { useToggleFavoriteMutation } from 'hooks/useFetchItems';
 import globalize from 'lib/globalize';
-import JfIcon from 'components/JfIcon';
-import { IconSvgs } from '../../assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 
 interface FavoriteButtonProps {
     className?: string;
@@ -55,7 +55,7 @@ const FavoriteButton: FC<FavoriteButtonProps> = ({
             onClick={onClick}
         >
             <span style={{ color: isFavorite ? '#ff4d6d' : undefined }}>
-                <JfIcon svg={IconSvgs.heart} />
+                <SvgIcon svg={IconSvgs.heart} />
             </span>
         </IconButton>
     );

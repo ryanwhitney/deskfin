@@ -9,7 +9,7 @@ import Events from 'utils/events';
 
 import recordingHelper from './recordinghelper';
 
-import template from './recordingfields.template.js';
+import template from './recordingfields.template.html';
 
 import 'elements/emby-button/emby-button';
 import 'elements/emby-button/paper-icon-button-light';

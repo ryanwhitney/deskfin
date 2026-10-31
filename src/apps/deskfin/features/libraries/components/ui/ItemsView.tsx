@@ -1,40 +1,40 @@
 import type { ItemSortBy } from '@jellyfin/sdk/lib/generated-client/models/item-sort-by';
-import type { BaseItemKind } from "@jellyfin/sdk/lib/generated-client/models/base-item-kind";
-import type { CollectionType } from "@jellyfin/sdk/lib/generated-client/models/collection-type";
-import React, { type FC, useCallback, useMemo } from "react";
+import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
+import type { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
+import React, { type FC, useCallback, useMemo } from 'react';
 
-import { useLocalStorage } from "apps/deskfin/hooks/useLocalStorage";
+import { useLocalStorage } from 'apps/deskfin/hooks/useLocalStorage';
 import {
     useGetItemsViewByType,
     useToggleFavoriteMutation,
-    useTogglePlayedMutation,
-} from "hooks/useFetchItems";
-import { useApi } from "hooks/useApi";
-import { getDefaultLibraryViewSettings, getSettingsKey } from "../../utils/settings";
-import Loading from "components/loading/LoadingComponent";
-import ItemsContainer from "elements/emby-itemscontainer/ItemsContainer";
-import NoItemsMessage from "components/common/NoItemsMessage";
-import { LibraryTab } from "types/libraryTab";
-import { type LibraryViewSettings, type ParentId } from "types/library";
-import { useItem } from "hooks/useItem";
-import type { ItemDto } from "types/base/models/item-dto";
+    useTogglePlayedMutation
+} from 'hooks/useFetchItems';
+import { useApi } from 'hooks/useApi';
+import { getDefaultLibraryViewSettings, getSettingsKey } from '../../utils/settings';
+import Loading from 'components/loading/LoadingComponent';
+import ItemsContainer from 'elements/emby-itemscontainer/ItemsContainer';
+import NoItemsMessage from 'components/common/NoItemsMessage';
+import { LibraryTab } from 'apps/deskfin/types/libraryTab';
+import { type LibraryViewSettings, type ParentId } from 'types/library';
+import { useItem } from 'hooks/useItem';
+import type { ItemDto } from 'types/base/models/item-dto';
 
-import { SortMenu } from "apps/deskfin/components/library/SortMenu";
-import { FilterMenu } from "apps/deskfin/components/library/FilterMenu";
+import { SortMenu } from 'apps/deskfin/components/library/SortMenu';
+import { FilterMenu } from 'apps/deskfin/components/library/FilterMenu';
 import {
     PlayAllButton,
     ShuffleButton,
-    NewCollectionButton,
-} from "apps/deskfin/components/library/ActionButtons";
-import styles from "apps/deskfin/components/library/LibraryToolbar.module.scss";
+    NewCollectionButton
+} from 'apps/deskfin/components/library/ActionButtons';
+import styles from 'apps/deskfin/components/library/LibraryToolbar.module.scss';
 
-import { MediaCard } from "apps/deskfin/components/media/MediaCard";
+import { MediaCard } from 'apps/deskfin/components/media/MediaCard';
 import {
     buildCardImageUrl,
     getCardMeta,
     getProgressPct,
-    getOverlayCount,
-} from "apps/deskfin/features/home/utils/cardHelpers";
+    getOverlayCount
+} from 'apps/deskfin/features/home/utils/cardHelpers';
 
 interface ItemsViewProps {
     viewType: LibraryTab;
@@ -59,7 +59,7 @@ const ItemsView: FC<ItemsViewProps> = ({
     isBtnFilterEnabled = true,
     isBtnNewCollectionEnabled = false,
     itemType,
-    noItemsMessage,
+    noItemsMessage
 }) => {
     const { user } = useApi();
     const [storedViewSettings, setLibraryViewSettings] =
@@ -77,7 +77,7 @@ const ItemsView: FC<ItemsViewProps> = ({
     const {
         isPending,
         data: itemsResult,
-        refetch,
+        refetch
     } = useGetItemsViewByType(
         viewType,
         parentId,
@@ -97,7 +97,7 @@ const ItemsView: FC<ItemsViewProps> = ({
         async (cardItem: ItemDto) => {
             await toggleFavorite({
                 itemId: cardItem.Id!,
-                isFavorite: !!cardItem.UserData?.IsFavorite,
+                isFavorite: !!cardItem.UserData?.IsFavorite
             });
             onAfterAction();
         },
@@ -108,7 +108,7 @@ const ItemsView: FC<ItemsViewProps> = ({
         async (cardItem: ItemDto) => {
             await togglePlayed({
                 itemId: cardItem.Id!,
-                isPlayed: !!cardItem.UserData?.Played,
+                isPlayed: !!cardItem.UserData?.Played
             });
             onAfterAction();
         },
@@ -124,9 +124,9 @@ const ItemsView: FC<ItemsViewProps> = ({
     // Determine card variant based on content type
     const getCardVariant = () => {
         if ([LibraryTab.Episodes].includes(viewType)) {
-            return "landscape";
+            return 'landscape';
         }
-        return "portrait";
+        return 'portrait';
     };
 
     const cardVariant = getCardVariant();
@@ -139,14 +139,14 @@ const ItemsView: FC<ItemsViewProps> = ({
                 <ItemsContainer
                     parentId={parentId}
                     reloadItems={refetch}
-                    queryKey={["ItemsViewByType"]}
+                    queryKey={['ItemsViewByType']}
                 >
                     <div className={styles.gridContainer}>
                         {/* Header: count on left, all actions on right */}
                         <div className={styles.gridHeader}>
                             <div className={styles.itemCount}>
-                                {totalRecordCount}{" "}
-                                {totalRecordCount === 1 ? "item" : "items"}
+                                {totalRecordCount}{' '}
+                                {totalRecordCount === 1 ? 'item' : 'items'}
                             </div>
                             <div className={styles.gridActions}>
                                 {isBtnPlayAllEnabled && items.length > 0 && (
@@ -160,18 +160,18 @@ const ItemsView: FC<ItemsViewProps> = ({
                                         }
                                     />
                                 )}
-                                {isBtnShuffleEnabled &&
-                                    totalRecordCount > 1 && (
-                                        <ShuffleButton
-                                            item={item}
-                                            items={items}
-                                            viewType={viewType}
-                                            hasFilters={hasFilters}
-                                            libraryViewSettings={
-                                                libraryViewSettings
-                                            }
-                                        />
-                                    )}
+                                {isBtnShuffleEnabled
+                                    && totalRecordCount > 1 && (
+                                    <ShuffleButton
+                                        item={item}
+                                        items={items}
+                                        viewType={viewType}
+                                        hasFilters={hasFilters}
+                                        libraryViewSettings={
+                                            libraryViewSettings
+                                        }
+                                    />
+                                )}
                                 {isBtnNewCollectionEnabled && (
                                     <NewCollectionButton />
                                 )}
@@ -218,7 +218,7 @@ const ItemsView: FC<ItemsViewProps> = ({
                                         user={user}
                                         variant={cardVariant}
                                         imageUrl={buildCardImageUrl(cardItem, {
-                                            variant: cardVariant,
+                                            variant: cardVariant
                                         })}
                                         title={getCardMeta(cardItem).title}
                                         titleHref={

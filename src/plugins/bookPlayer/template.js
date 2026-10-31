@@ -1,3 +1,0 @@
-export default `<div id="bookOsdMount"></div>
-<div id="bookPlayerContainer" class="bookPlayerContainer"></div>
-`;

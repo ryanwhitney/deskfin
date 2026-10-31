@@ -30,7 +30,7 @@ export const EpisodesSection: FC<EpisodesSectionProps> = ({
             <GridList
                 className={styles.episodeList}
                 aria-label={sectionTitle}
-                selectionMode="none"
+                selectionMode='none'
                 onAction={(key) => { window.location.href = `#/details?id=${String(key)}`; }}
             >
                 {filteredEpisodes.map(ep => (

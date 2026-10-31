@@ -67,7 +67,7 @@ export const PlaylistRow: FC<PlaylistRowProps> = ({
         <HomeRow
             title={title}
             items={items}
-            cardVariant="portrait"
+            cardVariant='portrait'
             linkHref={linkHref}
             linkText={linkText}
             user={user}

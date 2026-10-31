@@ -15,7 +15,7 @@ import '../formdialog.scss';
 import './recordingcreator.scss';
 import 'material-design-icons-iconfont';
 import '../../styles/flexstyles.scss';
-import template from './recordingeditor.template.js';
+import template from './recordingeditor.template.html';
 
 let currentDialog;
 let recordingDeleted = false;

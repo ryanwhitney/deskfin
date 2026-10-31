@@ -10,8 +10,8 @@ import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base
 
 import { useGetUserPlaylists } from '../hooks/useGetUserPlaylists';
 import { useAddToPlaylistMutation } from '../hooks/useAddToPlaylistMutation';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 import globalize from 'lib/globalize';
 
 import styles from './SelectPlaylistDialog.module.scss';
@@ -59,7 +59,7 @@ export const SelectPlaylistDialog: FC<SelectPlaylistDialogProps> = ({
         >
             <Modal className={styles.modal}>
                 <Dialog className={styles.dialog}>
-                    <Heading slot="title" className={styles.title}>
+                    <Heading slot='title' className={styles.title}>
                         {globalize.translate('AddToPlaylist')}
                     </Heading>
 
@@ -89,7 +89,7 @@ export const SelectPlaylistDialog: FC<SelectPlaylistDialogProps> = ({
                                 {playlists.map((playlist) => (
                                     <button
                                         key={playlist.Id}
-                                        type="button"
+                                        type='button'
                                         className={styles.item}
                                         onClick={() => void handleAddToPlaylist(playlist.Id!)}
                                         disabled={isAdding}

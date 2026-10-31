@@ -21,7 +21,7 @@ import '../../styles/flexstyles.scss';
 import './style.scss';
 import toast from '../toast/toast';
 import alert from '../alert';
-import template from './mediaLibraryCreator.template.js';
+import template from './mediaLibraryCreator.template.html';
 import { ServerConnections } from 'lib/jellyfin-apiclient';
 
 function onAddLibrary(e) {

@@ -3,7 +3,7 @@ import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base
 
 import globalize from 'lib/globalize';
 import { playbackManager } from 'components/playback/playbackmanager';
-import { Squircle } from '@squircle-js/react';
+import { Squircle } from 'apps/deskfin/components/squircle/Squircle';
 import datetime from 'scripts/datetime';
 import { buildCardImageUrl } from 'apps/deskfin/features/home/utils/cardHelpers';
 
@@ -44,13 +44,12 @@ export const ExtrasSection: FC<ExtrasSectionProps> = ({ extras }) => {
                     return (
                         <button
                             key={extra.Id}
-                            type="button"
+                            type='button'
                             className={styles.card}
                             onClick={() => handlePlay(extra)}
                         >
                             <Squircle
-                                cornerRadius={10}
-                                cornerSmoothing={1}
+                                radius={10}
                                 className={styles.thumbWrap}
                             >
                                 {imageUrl ? (
@@ -63,8 +62,8 @@ export const ExtrasSection: FC<ExtrasSectionProps> = ({ extras }) => {
                                     <div className={styles.thumbPlaceholder} />
                                 )}
                                 <div className={styles.playOverlay}>
-                                    <svg viewBox="0 0 24 24" className={styles.playIcon}>
-                                        <path d="M8 5v14l11-7z" fill="currentColor" />
+                                    <svg viewBox='0 0 24 24' className={styles.playIcon}>
+                                        <path d='M8 5v14l11-7z' fill='currentColor' />
                                     </svg>
                                 </div>
                             </Squircle>

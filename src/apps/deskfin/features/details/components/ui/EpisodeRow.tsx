@@ -2,16 +2,16 @@ import React, { type FC, useMemo, useState } from 'react';
 
 import { playbackManager } from 'components/playback/playbackmanager';
 import { ServerConnections } from 'lib/jellyfin-apiclient';
-import globalize from 'lib/globalize';
 import type { ItemDto } from 'types/base/models/item-dto';
 import { DetailsMoreMenu } from './DetailsMoreMenu';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 import { IconButton } from 'apps/deskfin/components/button/IconButton';
 import FavoriteButton from 'apps/deskfin/features/userData/components/FavoriteButton';
 import PlayedButton from 'apps/deskfin/features/userData/components/PlayedButton';
 
 import styles from './EpisodeRow.module.scss';
+import { translateOr } from 'apps/deskfin/utils/translate';
 
 interface EpisodeRowProps {
     episode: ItemDto;
@@ -21,7 +21,7 @@ interface EpisodeRowProps {
     className?: string;
 }
 
-const t = (key: string, fallback: string) => globalize.tryTranslate?.(key) ?? fallback;
+const t = translateOr;
 
 const buildEpisodeThumb = (episode: ItemDto, maxWidth = 640) => {
     const apiClient = ServerConnections.currentApiClient();
@@ -39,9 +39,9 @@ const buildEpisodeThumb = (episode: ItemDto, maxWidth = 640) => {
 const formatEpisodeLabel = (episode: ItemDto) => {
     const s = (episode as any).ParentIndexNumber as number | undefined;
     const e = (episode as any).IndexNumber as number | undefined;
-    const prefix = (s != null || e != null)
-        ? `S${s ?? '?'}:E${e ?? '?'}`
-        : '';
+    const prefix = (s != null || e != null) ?
+        `S${s ?? '?'}:E${e ?? '?'}` :
+        '';
     const name = episode.Name || '';
     return prefix ? `${prefix}: ${name}` : name;
 };

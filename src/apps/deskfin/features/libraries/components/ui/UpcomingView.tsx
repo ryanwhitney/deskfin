@@ -43,7 +43,7 @@ const UpcomingView: FC<LibraryViewProps> = ({ parentId }) => {
                 <Section key={group.name} title={group.name}>
                     <ItemGrid
                         items={group.items}
-                        variant="landscape"
+                        variant='landscape'
                         onToggleFavorite={onToggleFavorite}
                         onTogglePlayed={onTogglePlayed}
                         onAfterAction={onAfterAction}

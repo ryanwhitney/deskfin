@@ -6,7 +6,8 @@ import { ItemSortBy } from '@jellyfin/sdk/lib/generated-client/models/item-sort-
 import { SortOrder } from '@jellyfin/sdk/lib/generated-client/models/sort-order';
 import React, { type FC, useCallback } from 'react';
 
-import { useGetItems, useToggleFavoriteMutation, useTogglePlayedMutation } from 'hooks/useFetchItems';
+import { useToggleFavoriteMutation, useTogglePlayedMutation } from 'hooks/useFetchItems';
+import { useGetItems } from 'apps/deskfin/hooks/api/useGetItems';
 import Loading from 'components/loading/LoadingComponent';
 import type { ParentId } from 'types/library';
 import type { ItemDto } from 'types/base/models/item-dto';

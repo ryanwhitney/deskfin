@@ -1,13 +1,13 @@
 import React, { type FC, useCallback } from 'react';
-import { Button, DialogTrigger, Menu, MenuItem, MenuTrigger, Popover, Separator } from 'react-aria-components';
+import { Button, Menu, MenuItem, MenuTrigger, Popover, Separator } from 'react-aria-components';
 import { ImageType } from '@jellyfin/sdk/lib/generated-client/models/image-type';
 
 import globalize from 'lib/globalize';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 import type { LibraryViewSettings } from 'types/library';
 import { ViewMode } from 'types/library';
-import { LibraryTab } from 'types/libraryTab';
+import { LibraryTab } from 'apps/deskfin/types/libraryTab';
 
 import styles from './LibraryToolbar.module.scss';
 
@@ -60,8 +60,8 @@ export const ViewSettingsMenu: FC<ViewSettingsMenuProps> = ({
             >
                 <SvgIcon svg={IconSvgs.ellipsis} size={18} />
             </Button>
-            <Popover className={styles.popover} placement="bottom end" offset={4}>
-                <Menu className={styles.menu} aria-label="View settings">
+            <Popover className={styles.popover} placement='bottom end' offset={4}>
+                <Menu className={styles.menu} aria-label='View settings'>
                     {/* View mode */}
                     <div className={styles.sectionHeader}>View</div>
                     <MenuItem

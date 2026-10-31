@@ -1,13 +1,12 @@
-import { CollectionType } from "@jellyfin/sdk/lib/generated-client/models/collection-type";
-import { BaseItemKind } from "@jellyfin/sdk/lib/generated-client/models/base-item-kind";
-import React from "react";
-import { Navigate, useSearchParams } from "react-router-dom";
+import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
+import React from 'react';
+import { Navigate, useSearchParams } from 'react-router-dom';
 
-import Page from "components/Page";
-import globalize from "lib/globalize";
-import { ServerConnections } from "lib/jellyfin-apiclient";
-import { useItem } from "hooks/useItem";
-import { PlaylistView } from "apps/deskfin/features/watchlist/components/PlaylistView";
+import Page from 'components/Page';
+import { ServerConnections } from 'lib/jellyfin-apiclient';
+import { useItem } from 'hooks/useItem';
+import { PlaylistView } from 'apps/deskfin/features/watchlist/components/PlaylistView';
+import { translateOr } from 'apps/deskfin/utils/translate';
 
 /**
  * Compatibility route for legacy `#/list?parentId=...`.
@@ -16,11 +15,11 @@ import { PlaylistView } from "apps/deskfin/features/watchlist/components/Playlis
  */
 export default function ListRoute() {
     const [params] = useSearchParams();
-    const playlistId = params.get("id") || "";
-    const parentId = params.get("topParentId") || params.get("parentId") || "";
-    const genreId = params.get("genreId") || "";
-    const musicGenreId = params.get("musicGenreId") || "";
-    const studioId = params.get("studioId") || "";
+    const playlistId = params.get('id') || '';
+    const parentId = params.get('topParentId') || params.get('parentId') || '';
+    const genreId = params.get('genreId') || '';
+    const musicGenreId = params.get('musicGenreId') || '';
+    const studioId = params.get('studioId') || '';
 
     // If we have a playlist ID, show the playlist view
     if (playlistId) {
@@ -35,9 +34,8 @@ export default function ListRoute() {
 
     if (!parentId && !hasSpecialFilter) {
         return (
-            <Page id="listPage" className="mainAnimatedPage libraryPage">
-                {globalize.tryTranslate?.("MessageNoItemsAvailable") ??
-                    "No items available"}
+            <Page id='listPage' className='mainAnimatedPage libraryPage'>
+                {translateOr('MessageNoItemsAvailable', 'No items available')}
             </Page>
         );
     }
@@ -45,24 +43,24 @@ export default function ListRoute() {
     // For genre/studio links, redirect to legacy list which handles them properly
     if (hasSpecialFilter) {
         const serverId =
-            params.get("serverId") ||
-            ServerConnections.currentApiClient()?.serverId() ||
-            "";
-        const serverIdParam = serverId
-            ? `&serverId=${encodeURIComponent(serverId)}`
-            : "";
-        const parentIdParam = parentId
-            ? `&parentId=${encodeURIComponent(parentId)}`
-            : "";
-        const genreParam = genreId
-            ? `&genreId=${encodeURIComponent(genreId)}`
-            : "";
-        const musicGenreParam = musicGenreId
-            ? `&musicGenreId=${encodeURIComponent(musicGenreId)}`
-            : "";
-        const studioParam = studioId
-            ? `&studioId=${encodeURIComponent(studioId)}`
-            : "";
+            params.get('serverId')
+            || ServerConnections.currentApiClient()?.serverId()
+            || '';
+        const serverIdParam = serverId ?
+            `&serverId=${encodeURIComponent(serverId)}` :
+            '';
+        const parentIdParam = parentId ?
+            `&parentId=${encodeURIComponent(parentId)}` :
+            '';
+        const genreParam = genreId ?
+            `&genreId=${encodeURIComponent(genreId)}` :
+            '';
+        const musicGenreParam = musicGenreId ?
+            `&musicGenreId=${encodeURIComponent(musicGenreId)}` :
+            '';
+        const studioParam = studioId ?
+            `&studioId=${encodeURIComponent(studioId)}` :
+            '';
 
         // Build URL without leading &
         const queryParams = [
@@ -70,18 +68,18 @@ export default function ListRoute() {
             genreParam,
             musicGenreParam,
             studioParam,
-            serverIdParam,
+            serverIdParam
         ]
             .filter(Boolean)
-            .join("")
-            .replace(/^&/, "");
+            .join('')
+            .replace(/^&/, '');
 
         return <Navigate replace to={`/legacylist?${queryParams}`} />;
     }
 
     if (isLoading) {
         return (
-            <Page id="listPage" className="mainAnimatedPage libraryPage"></Page>
+            <Page id='listPage' className='mainAnimatedPage libraryPage'></Page>
         );
     }
 
@@ -103,7 +101,7 @@ export default function ListRoute() {
         return <Navigate replace to={`/books?topParentId=${parentId}`} />;
     }
     if (collectionType === CollectionType.Livetv) {
-        return <Navigate replace to={"/livetv"} />;
+        return <Navigate replace to={'/livetv'} />;
     }
     if (collectionType === CollectionType.Boxsets) {
         return (
@@ -117,9 +115,9 @@ export default function ListRoute() {
     // Unknown / legacy library type: fall back to the legacy list ViewManager route.
     // (We can add a generic React "folder browser" later once we inventory remaining collection types.)
     const serverId = ServerConnections.currentApiClient()?.serverId();
-    const serverIdParam = serverId
-        ? `&serverId=${encodeURIComponent(serverId)}`
-        : "";
+    const serverIdParam = serverId ?
+        `&serverId=${encodeURIComponent(serverId)}` :
+        '';
     return (
         <Navigate
             replace

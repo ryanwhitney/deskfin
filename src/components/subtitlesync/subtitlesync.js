@@ -1,7 +1,7 @@
 
 import { playbackManager } from '../playback/playbackmanager';
 import layoutManager from '../layoutManager';
-import template from './subtitlesync.template.js';
+import template from './subtitlesync.template.html';
 import './subtitlesync.scss';
 
 let player;

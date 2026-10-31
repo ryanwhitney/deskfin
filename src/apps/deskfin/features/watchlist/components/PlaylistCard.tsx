@@ -1,6 +1,6 @@
 import React, { type FC, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Squircle } from '@squircle-js/react';
+import { Squircle } from 'apps/deskfin/components/squircle/Squircle';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getLibraryApi } from '@jellyfin/sdk/lib/utils/api/library-api';
 import { ItemFields } from '@jellyfin/sdk/lib/generated-client/models/item-fields';
@@ -17,14 +17,14 @@ import {
     Modal,
     Heading
 } from 'react-aria-components';
-import { FocusRing } from '@react-aria/focus';
+import { FocusRing } from 'react-aria';
 
 import { useApi } from 'hooks/useApi';
 import { useToggleFavoriteMutation } from 'hooks/useFetchItems';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
 import { buildCardImageUrl } from 'apps/deskfin/features/home/utils/cardHelpers';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 import { ActionMenuStyles } from 'apps/deskfin/components/menu/ActionMenu';
 import { useDeletePlaylistMutation } from '../hooks/useDeletePlaylistMutation';
 import { ManagePlaylistDialog } from './ManagePlaylistDialog';
@@ -154,13 +154,11 @@ export const PlaylistCard: FC<PlaylistCardProps> = ({ playlist, serverId, onDele
     return (
         <div className={styles.card} onClick={handleCardClick}>
             <Squircle
-                cornerRadius={16}
-                cornerSmoothing={1}
+                radius={16}
                 className={styles.thumbBorder}
             >
                 <Squircle
-                    cornerRadius={14}
-                    cornerSmoothing={1}
+                    radius={14}
                     className={styles.thumbWrap}
                 >
                     <div className={styles.thumb}>

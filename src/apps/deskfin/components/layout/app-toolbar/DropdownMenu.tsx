@@ -29,9 +29,9 @@ const DropdownMenu = ({
         if (!anchorEl || !open) return;
         const rect = anchorEl.getBoundingClientRect();
         const top = rect.bottom + window.scrollY + 4;
-        const left = align === 'right'
-            ? rect.right + window.scrollX
-            : rect.left + window.scrollX;
+        const left = align === 'right' ?
+            rect.right + window.scrollX :
+            rect.left + window.scrollX;
         setStyle({
             position: 'absolute',
             top,

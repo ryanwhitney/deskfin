@@ -6,8 +6,8 @@ import IconButton from '@mui/material/IconButton';
 import { ItemAction } from 'constants/itemAction';
 import globalize from 'lib/globalize';
 import { useTogglePlayedMutation } from 'hooks/useFetchItems';
-import JfIcon from 'components/JfIcon';
-import { IconSvgs } from '../../assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 
 interface PlayedButtonProps {
     className?: string;
@@ -69,7 +69,7 @@ const PlayedButton: FC<PlayedButtonProps> = ({
             onClick={onClick}
         >
             <span style={{ color: isPlayed ? '#4ade80' : undefined }}>
-                <JfIcon svg={IconSvgs.checkmark} />
+                <SvgIcon svg={IconSvgs.checkmark} />
             </span>
         </IconButton>
     );

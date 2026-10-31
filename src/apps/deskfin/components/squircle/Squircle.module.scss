@@ -1,0 +1,18 @@
+// Squircle corners. `--squircle-radius` is the nominal (Figma-style) corner radius.
+//
+// Native: Figma's fully smoothed squircle (cornerSmoothing 1) starts its curve at 2× the radius and passes
+// 0.2929× the radius in from each edge at the diagonal. superellipse(2.13) with a 2× border-radius matches
+// both, since a superellipse(K) corner sits R·(1 − 2^(−1/2^K)) in from each edge.
+//
+// Fallback (no corner-shape yet, e.g. Safari/Firefox stable): plain rounding with the same diagonal depth,
+// replaced by an exact clip-path once Squircle.tsx has measured the element.
+.squircle {
+    border-radius: var(--squircle-radius);
+    // Clip children to the corners too, as the clip-path fallback (and squircle-js before it) does.
+    overflow: clip;
+
+    @supports (corner-shape: superellipse(2)) {
+        border-radius: calc(var(--squircle-radius) * 2);
+        corner-shape: superellipse(2.13);
+    }
+}

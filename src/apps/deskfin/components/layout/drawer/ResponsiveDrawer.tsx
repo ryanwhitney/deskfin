@@ -40,16 +40,15 @@ export const ResponsiveDrawer: FC<PropsWithChildren<ResponsiveDrawerProps>> = ({
             <div
                 className={`${styles.backdrop} ${open ? styles.backdropOpen : ''}`}
                 onClick={onClose}
-                aria-hidden="true"
+                aria-hidden='true'
             />
             <aside className={`${styles.panel} ${open ? styles.panelOpen : ''}`}>
                 {/* Close drawer when content is clicked (match previous behavior) */}
-                <div onClick={onClose} onKeyDown={onClose} role="presentation">
+                <div onClick={onClose} onKeyDown={onClose} role='presentation'>
                     {children}
                 </div>
             </aside>
         </>
     );
 };
-
 

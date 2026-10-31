@@ -5,7 +5,7 @@ import { formatLibraryTitle } from 'apps/deskfin/utils/titleUtils';
 import Page from 'components/Page';
 import PageTabContent from '../components/ui/PageTabContent';
 import { LibraryViewMenu } from 'apps/deskfin/components/library/LibraryViewMenu';
-import { LibraryTab } from 'types/libraryTab';
+import { LibraryTab } from 'apps/deskfin/types/libraryTab';
 import { LibraryTabContent } from 'types/libraryTabContent';
 
 import layoutStyles from '../components/ui/PageLayout.module.scss';

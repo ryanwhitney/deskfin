@@ -1,18 +1,18 @@
-import React, { type FC, useState, useEffect, useCallback } from "react";
+import React, { type FC, useState, useEffect, useCallback } from 'react';
 import {
     Button as RacButton,
     MenuTrigger,
-    Popover,
-} from "react-aria-components";
-import { FocusRing } from "@react-aria/focus";
+    Popover
+} from 'react-aria-components';
+import { FocusRing } from 'react-aria';
 
-import { playbackManager } from "components/playback/playbackmanager";
-import Events from "utils/events";
-import { IconSvgs } from "assets/icons";
-import SvgIcon from "components/SvgIcon";
+import { playbackManager } from 'components/playback/playbackmanager';
+import Events from 'utils/events';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
 
-import { useBlurOnMousePress } from "./useBlurOnMousePress";
-import styles from "./VolumeControl.module.scss";
+import { useBlurOnMousePress } from './useBlurOnMousePress';
+import styles from './VolumeControl.module.scss';
 
 interface VolumeControlProps {
     player: any;
@@ -38,12 +38,12 @@ export const VolumeControl: FC<VolumeControlProps> = ({ player }) => {
         const onVolumeChange = () => updateVolume();
 
         if (player) {
-            Events.on(player, "volumechange", onVolumeChange);
+            Events.on(player, 'volumechange', onVolumeChange);
         }
 
         return () => {
             if (player) {
-                Events.off(player, "volumechange", onVolumeChange);
+                Events.off(player, 'volumechange', onVolumeChange);
             }
         };
     }, [player, updateVolume]);
@@ -79,28 +79,28 @@ export const VolumeControl: FC<VolumeControlProps> = ({ player }) => {
 
     return (
         <MenuTrigger isOpen={isOpen} onOpenChange={(open) => { setIsOpen(open); if (!open) blurOnMenuClose(); }}>
-            <FocusRing focusRingClass="focus-ring">
+            <FocusRing focusRingClass='focus-ring'>
                 <RacButton
                     ref={buttonRef}
                     className={styles.iconButton}
                     onPress={handleToggleMute}
-                    aria-label={isMuted ? "Unmute" : "Mute"}
+                    aria-label={isMuted ? 'Unmute' : 'Mute'}
                 >
                     {getVolumeIcon()}
                 </RacButton>
             </FocusRing>
 
-            <Popover className={styles.popover} placement="top" offset={8}>
+            <Popover className={styles.popover} placement='top' offset={8}>
                 <div className={styles.sliderContainer}>
                     <input
-                        type="range"
-                        min="0"
-                        max="10000"
-                        step="1"
+                        type='range'
+                        min='0'
+                        max='10000'
+                        step='1'
                         value={volume}
                         onChange={handleVolumeChange}
                         className={styles.slider}
-                        aria-label="Volume"
+                        aria-label='Volume'
                     />
                     <div className={styles.volumeLabel}>{volume / 100}%</div>
                 </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Squircle } from '@squircle-js/react';
+import { Squircle } from 'apps/deskfin/components/squircle/Squircle';
 import styles from './ItemCard.module.scss';
 
 type Classy = { className?: string };
@@ -42,8 +42,8 @@ export function ItemCard({
 }: Readonly<ItemCardProps>) {
     // Convert title to string for alt text
     const altText = typeof title === 'string' ? title :
-                    React.isValidElement(title) ? '' :
-                    String(title ?? '');
+        React.isValidElement(title) ? '' :
+            String(title ?? '');
 
     return (
         <a
@@ -52,8 +52,7 @@ export function ItemCard({
             onClick={onClick}
         >
             <Squircle
-                cornerRadius={16}
-                cornerSmoothing={1}
+                radius={16}
                 className={cx(styles.image, classes?.image)}
                 style={{ backgroundColor: imageUrl ? undefined : imageFallback }}
             >
@@ -72,5 +71,4 @@ export function ItemCard({
         </a>
     );
 }
-
 

@@ -5,8 +5,6 @@
 export enum AppType {
     /** The admin dashboard app. */
     Dashboard = 'dashboard',
-    /** The custom deskfin app. */
-    Deskfin = 'deskfin',
     /** The legacy app. */
     Legacy = 'legacy',
     /** The modern React app. */

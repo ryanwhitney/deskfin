@@ -1,31 +1,31 @@
-import { BaseItemKind } from "@jellyfin/sdk/lib/generated-client/models/base-item-kind";
-import React, { FC } from "react";
-import useCurrentTab from "hooks/useCurrentTab";
-import { useTitle } from "apps/deskfin/hooks/useTitle";
-import { formatLibraryTitle } from "apps/deskfin/utils/titleUtils";
-import Page from "components/Page";
-import PageTabContent from "../components/ui/PageTabContent";
-import { LibraryViewMenu } from "apps/deskfin/components/library/LibraryViewMenu";
-import { LibraryTab } from "types/libraryTab";
-import { CollectionType } from "@jellyfin/sdk/lib/generated-client/models/collection-type";
-import { LibraryTabContent } from "types/libraryTabContent";
+import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
+import React, { FC } from 'react';
+import useCurrentTab from 'hooks/useCurrentTab';
+import { useTitle } from 'apps/deskfin/hooks/useTitle';
+import { formatLibraryTitle } from 'apps/deskfin/utils/titleUtils';
+import Page from 'components/Page';
+import PageTabContent from '../components/ui/PageTabContent';
+import { LibraryViewMenu } from 'apps/deskfin/components/library/LibraryViewMenu';
+import { LibraryTab } from 'apps/deskfin/types/libraryTab';
+import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
+import { LibraryTabContent } from 'types/libraryTabContent';
 
-import layoutStyles from "../components/ui/PageLayout.module.scss";
-import globalize from "lib/globalize";
+import layoutStyles from '../components/ui/PageLayout.module.scss';
+import globalize from 'lib/globalize';
 import { type LibraryTabMapping, TvShowSuggestionsSectionsView } from '../types/sectionsViews';
 
 const episodesTabContent: LibraryTabContent = {
     viewType: LibraryTab.Episodes,
     itemType: [BaseItemKind.Episode],
     collectionType: CollectionType.Tvshows,
-    noItemsMessage: "MessageNoEpisodesFound",
+    noItemsMessage: 'MessageNoEpisodesFound'
 };
 
 const seriesTabContent: LibraryTabContent = {
     viewType: LibraryTab.Series,
     itemType: [BaseItemKind.Series],
     collectionType: CollectionType.Tvshows,
-    isBtnShuffleEnabled: true,
+    isBtnShuffleEnabled: true
 };
 
 const networksTabContent: LibraryTabContent = {
@@ -33,23 +33,23 @@ const networksTabContent: LibraryTabContent = {
     itemType: [BaseItemKind.Series],
     isBtnFilterEnabled: false,
     isBtnGridListEnabled: false,
-    isBtnSortEnabled: false,
+    isBtnSortEnabled: false
 };
 
 const upcomingTabContent: LibraryTabContent = {
-    viewType: LibraryTab.Upcoming,
+    viewType: LibraryTab.Upcoming
 };
 
 const suggestionsTabContent: LibraryTabContent = {
     viewType: LibraryTab.Suggestions,
     collectionType: CollectionType.Tvshows,
-    sectionsView: TvShowSuggestionsSectionsView,
+    sectionsView: TvShowSuggestionsSectionsView
 };
 
 const genresTabContent: LibraryTabContent = {
     viewType: LibraryTab.Genres,
     itemType: [BaseItemKind.Series],
-    collectionType: CollectionType.Tvshows,
+    collectionType: CollectionType.Tvshows
 };
 
 const tvShowsTabMapping: LibraryTabMapping = {
@@ -58,7 +58,7 @@ const tvShowsTabMapping: LibraryTabMapping = {
     2: upcomingTabContent,
     3: genresTabContent,
     4: networksTabContent,
-    5: episodesTabContent,
+    5: episodesTabContent
 };
 
 const Shows: FC = () => {
@@ -71,29 +71,29 @@ const Shows: FC = () => {
             case 0:
                 return undefined; // Default "TV Shows" tab
             case 1:
-                return "Suggestions";
+                return 'Suggestions';
             case 2:
-                return "Upcoming";
+                return 'Upcoming';
             case 3:
-                return "Genres";
+                return 'Genres';
             case 4:
-                return "Networks";
+                return 'Networks';
             case 5:
-                return "Episodes";
+                return 'Episodes';
             default:
                 return undefined;
         }
     };
 
-    useTitle(formatLibraryTitle("TV Shows", getTitleForTab()));
+    useTitle(formatLibraryTitle('TV Shows', getTitleForTab()));
 
     return (
         <Page
-            id="tvshowsPage"
-            className="mainAnimatedPage libraryPage backdropPage collectionEditorPage pageWithAbsoluteTabs withTabs"
+            id='tvshowsPage'
+            className='mainAnimatedPage libraryPage backdropPage collectionEditorPage pageWithAbsoluteTabs withTabs'
             backDropType={[BaseItemKind.Series]}
         >
-            <h1>{globalize.translate("Shows")}</h1>
+            <h1>{globalize.translate('Shows')}</h1>
             <div className={layoutStyles.toolbar}>
                 <LibraryViewMenu />
             </div>

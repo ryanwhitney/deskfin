@@ -19,8 +19,8 @@ import {
 import NoItemsMessage from 'components/common/NoItemsMessage';
 import { useTitle } from 'apps/deskfin/hooks/useTitle';
 import { formatLibraryTitle } from 'apps/deskfin/utils/titleUtils';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 import globalize from 'lib/globalize';
 
 import { ManagePlaylistDialog } from './ManagePlaylistDialog';

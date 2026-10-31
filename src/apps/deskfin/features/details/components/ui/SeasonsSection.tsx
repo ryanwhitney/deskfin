@@ -19,9 +19,9 @@ export const SeasonsSection: FC<SeasonsSectionProps> = ({ seasons }) => {
                 {seasons.map(s => {
                     const sImg = buildImageUrl(s, 'Primary', 400);
                     const sCountRaw = (s as any).ChildCount ?? (s as any).EpisodeCount;
-                    const sCount = typeof sCountRaw === 'number'
-                        ? sCountRaw
-                        : (typeof sCountRaw === 'string' ? parseInt(sCountRaw, 10) : 0);
+                    const sCount = typeof sCountRaw === 'number' ?
+                        sCountRaw :
+                        (typeof sCountRaw === 'string' ? parseInt(sCountRaw, 10) : 0);
 
                     return (
                         <SeasonCard

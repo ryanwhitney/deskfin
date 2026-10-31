@@ -8,7 +8,7 @@ import globalize from 'lib/globalize';
 import { playbackManager } from 'components/playback/playbackmanager';
 import { getFiltersQuery } from 'utils/items';
 import type { LibraryViewSettings } from 'types/library';
-import { LibraryTab } from 'types/libraryTab';
+import { LibraryTab } from 'apps/deskfin/types/libraryTab';
 import type { ItemDto } from 'types/base/models/item-dto';
 
 import styles from './GridActionButton.module.scss';

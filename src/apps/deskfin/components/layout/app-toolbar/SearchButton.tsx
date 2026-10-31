@@ -6,8 +6,8 @@ import {
     useSearchParams
 } from 'react-router-dom';
 import globalize from 'lib/globalize';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 import { ToolbarIconLink } from 'apps/deskfin/components/toolbar/ToolbarIconLink';
 
 const getUrlParams = (searchParams: URLSearchParams) => {

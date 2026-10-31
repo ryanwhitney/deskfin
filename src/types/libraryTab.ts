@@ -24,7 +24,6 @@ export enum LibraryTab {
     Photos = 'photos',
     Videos = 'videos',
     Books = 'books',
-    Years = 'years',
     MusicVideos = 'musicvideos',
     Folders = 'folders',
     Mixed = 'mixed'

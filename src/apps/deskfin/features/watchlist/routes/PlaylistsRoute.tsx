@@ -9,8 +9,8 @@ import Page from 'components/Page';
 import Loading from 'components/loading/LoadingComponent';
 import NoItemsMessage from 'components/common/NoItemsMessage';
 import globalize from 'lib/globalize';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 import { useTitle } from 'apps/deskfin/hooks/useTitle';
 
 import toolbarStyles from 'apps/deskfin/components/library/LibraryToolbar.module.scss';

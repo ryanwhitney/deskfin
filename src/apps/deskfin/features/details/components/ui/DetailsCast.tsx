@@ -1,7 +1,7 @@
 import React, { type FC } from 'react';
 import { ServerConnections } from 'lib/jellyfin-apiclient';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 import styles from '../../routes/DetailsRoute.module.scss';
 
 interface Person {

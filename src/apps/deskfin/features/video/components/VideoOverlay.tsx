@@ -1,13 +1,13 @@
 import React, { type FC, useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button as RacButton } from 'react-aria-components';
-import { FocusRing } from '@react-aria/focus';
+import { FocusRing } from 'react-aria';
 
 import { playbackManager } from 'components/playback/playbackmanager';
 import { EventType } from 'constants/eventType';
 import Events from 'utils/events';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 
 import { useBlurOnMousePress } from './playback/useBlurOnMousePress';
 import styles from './VideoOverlay.module.scss';
@@ -156,18 +156,18 @@ export const VideoOverlay: FC = () => {
     return (
         <>
             <button
-                type="button"
+                type='button'
                 className={styles.clickArea}
                 onClick={handleVideoClick}
-                aria-label="Toggle play/pause"
+                aria-label='Toggle play/pause'
             />
             <div ref={overlayRef} className={`${styles.overlay} ${isVisible ? styles.visible : ''}`}>
-                <FocusRing focusRingClass="focus-ring">
+                <FocusRing focusRingClass='focus-ring'>
                     <RacButton
                         ref={backButtonBlur.ref}
                         className={styles.backButton}
                         onPress={handleBack}
-                        aria-label="Go back"
+                        aria-label='Go back'
                     >
                         <span className={styles.backIcon}>
                             <SvgIcon svg={IconSvgs.chevronDown} size={20} />

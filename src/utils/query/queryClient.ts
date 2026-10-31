@@ -8,10 +8,10 @@ import { get, set, del } from 'idb-keyval';
 const HTTP_UNAUTHORIZED = 401;
 /** Maximum garbage collection time. Set to 24 hours for persistence. */
 const MAX_GC_TIME = 24 * 60 * 60 * 1000;
-/** Maximum stale time. Deskfin keeps data fresh for 30s. */
-const MAX_STALENESS = 30 * 1000;
-/** Maximum number of retries for failed queries. Deskfin uses 1 to fail faster. */
-const MAX_RETRIES = 1;
+/** Maximum stale time. Set to 1 minute for query reuse. */
+const MAX_STALENESS = 60 * 1000;
+/** Maximum number of retries for failed queries. */
+const MAX_RETRIES = 2;
 
 // NOTE: queryClient needs to be defined before the QueryCache so that it can be used in the onError callback.
 // eslint-disable-next-line prefer-const
@@ -48,7 +48,6 @@ queryClient = new QueryClient({
             gcTime: MAX_GC_TIME,
             networkMode: 'always', // network connection is not required if running on localhost
             staleTime: MAX_STALENESS,
-            refetchOnWindowFocus: false, // Don't refetch when window regains focus (deskfin)
             retry: (failureCount, error) => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const requestError = error as any;

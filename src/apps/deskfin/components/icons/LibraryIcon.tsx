@@ -3,8 +3,8 @@ import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collec
 import React, { FC } from 'react';
 
 import { MetaView } from 'apps/deskfin/app/navigation/metaView';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 
 interface LibraryIconProps {
     item: BaseItemDto

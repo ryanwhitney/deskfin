@@ -1,16 +1,5 @@
 import React, { type FC, useState } from 'react';
-import {
-    Dialog,
-    DialogTrigger,
-    Modal,
-    ModalOverlay,
-    Heading,
-    Button,
-    Label,
-    TextField,
-    Input,
-    Checkbox
-} from 'react-aria-components';
+import { Dialog, Modal, ModalOverlay, Heading, Button, Label, TextField, Input, Checkbox } from 'react-aria-components';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
 
 import { useCreatePlaylistMutation } from '../hooks/useCreatePlaylistMutation';
@@ -76,7 +65,7 @@ export const CreateWatchlistDialog: FC<CreateWatchlistDialogProps> = ({
                 <Dialog className={styles.dialog}>
                     {({ close }) => (
                         <form onSubmit={handleSubmit}>
-                            <Heading slot="title" className={styles.title}>
+                            <Heading slot='title' className={styles.title}>
                                 Create New List
                             </Heading>
 
@@ -91,7 +80,7 @@ export const CreateWatchlistDialog: FC<CreateWatchlistDialogProps> = ({
                                         className={styles.input}
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
-                                        placeholder="Enter list name"
+                                        placeholder='Enter list name'
                                     />
                                 </TextField>
 
@@ -109,7 +98,7 @@ export const CreateWatchlistDialog: FC<CreateWatchlistDialogProps> = ({
 
                             <div className={styles.actions}>
                                 <Button
-                                    type="button"
+                                    type='button'
                                     className={styles.button}
                                     onPress={handleCancel}
                                     isDisabled={isPending}
@@ -117,7 +106,7 @@ export const CreateWatchlistDialog: FC<CreateWatchlistDialogProps> = ({
                                     {globalize.translate('Cancel')}
                                 </Button>
                                 <Button
-                                    type="submit"
+                                    type='submit'
                                     className={[styles.button, styles.buttonPrimary].join(' ')}
                                     isDisabled={isPending || !name.trim()}
                                 >

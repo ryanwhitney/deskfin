@@ -130,7 +130,7 @@ export const ManagePlaylistDialog: FC<ManagePlaylistDialogProps> = ({
                         <>
                             {showDeleteConfirm ? (
                                 <>
-                                    <Heading slot="title" className={styles.title}>
+                                    <Heading slot='title' className={styles.title}>
                                         Delete List?
                                     </Heading>
 
@@ -142,7 +142,7 @@ export const ManagePlaylistDialog: FC<ManagePlaylistDialogProps> = ({
 
                                     <div className={styles.actions}>
                                         <Button
-                                            type="button"
+                                            type='button'
                                             className={styles.button}
                                             onPress={() => setShowDeleteConfirm(false)}
                                             isDisabled={isPending}
@@ -150,7 +150,7 @@ export const ManagePlaylistDialog: FC<ManagePlaylistDialogProps> = ({
                                             {globalize.translate('Cancel')}
                                         </Button>
                                         <Button
-                                            type="button"
+                                            type='button'
                                             className={[styles.button, styles.buttonDanger].join(' ')}
                                             onPress={() => void handleDelete()}
                                             isDisabled={isPending}
@@ -161,7 +161,7 @@ export const ManagePlaylistDialog: FC<ManagePlaylistDialogProps> = ({
                                 </>
                             ) : (
                                 <form onSubmit={handleSubmit}>
-                                    <Heading slot="title" className={styles.title}>
+                                    <Heading slot='title' className={styles.title}>
                                         Manage List
                                     </Heading>
 
@@ -176,7 +176,7 @@ export const ManagePlaylistDialog: FC<ManagePlaylistDialogProps> = ({
                                                 className={styles.input}
                                                 value={name}
                                                 onChange={(e) => setName(e.target.value)}
-                                                placeholder="Enter list name"
+                                                placeholder='Enter list name'
                                             />
                                         </TextField>
 
@@ -194,7 +194,7 @@ export const ManagePlaylistDialog: FC<ManagePlaylistDialogProps> = ({
 
                                     <div className={styles.actionsSpread}>
                                         <Button
-                                            type="button"
+                                            type='button'
                                             className={[styles.button, styles.buttonDangerOutline].join(' ')}
                                             onPress={() => setShowDeleteConfirm(true)}
                                             isDisabled={isPending}
@@ -203,7 +203,7 @@ export const ManagePlaylistDialog: FC<ManagePlaylistDialogProps> = ({
                                         </Button>
                                         <div className={styles.actionsRight}>
                                             <Button
-                                                type="button"
+                                                type='button'
                                                 className={styles.button}
                                                 onPress={handleCancel}
                                                 isDisabled={isPending}
@@ -211,7 +211,7 @@ export const ManagePlaylistDialog: FC<ManagePlaylistDialogProps> = ({
                                                 {globalize.translate('Cancel')}
                                             </Button>
                                             <Button
-                                                type="submit"
+                                                type='submit'
                                                 className={[styles.button, styles.buttonPrimary].join(' ')}
                                                 isDisabled={isPending || !name.trim()}
                                             >

@@ -5,8 +5,8 @@ import ItemsContainer, {
 } from 'elements/emby-itemscontainer/ItemsContainer';
 import Scroller from 'elements/emby-scroller/Scroller';
 import Cards from 'components/cardbuilder/Card/Cards';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 import type { CardOptions } from 'types/cardOptions';
 import type { ItemDto } from 'types/base/models/item-dto';
 
@@ -48,7 +48,7 @@ export const ProgramsSection: FC<ProgramsSectionProps> = ({
 
             <Scroller>
                 <ItemsContainer
-                    className="scrollSlider"
+                    className='scrollSlider'
                     {...itemsContainerProps}
                 >
                     <Cards items={items} cardOptions={cardOptions} />

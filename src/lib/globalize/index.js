@@ -5,9 +5,6 @@ import { currentSettings as userSettings } from 'scripts/settings/userSettings';
 import Events from 'utils/events';
 import { updateLocale } from 'utils/dateFnsLocale';
 
-// Pre-bundle all string/translation files using Vite glob imports
-const stringModules = import.meta.glob('../../strings/*.json');
-
 const Direction = {
     rtl: 'rtl',
     ltr: 'ltr'
@@ -216,16 +213,8 @@ function loadTranslation(translations, lang) {
         }
 
         const url = filtered[0].path;
-        const stringKey = `../../strings/${url}`;
-        const loader = stringModules[stringKey];
 
-        if (!loader) {
-            console.warn(`String file not found: ${url}`);
-            resolve({});
-            return;
-        }
-
-        loader().then((fileContent) => {
+        import(/* webpackChunkName: "[request]" */ `../../strings/${url}`).then((fileContent) => {
             resolve(fileContent);
         }).catch(() => {
             resolve({});
@@ -263,27 +252,6 @@ function translateKeyFromModule(key, module) {
     }
 
     return key;
-}
-
-export function tryTranslate(key) {
-    const parts = key.split('#');
-    let module;
-    if (parts.length > 1) {
-        module = parts[0];
-        key = parts[1];
-    }
-
-    let dictionary = getDictionary(module, getCurrentLocale());
-    if (dictionary?.[key]) {
-        return dictionary[key];
-    }
-
-    dictionary = getDictionary(module, FALLBACK_CULTURE);
-    if (dictionary?.[key]) {
-        return dictionary[key];
-    }
-
-    return undefined;
 }
 
 export function translate(key) {
@@ -340,7 +308,6 @@ Events.on(userSettings, 'change', function (e, name) {
 
 export default {
     translate,
-    tryTranslate,
     translateHtml,
     loadStrings,
     defaultModule,

@@ -7,7 +7,7 @@ import { getPersonApi } from '@jellyfin/sdk/lib/utils/api/person-api';
 import globalize from 'lib/globalize';
 import { useApi } from 'hooks/useApi';
 import { ServerConnections } from 'lib/jellyfin-apiclient';
-import { useUserViews } from 'hooks/api/useUserViews';
+import { useUserViews } from 'apps/deskfin/hooks/api/useUserViews';
 import { useToggleFavoriteMutation, useTogglePlayedMutation } from 'hooks/useFetchItems';
 import { useTitle } from 'apps/deskfin/hooks/useTitle';
 import { formatLibraryTitle } from 'apps/deskfin/utils/titleUtils';
@@ -25,8 +25,9 @@ import { Section } from 'apps/deskfin/components/media/Section';
 import { ItemGrid } from 'apps/deskfin/components/media/ItemGrid';
 import { useGetUserPlaylists } from 'apps/deskfin/features/watchlist/hooks/useGetUserPlaylists';
 import styles from './HomeRoute.module.scss';
+import { translateOr } from 'apps/deskfin/utils/translate';
 
-const t = (key: string, fallback: string) => globalize.tryTranslate?.(key) ?? fallback;
+const t = translateOr;
 
 type LatestByLibrary = { library: BaseItemDto; items: ItemDto[] };
 
@@ -45,15 +46,35 @@ const getAllSectionsToShow = (sectionCount: number): HomeSectionType[] => {
     return sections as HomeSectionType[];
 };
 
+/**
+ * Shares one in-flight request per key. The home route can mount twice in quick succession at startup;
+ * this keeps the second mount from fetching the same sections again.
+ */
+const inflight = new Map<string, Promise<unknown>>();
+const shared = <T,>(key: string, load: () => Promise<T>): Promise<T> => {
+    const existing = inflight.get(key) as Promise<T> | undefined;
+    if (existing) return existing;
+    const promise = load().finally(() => inflight.delete(key));
+    inflight.set(key, promise);
+    return promise;
+};
+
+/** Stable empty list, so "no user views yet" doesn't look like a change on every render. */
+const NO_VIEWS: BaseItemDto[] = [];
+
 const Home: FC = () => {
     const { api, user, serverId } = useApi();
-    const apiClient = serverId ? ServerConnections.getApiClient(serverId) : undefined;
+    const apiClient = useMemo(() => (serverId ? ServerConnections.getApiClient(serverId) : undefined), [serverId]);
+    // The user object is replaced whenever it's refreshed; loaders read it through a ref and key off the id.
+    const userRef = useRef(user);
+    userRef.current = user;
+    const userId = user?.Id;
     const documentRef = useRef<Document>(document);
     const [searchParams] = useSearchParams();
     const isFavoritesTab = searchParams.get('tab') === '1';
 
     const { data: userViewsResp } = useUserViews({ userId: user?.Id });
-    const userViews = (userViewsResp?.Items || []) as BaseItemDto[];
+    const userViews = (userViewsResp?.Items as BaseItemDto[] | undefined) ?? NO_VIEWS;
 
     const { data: userPlaylists = [] } = useGetUserPlaylists({ enabled: !isFavoritesTab });
 
@@ -86,88 +107,106 @@ const Home: FC = () => {
         }
     }, [userViews.length]);
 
-
-    const refreshAll = useCallback(async (options?: { priorityOnly?: boolean }) => {
-        if (!apiClient || !user?.Id) return;
-        const priorityOnly = !!options?.priorityOnly;
-
+    /*
+     * Home sections load in three non-overlapping parts, so nothing is requested twice:
+     * the first rows right away, the rest when the browser is idle, and latest-per-library once user views arrive.
+     */
+    const loadPrioritySections = useCallback(async () => {
+        if (!apiClient || !userId) return;
         const sectionOrder = getAllSectionsToShow(10);
         const tasks: Promise<void>[] = [];
 
         if (sectionOrder.includes(HomeSectionType.Resume)) {
-            tasks.push(apiClient.getResumableItems(apiClient.getCurrentUserId(), {
+            tasks.push(shared(`resume-video:${userId}`, () => apiClient.getResumableItems(apiClient.getCurrentUserId(), {
                 Limit: 12, Recursive: true, Fields: 'PrimaryImageAspectRatio',
                 ImageTypeLimit: 1, EnableImageTypes: 'Primary,Backdrop,Thumb',
                 EnableTotalRecordCount: false, MediaTypes: 'Video'
-            }).then(r => setResumeVideo((r?.Items || []) as ItemDto[])));
-        }
-
-        if (!priorityOnly && sectionOrder.includes(HomeSectionType.ResumeAudio)) {
-            tasks.push(apiClient.getResumableItems(apiClient.getCurrentUserId(), {
-                Limit: 12, Recursive: true, Fields: 'PrimaryImageAspectRatio',
-                ImageTypeLimit: 1, EnableImageTypes: 'Primary,Backdrop,Thumb',
-                EnableTotalRecordCount: false, MediaTypes: 'Audio'
-            }).then(r => setResumeAudio((r?.Items || []) as ItemDto[])));
-        }
-
-        if (!priorityOnly && sectionOrder.includes(HomeSectionType.ResumeBook)) {
-            tasks.push(apiClient.getResumableItems(apiClient.getCurrentUserId(), {
-                Limit: 12, Recursive: true, Fields: 'PrimaryImageAspectRatio',
-                ImageTypeLimit: 1, EnableImageTypes: 'Primary,Backdrop,Thumb',
-                EnableTotalRecordCount: false, MediaTypes: 'Book'
-            }).then(r => setResumeBook((r?.Items || []) as ItemDto[])));
+            })).then(r => setResumeVideo((r?.Items || []) as ItemDto[])));
         }
 
         if (sectionOrder.includes(HomeSectionType.NextUp)) {
             const oldestDateForNextUp = new Date();
             oldestDateForNextUp.setDate(oldestDateForNextUp.getDate() - userSettings.maxDaysForNextUp());
-            tasks.push(apiClient.getNextUpEpisodes({
+            tasks.push(shared(`next-up:${userId}`, () => apiClient.getNextUpEpisodes({
                 Limit: 24, Fields: 'PrimaryImageAspectRatio,DateCreated,Path,MediaSourceCount',
                 UserId: apiClient.getCurrentUserId(), ImageTypeLimit: 1,
                 EnableImageTypes: 'Primary,Backdrop,Banner,Thumb', EnableTotalRecordCount: false,
                 DisableFirstEpisode: false, NextUpDateCutoff: oldestDateForNextUp.toISOString(),
                 EnableResumable: false, EnableRewatching: userSettings.enableRewatchingInNextUp()
-            }).then(r => setNextUp((r?.Items || []) as ItemDto[])));
-        }
-
-        if (!priorityOnly && sectionOrder.includes(HomeSectionType.ActiveRecordings)) {
-            tasks.push(apiClient.getLiveTvRecordings({
-                userId: apiClient.getCurrentUserId(), Limit: 12,
-                Fields: 'PrimaryImageAspectRatio', EnableTotalRecordCount: false,
-                IsLibraryItem: null, IsInProgress: true
-            }).then(r => setActiveRecordings((r?.Items || []) as ItemDto[])));
-        }
-
-        if (!priorityOnly && sectionOrder.includes(HomeSectionType.LiveTv) && user?.Policy?.EnableLiveTvAccess) {
-            tasks.push(apiClient.getLiveTvRecommendedPrograms({
-                userId: apiClient.getCurrentUserId(), IsAiring: true, limit: 24,
-                ImageTypeLimit: 1, EnableImageTypes: 'Primary,Thumb,Backdrop',
-                EnableTotalRecordCount: false, Fields: 'ChannelInfo,PrimaryImageAspectRatio'
-            }).then(r => setOnNow((r?.Items || []) as ItemDto[])));
-        }
-
-        if (!priorityOnly && sectionOrder.includes(HomeSectionType.LatestMedia) && userViews.length) {
-            const excludeViewTypes = ['playlists', 'livetv', 'boxsets', 'channels', 'folders'];
-            const userExcludeItems = user.Configuration?.LatestItemsExcludes ?? [];
-            const filteredViews = userViews.filter(v =>
-                v.Id && !userExcludeItems.includes(v.Id) &&
-                !(v.CollectionType && excludeViewTypes.includes(v.CollectionType))
-            );
-
-            const latestTasks = filteredViews.map(async (view) => {
-                const items = await apiClient.getLatestItems({
-                    Limit: 16, Fields: 'PrimaryImageAspectRatio,Path',
-                    ImageTypeLimit: 1, EnableImageTypes: 'Primary,Backdrop,Thumb',
-                    ParentId: view.Id
-                });
-                return { library: view, items: (items || []) as ItemDto[] };
-            });
-
-            tasks.push(Promise.all(latestTasks).then(setLatestByLibrary));
+            })).then(r => setNextUp((r?.Items || []) as ItemDto[])));
         }
 
         await Promise.all(tasks);
-    }, [apiClient, user, userViews]);
+    }, [apiClient, userId]);
+
+    const loadOtherSections = useCallback(async () => {
+        if (!apiClient || !userId) return;
+        const sectionOrder = getAllSectionsToShow(10);
+        const tasks: Promise<void>[] = [];
+
+        if (sectionOrder.includes(HomeSectionType.ResumeAudio)) {
+            tasks.push(shared(`resume-audio:${userId}`, () => apiClient.getResumableItems(apiClient.getCurrentUserId(), {
+                Limit: 12, Recursive: true, Fields: 'PrimaryImageAspectRatio',
+                ImageTypeLimit: 1, EnableImageTypes: 'Primary,Backdrop,Thumb',
+                EnableTotalRecordCount: false, MediaTypes: 'Audio'
+            })).then(r => setResumeAudio((r?.Items || []) as ItemDto[])));
+        }
+
+        if (sectionOrder.includes(HomeSectionType.ResumeBook)) {
+            tasks.push(shared(`resume-book:${userId}`, () => apiClient.getResumableItems(apiClient.getCurrentUserId(), {
+                Limit: 12, Recursive: true, Fields: 'PrimaryImageAspectRatio',
+                ImageTypeLimit: 1, EnableImageTypes: 'Primary,Backdrop,Thumb',
+                EnableTotalRecordCount: false, MediaTypes: 'Book'
+            })).then(r => setResumeBook((r?.Items || []) as ItemDto[])));
+        }
+
+        if (sectionOrder.includes(HomeSectionType.ActiveRecordings)) {
+            tasks.push(shared(`recordings:${userId}`, () => apiClient.getLiveTvRecordings({
+                userId: apiClient.getCurrentUserId(), Limit: 12,
+                Fields: 'PrimaryImageAspectRatio', EnableTotalRecordCount: false,
+                IsLibraryItem: null, IsInProgress: true
+            })).then(r => setActiveRecordings((r?.Items || []) as ItemDto[])));
+        }
+
+        if (sectionOrder.includes(HomeSectionType.LiveTv) && userRef.current?.Policy?.EnableLiveTvAccess) {
+            tasks.push(shared(`on-now:${userId}`, () => apiClient.getLiveTvRecommendedPrograms({
+                userId: apiClient.getCurrentUserId(), IsAiring: true, limit: 24,
+                ImageTypeLimit: 1, EnableImageTypes: 'Primary,Thumb,Backdrop',
+                EnableTotalRecordCount: false, Fields: 'ChannelInfo,PrimaryImageAspectRatio'
+            })).then(r => setOnNow((r?.Items || []) as ItemDto[])));
+        }
+
+        await Promise.all(tasks);
+    }, [apiClient, userId]);
+
+    const loadLatestSections = useCallback(async () => {
+        if (!apiClient || !userId || !userViews.length) return;
+        if (!getAllSectionsToShow(10).includes(HomeSectionType.LatestMedia)) return;
+
+        const excludeViewTypes = ['playlists', 'livetv', 'boxsets', 'channels', 'folders'];
+        const userExcludeItems = userRef.current?.Configuration?.LatestItemsExcludes ?? [];
+        const filteredViews = userViews.filter(v =>
+            v.Id && !userExcludeItems.includes(v.Id)
+            && !(v.CollectionType && excludeViewTypes.includes(v.CollectionType))
+        );
+
+        const latestTasks = filteredViews.map(async (view) => {
+            const items = await shared(`latest:${userId}:${view.Id}`, () => apiClient.getLatestItems({
+                Limit: 16, Fields: 'PrimaryImageAspectRatio,Path',
+                ImageTypeLimit: 1, EnableImageTypes: 'Primary,Backdrop,Thumb',
+                ParentId: view.Id
+            }));
+            return { library: view, items: (items || []) as ItemDto[] };
+        });
+
+        setLatestByLibrary(await Promise.all(latestTasks));
+    }, [apiClient, userId, userViews]);
+
+    const refreshAll = useCallback(() => Promise.all([
+        loadPrioritySections(),
+        loadOtherSections(),
+        loadLatestSections()
+    ]), [loadPrioritySections, loadOtherSections, loadLatestSections]);
 
     const refreshFavorites = useCallback(async () => {
         if (!apiClient || !api || !user?.Id) return;
@@ -179,13 +218,13 @@ const Home: FC = () => {
             EnableTotalRecordCount: false, ImageTypeLimit: 1,
             EnableImageTypes: 'Primary,Backdrop,Thumb', Limit: 24
         };
-        const userId = apiClient.getCurrentUserId();
+        const currentUserId = apiClient.getCurrentUserId();
 
         const [movies, shows, episodes, collections, peopleResp] = await Promise.all([
-            apiClient.getItems(userId, { ...baseOptions, IncludeItemTypes: 'Movie' }),
-            apiClient.getItems(userId, { ...baseOptions, IncludeItemTypes: 'Series' }),
-            apiClient.getItems(userId, { ...baseOptions, IncludeItemTypes: 'Episode' }),
-            apiClient.getItems(userId, { ...baseOptions, IncludeItemTypes: 'BoxSet' }),
+            apiClient.getItems(currentUserId, { ...baseOptions, IncludeItemTypes: 'Movie' }),
+            apiClient.getItems(currentUserId, { ...baseOptions, IncludeItemTypes: 'Series' }),
+            apiClient.getItems(currentUserId, { ...baseOptions, IncludeItemTypes: 'Episode' }),
+            apiClient.getItems(currentUserId, { ...baseOptions, IncludeItemTypes: 'BoxSet' }),
             getPersonApi(api).getPersons({
                 userId: user.Id,
                 isFavorite: true,
@@ -206,7 +245,6 @@ const Home: FC = () => {
         if (isFavoritesTab) {
             void refreshFavorites();
         } else {
-            void refreshAll({ priorityOnly: true });
             void refreshAll();
         }
     }, [isFavoritesTab, refreshAll, refreshFavorites]);
@@ -225,23 +263,33 @@ const Home: FC = () => {
         clearBackdrop();
         documentRef.current.querySelector('.skinHeader')?.classList.add('noHomeButtonHeader');
 
+        let cancelIdle: (() => void) | undefined;
         if (isFavoritesTab) {
             void refreshFavorites();
         } else {
-            void refreshAll({ priorityOnly: true });
-            const ric = (window as any).requestIdleCallback;
-            const schedule = ric
-                ? (cb: () => void) => ric(cb, { timeout: 1500 })
-                : (cb: () => void) => setTimeout(cb, 0);
-            schedule(() => void refreshAll());
+            void loadPrioritySections();
+            // Safari lacks requestIdleCallback
+            if ('requestIdleCallback' in window) {
+                const handle = requestIdleCallback(() => void loadOtherSections(), { timeout: 1500 });
+                cancelIdle = () => cancelIdleCallback(handle);
+            } else {
+                const handle = setTimeout(() => void loadOtherSections(), 0);
+                cancelIdle = () => clearTimeout(handle);
+            }
         }
 
         return () => {
+            cancelIdle?.();
             documentRef.current.querySelector('.skinHeader')?.classList.remove('noHomeButtonHeader');
         };
-    }, [isFavoritesTab, refreshAll, refreshFavorites]);
+    }, [isFavoritesTab, loadPrioritySections, loadOtherSections, refreshFavorites]);
 
-    useTitle(isFavoritesTab ? formatLibraryTitle('Favorites') : "desk");
+    // Latest-per-library needs the user's views, which arrive separately.
+    useEffect(() => {
+        if (!isFavoritesTab) void loadLatestSections();
+    }, [isFavoritesTab, loadLatestSections]);
+
+    useTitle(isFavoritesTab ? formatLibraryTitle('Favorites') : 'desk');
 
     const sectionOrder = useMemo(() => getAllSectionsToShow(10), []);
 
@@ -249,8 +297,8 @@ const Home: FC = () => {
 
     return (
         <Page
-            id="indexPage"
-            className="mainAnimatedPage homePage libraryPage allLibraryPage backdropPage"
+            id='indexPage'
+            className='mainAnimatedPage homePage libraryPage allLibraryPage backdropPage'
             isBackButtonEnabled={false}
             backDropType={[BaseItemKind.Movie, BaseItemKind.Series, BaseItemKind.Book]}
         >
@@ -261,7 +309,7 @@ const Home: FC = () => {
                             <Section title={t('Movies', 'Movies')}>
                                 <ItemGrid
                                     items={favoriteMovies}
-                                    variant="portrait"
+                                    variant='portrait'
                                     onToggleFavorite={onToggleFavorite}
                                     onTogglePlayed={onTogglePlayed}
                                     onAfterAction={onAfterAction}
@@ -272,7 +320,7 @@ const Home: FC = () => {
                             <Section title={t('Shows', 'Shows')}>
                                 <ItemGrid
                                     items={favoriteShows}
-                                    variant="portrait"
+                                    variant='portrait'
                                     onToggleFavorite={onToggleFavorite}
                                     onTogglePlayed={onTogglePlayed}
                                     onAfterAction={onAfterAction}
@@ -283,7 +331,7 @@ const Home: FC = () => {
                             <Section title={t('Episodes', 'Episodes')}>
                                 <ItemGrid
                                     items={favoriteEpisodes}
-                                    variant="landscape"
+                                    variant='landscape'
                                     onToggleFavorite={onToggleFavorite}
                                     onTogglePlayed={onTogglePlayed}
                                     onAfterAction={onAfterAction}
@@ -294,7 +342,7 @@ const Home: FC = () => {
                             <Section title={t('Collections', 'Collections')}>
                                 <ItemGrid
                                     items={favoriteCollections}
-                                    variant="portrait"
+                                    variant='portrait'
                                     onToggleFavorite={onToggleFavorite}
                                     onTogglePlayed={onTogglePlayed}
                                     onAfterAction={onAfterAction}
@@ -305,7 +353,7 @@ const Home: FC = () => {
                             <Section title={t('People', 'People')}>
                                 <ItemGrid
                                     items={favoritePeople}
-                                    variant="portrait"
+                                    variant='portrait'
                                     onToggleFavorite={onToggleFavorite}
                                     onTogglePlayed={onTogglePlayed}
                                     onAfterAction={onAfterAction}
@@ -322,13 +370,13 @@ const Home: FC = () => {
                                 <div className={styles.row}>
                                     {userViews.map(v => {
                                         const ct = v.CollectionType;
-                                        const base = ct === 'movies' ? 'movies'
-                                            : ct === 'tvshows' ? 'tv'
-                                            : ct === 'music' ? 'music'
-                                            : ct === 'homevideos' ? 'homevideos'
-                                            : ct === 'books' ? 'books'
-                                            : ct === 'boxsets' ? 'collections'
-                                            : 'list';
+                                        const base = ct === 'movies' ? 'movies' :
+                                            ct === 'tvshows' ? 'tv' :
+                                                ct === 'music' ? 'music' :
+                                                    ct === 'homevideos' ? 'homevideos' :
+                                                        ct === 'books' ? 'books' :
+                                                            ct === 'boxsets' ? 'collections' :
+                                                                'list';
                                         const href = base === 'list' ? `#/list?parentId=${v.Id}` : `#/${base}?topParentId=${v.Id}`;
 
                                         return (
@@ -351,15 +399,15 @@ const Home: FC = () => {
                         )}
 
                         {sectionOrder.includes(HomeSectionType.Resume) && (
-                            <HomeRow title={t('HeaderContinueWatching', 'Continue watching')} items={resumeVideo} cardVariant="landscape" {...rowProps} />
+                            <HomeRow title={t('HeaderContinueWatching', 'Continue watching')} items={resumeVideo} cardVariant='landscape' isPriority {...rowProps} />
                         )}
 
                         {sectionOrder.includes(HomeSectionType.ResumeAudio) && (
-                            <HomeRow title={t('HeaderContinueListening', 'Continue listening')} items={resumeAudio} cardVariant="landscape" {...rowProps} />
+                            <HomeRow title={t('HeaderContinueListening', 'Continue listening')} items={resumeAudio} cardVariant='landscape' {...rowProps} />
                         )}
 
                         {sectionOrder.includes(HomeSectionType.ResumeBook) && (
-                            <HomeRow title={t('HeaderContinueReading', 'Continue reading')} items={resumeBook} cardVariant="landscape" {...rowProps} />
+                            <HomeRow title={t('HeaderContinueReading', 'Continue reading')} items={resumeBook} cardVariant='landscape' {...rowProps} />
                         )}
 
                         {sectionOrder.includes(HomeSectionType.LiveTv) && user?.Policy?.EnableLiveTvAccess && (
@@ -367,12 +415,12 @@ const Home: FC = () => {
                                 <section className={styles.section}>
                                     <h2 className={styles.sectionTitle}>{t('LiveTV', 'Live TV')}</h2>
                                     <div className={styles.row}>
-                                        <a className={styles.pill} href="#/livetv?section=programs">{t('Programs', 'Programs')}</a>
-                                        <a className={styles.pill} href="#/livetv?section=guide">{t('Guide', 'Guide')}</a>
-                                        <a className={styles.pill} href="#/livetv?section=channels">{t('Channels', 'Channels')}</a>
-                                        <a className={styles.pill} href="#/recordedtv">{t('Recordings', 'Recordings')}</a>
-                                        <a className={styles.pill} href="#/livetv?section=dvrschedule">{t('Schedule', 'Schedule')}</a>
-                                        <a className={styles.pill} href="#/livetv?section=seriesrecording">{t('Series', 'Series')}</a>
+                                        <a className={styles.pill} href='#/livetv?section=programs'>{t('Programs', 'Programs')}</a>
+                                        <a className={styles.pill} href='#/livetv?section=guide'>{t('Guide', 'Guide')}</a>
+                                        <a className={styles.pill} href='#/livetv?section=channels'>{t('Channels', 'Channels')}</a>
+                                        <a className={styles.pill} href='#/recordedtv'>{t('Recordings', 'Recordings')}</a>
+                                        <a className={styles.pill} href='#/livetv?section=dvrschedule'>{t('Schedule', 'Schedule')}</a>
+                                        <a className={styles.pill} href='#/livetv?section=seriesrecording'>{t('Series', 'Series')}</a>
                                     </div>
                                 </section>
                                 <HomeRow title={t('HeaderOnNow', 'On Now')} items={onNow} {...rowProps} />
@@ -380,19 +428,19 @@ const Home: FC = () => {
                         )}
 
                         {sectionOrder.includes(HomeSectionType.NextUp) && (
-                            <HomeRow title={t('NextUp', 'Next Up')} items={nextUp} cardVariant="landscape" {...rowProps} />
+                            <HomeRow title={t('NextUp', 'Next Up')} items={nextUp} cardVariant='landscape' isPriority {...rowProps} />
                         )}
 
                         {sectionOrder.includes(HomeSectionType.LatestMedia) && latestByLibrary.map(({ library, items }) => {
                             const ct = library.CollectionType;
                             const isMovies = ct === 'movies';
                             const isTvShows = ct === 'tvshows';
-                            const linkHref = isMovies ? `#/movies?topParentId=${library.Id}`
-                                : isTvShows ? `#/tv?topParentId=${library.Id}`
-                                : undefined;
-                            const linkText = isMovies ? 'All movies'
-                                : isTvShows ? 'All shows'
-                                : undefined;
+                            const linkHref = isMovies ? `#/movies?topParentId=${library.Id}` :
+                                isTvShows ? `#/tv?topParentId=${library.Id}` :
+                                    undefined;
+                            const linkText = isMovies ? 'All movies' :
+                                isTvShows ? 'All shows' :
+                                    undefined;
 
                             return (
                                 <HomeRow
@@ -416,7 +464,7 @@ const Home: FC = () => {
                                     playlistId={playlist.Id}
                                     title={playlist.Name ?? 'Unnamed List'}
                                     linkHref={`#/list?id=${playlist.Id}&serverId=${user?.ServerId}`}
-                                    linkText="View all"
+                                    linkText='View all'
                                     {...rowProps}
                                 />
                             );

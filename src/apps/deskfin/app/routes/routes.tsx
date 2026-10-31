@@ -2,7 +2,6 @@ import React from 'react';
 import { Navigate, RouteObject } from 'react-router-dom';
 
 import ConnectionRequired from 'components/ConnectionRequired';
-import { toAsyncPageRoute } from 'components/router/AsyncRoute';
 import { toViewManagerPageRoute } from 'components/router/LegacyRoute';
 import ErrorBoundary from 'components/router/ErrorBoundary';
 import FallbackRoute from 'components/router/FallbackRoute';
@@ -23,7 +22,7 @@ export const DESKFIN_APP_ROUTES: RouteObject[] = [
                 /* User routes */
                 Component: ConnectionRequired,
                 children: [
-                    ...ASYNC_USER_ROUTES.map(toAsyncPageRoute),
+                    ...ASYNC_USER_ROUTES,
                     ...LEGACY_USER_ROUTES.map(toViewManagerPageRoute),
 
                     // The video page is special since it combines new controls with the legacy view

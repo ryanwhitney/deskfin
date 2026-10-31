@@ -5,8 +5,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import globalize from 'lib/globalize';
 import { useApi } from 'hooks/useApi';
 import { useTogglePlayedMutation } from 'hooks/useFetchItems';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from '../../../../../assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 import { IconButton } from 'apps/deskfin/components/button/IconButton';
 import { updateItemUserDataCache } from '../utils/updateItemUserDataCache';
 

@@ -1,15 +1,15 @@
-import React, { type FC } from "react";
-import datetime from "scripts/datetime";
-import type { ItemDto } from "types/base/models/item-dto";
-import { ItemKind } from "types/base/models/item-kind";
-import { ItemStatus } from "types/base/models/item-status";
-import { MediaStreamType } from "@jellyfin/sdk/lib/generated-client/models/media-stream-type";
+import React, { type FC } from 'react';
+import datetime from 'scripts/datetime';
+import type { ItemDto } from 'types/base/models/item-dto';
+import { ItemKind } from 'types/base/models/item-kind';
+import { ItemStatus } from 'types/base/models/item-status';
+import { MediaStreamType } from '@jellyfin/sdk/lib/generated-client/models/media-stream-type';
 
-import freshIcon from "assets/img/fresh.svg";
-import rottenIcon from "assets/img/rotten.svg";
-import { IconSvgs } from "assets/icons";
+import freshIcon from 'assets/img/fresh.svg';
+import rottenIcon from 'assets/img/rotten.svg';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 
-import styles from "./MetaInfo.module.scss";
+import styles from './MetaInfo.module.scss';
 
 interface MetaInfoProps {
     item: ItemDto;
@@ -79,16 +79,16 @@ function getResolutionText(item: ItemDto): string | null {
     if (!mediaSource) return null;
 
     const videoStream = (mediaSource.MediaStreams || []).find(
-        (s) => s.Type === MediaStreamType.Video,
+        (s) => s.Type === MediaStreamType.Video
     );
     if (!videoStream) return null;
 
     const { Width, Height, IsInterlaced } = videoStream;
     if (!Width || !Height) return null;
 
-    const suffix = IsInterlaced ? "i" : "";
+    const suffix = IsInterlaced ? 'i' : '';
 
-    if (Width >= 3800 || Height >= 2000) return "4K";
+    if (Width >= 3800 || Height >= 2000) return '4K';
     if (Width >= 2500 || Height >= 1400) return `1440p${suffix}`;
     if (Width >= 1800 || Height >= 1000) return `1080p${suffix}`;
     if (Width >= 1200 || Height >= 700) return `720p${suffix}`;
@@ -105,7 +105,7 @@ function getVideoCodec(item: ItemDto): string | null {
     if (!mediaSource) return null;
 
     const videoStream = (mediaSource.MediaStreams || []).find(
-        (s) => s.Type === MediaStreamType.Video,
+        (s) => s.Type === MediaStreamType.Video
     );
 
     return videoStream?.Codec?.toUpperCase() ?? null;
@@ -120,9 +120,9 @@ function getAudioChannels(item: ItemDto): string | null {
 
     const audioStream = (mediaSource.MediaStreams || []).find(
         (s) =>
-            s.Type === MediaStreamType.Audio &&
-            (s.Index === mediaSource.DefaultAudioStreamIndex ||
-                mediaSource.DefaultAudioStreamIndex == null),
+            s.Type === MediaStreamType.Audio
+            && (s.Index === mediaSource.DefaultAudioStreamIndex
+                || mediaSource.DefaultAudioStreamIndex == null)
     );
     if (!audioStream) return null;
 
@@ -131,13 +131,13 @@ function getAudioChannels(item: ItemDto): string | null {
 
     switch (Channels) {
         case 8:
-            return "7.1";
+            return '7.1';
         case 7:
-            return "6.1";
+            return '6.1';
         case 6:
-            return "5.1";
+            return '5.1';
         case 2:
-            return "2.0";
+            return '2.0';
         default:
             return null;
     }
@@ -152,16 +152,16 @@ function getAudioCodec(item: ItemDto): string | null {
 
     const audioStream = (mediaSource.MediaStreams || []).find(
         (s) =>
-            s.Type === MediaStreamType.Audio &&
-            (s.Index === mediaSource.DefaultAudioStreamIndex ||
-                mediaSource.DefaultAudioStreamIndex == null),
+            s.Type === MediaStreamType.Audio
+            && (s.Index === mediaSource.DefaultAudioStreamIndex
+                || mediaSource.DefaultAudioStreamIndex == null)
     );
     if (!audioStream) return null;
 
-    const codec = (audioStream.Codec || "").toLowerCase();
+    const codec = (audioStream.Codec || '').toLowerCase();
 
     // Use profile for DTS variants
-    if ((codec === "dca" || codec === "dts") && audioStream.Profile) {
+    if ((codec === 'dca' || codec === 'dts') && audioStream.Profile) {
         return audioStream.Profile;
     }
 
@@ -170,15 +170,15 @@ function getAudioCodec(item: ItemDto): string | null {
 
 // Pre-defined widths for resolution badges to avoid layout recalculation
 const RESOLUTION_WIDTHS = new Map<string, number>([
-    ["4K", 28],
-    ["1440p", 48],
-    ["1440pi", 52],
-    ["1080p", 48],
-    ["1080pi", 52],
-    ["720p", 40],
-    ["720pi", 44],
-    ["480p", 40],
-    ["480pi", 44],
+    ['4K', 28],
+    ['1440p', 48],
+    ['1440pi', 52],
+    ['1080p', 48],
+    ['1080pi', 52],
+    ['720p', 40],
+    ['720pi', 44],
+    ['480p', 40],
+    ['480pi', 44]
 ]);
 
 /**
@@ -196,29 +196,29 @@ const ResolutionBadge: FC<{ resolution: string }> = ({ resolution }) => {
         >
             <defs>
                 <mask id={`res-mask-${resolution}`}>
-                    <rect width="100%" height="100%" fill="white" />
+                    <rect width='100%' height='100%' fill='white' />
                     <text
-                        x="50%"
-                        y="9"
-                        dominantBaseline="middle"
-                        textAnchor="middle"
-                        fill="black"
-                        fontSize="12"
-                        fontWeight="700"
-                        letterSpacing="-1.5%"
-                        fontFamily="system-ui, -apple-system, BlinkMacSystemFont, sans-serif"
+                        x='50%'
+                        y='9'
+                        dominantBaseline='middle'
+                        textAnchor='middle'
+                        fill='black'
+                        fontSize='12'
+                        fontWeight='700'
+                        letterSpacing='-1.5%'
+                        fontFamily='system-ui, -apple-system, BlinkMacSystemFont, sans-serif'
                     >
                         {resolution}
                     </text>
                 </mask>
             </defs>
             <rect
-                width="100%"
-                height="100%"
-                fill="white"
+                width='100%'
+                height='100%'
+                fill='white'
                 mask={`url(#res-mask-${resolution})`}
-                rx="3"
-                ry="3"
+                rx='3'
+                ry='3'
             />
         </svg>
     );
@@ -233,7 +233,7 @@ const MetaInfo: FC<MetaInfoProps> = ({
     showResolution = true,
     showVideoCodec = true,
     showAudioChannels = true,
-    showAudioCodec = true,
+    showAudioCodec = true
 }) => {
     const year = showYear ? getYearDisplay(item) : null;
     const runtime = showRuntime ? getRuntimeDisplay(item) : null;
@@ -274,7 +274,7 @@ const MetaInfo: FC<MetaInfoProps> = ({
                 <span className={styles.ratingItem}>
                     <img
                         src={criticRating >= 60 ? freshIcon : rottenIcon}
-                        alt=""
+                        alt=''
                         className={styles.criticIcon}
                     />
                     {criticRating}%

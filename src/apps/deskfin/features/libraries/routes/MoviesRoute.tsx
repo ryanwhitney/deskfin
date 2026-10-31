@@ -1,17 +1,17 @@
-import { BaseItemKind } from "@jellyfin/sdk/lib/generated-client/models/base-item-kind";
-import React, { FC } from "react";
-import useCurrentTab from "hooks/useCurrentTab";
-import { useTitle } from "apps/deskfin/hooks/useTitle";
-import { formatLibraryTitle } from "apps/deskfin/utils/titleUtils";
-import Page from "components/Page";
-import PageTabContent from "../components/ui/PageTabContent";
-import { LibraryViewMenu } from "apps/deskfin/components/library/LibraryViewMenu";
-import { LibraryTab } from "types/libraryTab";
-import { CollectionType } from "@jellyfin/sdk/lib/generated-client/models/collection-type";
-import { LibraryTabContent } from "types/libraryTabContent";
+import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
+import React, { FC } from 'react';
+import useCurrentTab from 'hooks/useCurrentTab';
+import { useTitle } from 'apps/deskfin/hooks/useTitle';
+import { formatLibraryTitle } from 'apps/deskfin/utils/titleUtils';
+import Page from 'components/Page';
+import PageTabContent from '../components/ui/PageTabContent';
+import { LibraryViewMenu } from 'apps/deskfin/components/library/LibraryViewMenu';
+import { LibraryTab } from 'apps/deskfin/types/libraryTab';
+import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
+import { LibraryTabContent } from 'types/libraryTabContent';
 
-import layoutStyles from "../components/ui/PageLayout.module.scss";
-import globalize from "lib/globalize";
+import layoutStyles from '../components/ui/PageLayout.module.scss';
+import globalize from 'lib/globalize';
 import { type LibraryTabMapping, MovieSuggestionsSectionsView } from '../types/sectionsViews';
 
 const moviesTabContent: LibraryTabContent = {
@@ -19,7 +19,7 @@ const moviesTabContent: LibraryTabContent = {
     collectionType: CollectionType.Movies,
     isBtnPlayAllEnabled: true,
     isBtnShuffleEnabled: true,
-    itemType: [BaseItemKind.Movie],
+    itemType: [BaseItemKind.Movie]
 };
 
 const collectionsTabContent: LibraryTabContent = {
@@ -28,31 +28,31 @@ const collectionsTabContent: LibraryTabContent = {
     isBtnFilterEnabled: false,
     isBtnNewCollectionEnabled: true,
     itemType: [BaseItemKind.BoxSet],
-    noItemsMessage: "MessageNoCollectionsAvailable",
+    noItemsMessage: 'MessageNoCollectionsAvailable'
 };
 
 const favoritesTabContent: LibraryTabContent = {
     viewType: LibraryTab.Favorites,
     collectionType: CollectionType.Movies,
-    itemType: [BaseItemKind.Movie],
+    itemType: [BaseItemKind.Movie]
 };
 
 const suggestionsTabContent: LibraryTabContent = {
     viewType: LibraryTab.Suggestions,
     collectionType: CollectionType.Movies,
-    sectionsView: MovieSuggestionsSectionsView,
+    sectionsView: MovieSuggestionsSectionsView
 };
 
 const genresTabContent: LibraryTabContent = {
     viewType: LibraryTab.Genres,
     collectionType: CollectionType.Movies,
-    itemType: [BaseItemKind.Movie],
+    itemType: [BaseItemKind.Movie]
 };
 
 const yearsTabContent: LibraryTabContent = {
     viewType: LibraryTab.Years,
     collectionType: CollectionType.Movies,
-    itemType: [BaseItemKind.Movie],
+    itemType: [BaseItemKind.Movie]
 };
 
 const moviesTabMapping: LibraryTabMapping = {
@@ -61,7 +61,7 @@ const moviesTabMapping: LibraryTabMapping = {
     2: favoritesTabContent,
     3: collectionsTabContent,
     4: genresTabContent,
-    5: yearsTabContent,
+    5: yearsTabContent
 };
 
 const Movies: FC = () => {
@@ -74,29 +74,29 @@ const Movies: FC = () => {
             case 0:
                 return undefined; // Default "Movies" tab
             case 1:
-                return "Suggestions";
+                return 'Suggestions';
             case 2:
-                return "Favorites";
+                return 'Favorites';
             case 3:
-                return "Collections";
+                return 'Collections';
             case 4:
-                return "Genres";
+                return 'Genres';
             case 5:
-                return "Years";
+                return 'Years';
             default:
                 return undefined;
         }
     };
 
-    useTitle(formatLibraryTitle("Movies", getTitleForTab()));
+    useTitle(formatLibraryTitle('Movies', getTitleForTab()));
 
     return (
         <Page
-            id="moviesPage"
-            className="mainAnimatedPage libraryPage backdropPage collectionEditorPage pageWithAbsoluteTabs withTabs"
+            id='moviesPage'
+            className='mainAnimatedPage libraryPage backdropPage collectionEditorPage pageWithAbsoluteTabs withTabs'
             backDropType={[BaseItemKind.Movie]}
         >
-            <h1>{globalize.translate("Movies")}</h1>
+            <h1>{globalize.translate('Movies')}</h1>
             {/* Tab bar stays mounted - never re-renders on tab change */}
             <div className={layoutStyles.toolbar}>
                 <LibraryViewMenu />

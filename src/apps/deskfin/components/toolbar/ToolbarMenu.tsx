@@ -36,4 +36,3 @@ export const ToolbarMenuItem: FC<ToolbarMenuItemLinkProps | ToolbarMenuItemButto
     return <button {...rest} type={type} className={classes} />;
 };
 
-

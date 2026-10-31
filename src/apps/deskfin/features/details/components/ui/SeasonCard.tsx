@@ -32,4 +32,3 @@ export function SeasonCard({ season, imageUrl, episodeCount }: Readonly<SeasonCa
     );
 }
 
-

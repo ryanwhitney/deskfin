@@ -1,5 +1,5 @@
 import React, { type FC, Fragment } from 'react';
-import { FocusRing } from '@react-aria/focus';
+import { FocusRing } from 'react-aria';
 import globalize from 'lib/globalize';
 import type { ItemDto } from 'types/base/models/item-dto';
 import styles from '../../routes/DetailsRoute.module.scss';

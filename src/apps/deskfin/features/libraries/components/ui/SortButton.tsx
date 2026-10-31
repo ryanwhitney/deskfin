@@ -13,7 +13,7 @@ import SortByAlphaIcon from '@mui/icons-material/SortByAlpha';
 
 import globalize from 'lib/globalize';
 import { LibraryViewSettings } from 'types/library';
-import { LibraryTab } from 'types/libraryTab';
+import { LibraryTab } from 'apps/deskfin/types/libraryTab';
 
 type SortOption = {
     label: string;

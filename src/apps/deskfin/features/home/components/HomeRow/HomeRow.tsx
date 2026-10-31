@@ -19,6 +19,8 @@ interface HomeRowProps {
     onToggleFavorite: (item: ItemDto) => void;
     onTogglePlayed: (item: ItemDto) => void;
     cardVariant?: 'portrait' | 'landscape';
+    /** Row is visible at first paint: its first cards' images load immediately at high priority. */
+    isPriority?: boolean;
     linkHref?: string;
     linkText?: string;
     playlistContext?: {
@@ -26,6 +28,9 @@ interface HomeRowProps {
         playlistName: string;
     };
 }
+
+/** Landscape cards visible across a wide window; their images are fetched first. */
+const PRIORITY_CARDS = 5;
 
 export const HomeRow: FC<HomeRowProps> = ({
     title,
@@ -35,6 +40,7 @@ export const HomeRow: FC<HomeRowProps> = ({
     onToggleFavorite,
     onTogglePlayed,
     cardVariant = 'portrait',
+    isPriority = false,
     linkHref,
     linkText,
     playlistContext
@@ -69,10 +75,10 @@ export const HomeRow: FC<HomeRowProps> = ({
             <GridList
                 aria-label={title}
                 className={styles.row}
-                selectionMode="none"
+                selectionMode='none'
                 onAction={(key) => openDetailsById(String(key))}
             >
-                {items.map(it => {
+                {items.map((it, index) => {
                     const id = it.Id ?? `${title}-${it.Name ?? 'item'}`;
                     const meta = getCardMeta(it);
                     const img = buildCardImageUrl(it, {
@@ -93,6 +99,7 @@ export const HomeRow: FC<HomeRowProps> = ({
                                     user={user}
                                     variant={cardVariant}
                                     imageUrl={img}
+                                    isImagePriority={isPriority && index < PRIORITY_CARDS}
                                     overlayCount={getOverlayCount(it)}
                                     progressPct={getProgressPct(it)}
                                     title={meta.title}

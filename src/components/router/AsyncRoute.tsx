@@ -14,54 +14,15 @@ export interface AsyncRoute {
     type?: AppType
 }
 
-// Use Vite's glob imports to pre-bundle all route modules
-const dashboardRoutes = import.meta.glob('../../apps/dashboard/routes/**/*.tsx');
-const deskfinRoutes = import.meta.glob('../../apps/deskfin/features/**/routes/*.tsx');
-const legacyRoutes = import.meta.glob('../../apps/legacy/routes/**/*.tsx');
-const modernRoutes = import.meta.glob('../../apps/modern/routes/**/*.tsx');
-
-interface RouteModule {
-    default?: React.ComponentType;
-    Component?: React.ComponentType;
-    [key: string]: unknown;
-}
-
-const importRoute = (page: string, type: AppType): Promise<RouteModule> => {
-    let routes: Record<string, () => Promise<unknown>>;
-    let basePath: string;
-
+const importRoute = (page: string, type: AppType) => {
     switch (type) {
         case AppType.Dashboard:
-            routes = dashboardRoutes;
-            basePath = '../../apps/dashboard/routes/';
-            break;
-        case AppType.Deskfin:
-            routes = deskfinRoutes;
-            basePath = '../../apps/deskfin/features/';
-            break;
+            return import(/* webpackChunkName: "[request]" */ `../../apps/dashboard/routes/${page}`);
         case AppType.Modern:
-            routes = modernRoutes;
-            basePath = '../../apps/modern/routes/';
-            break;
+            return import(/* webpackChunkName: "[request]" */ `../../apps/modern/routes/${page}`);
         case AppType.Legacy:
-        default:
-            routes = legacyRoutes;
-            basePath = '../../apps/legacy/routes/';
-            break;
+            return import(/* webpackChunkName: "[request]" */ `../../apps/legacy/routes/${page}`);
     }
-
-    // Try .tsx first, then .ts, then without extension (for index files)
-    const key = `${basePath}${page}.tsx`;
-    const keyTs = `${basePath}${page}.ts`;
-    // Handle empty page name (root index) vs nested index
-    const keyIndex = page ? `${basePath}${page}/index.tsx` : `${basePath}index.tsx`;
-
-    const loader = routes[key] || routes[keyTs] || routes[keyIndex];
-    if (!loader) {
-        console.error(`Route not found: ${page} (tried ${key}, ${keyTs}, ${keyIndex})`);
-        return Promise.reject(new Error(`Route not found: ${page}`));
-    }
-    return loader() as Promise<RouteModule>;
 };
 
 export const toAsyncPageRoute = ({
@@ -72,14 +33,15 @@ export const toAsyncPageRoute = ({
     return {
         path,
         lazy: async () => {
-            const module = await importRoute(page ?? path, type);
-            // Support both default export and named Component export (React Router lazy pattern)
-            const Component = module.default || module.Component;
-            if (!Component) {
-                throw new Error(`Route module for ${page ?? path} has no default or Component export`);
-            }
+            const {
+                // If there is a default export, use it as the Component for compatibility
+                default: Component,
+                ...route
+            } = await importRoute(page ?? path, type);
+
             return {
-                Component: Component as React.ComponentType
+                Component,
+                ...route
             };
         }
     };

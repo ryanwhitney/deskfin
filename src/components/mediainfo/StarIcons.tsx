@@ -1,7 +1,7 @@
 import React, { type FC } from 'react';
 import classNames from 'classnames';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from '../../assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 
 interface StarIconsProps {
     className?: string;

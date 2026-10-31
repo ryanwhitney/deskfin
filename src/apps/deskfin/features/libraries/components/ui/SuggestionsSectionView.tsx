@@ -2,8 +2,7 @@ import type { RecommendationDto } from '@jellyfin/sdk/lib/generated-client/model
 import { RecommendationType } from '@jellyfin/sdk/lib/generated-client/models/recommendation-type';
 import React, { type FC, useCallback } from 'react';
 
-import { useGetSuggestionSectionsWithItems } from 'hooks/useFetchItems';
-import { useToggleFavoriteMutation, useTogglePlayedMutation } from 'hooks/useFetchItems';
+import { useGetSuggestionSectionsWithItems, useToggleFavoriteMutation, useTogglePlayedMutation } from 'hooks/useFetchItems';
 import globalize from 'lib/globalize';
 import Loading from 'components/loading/LoadingComponent';
 import NoItemsMessage from 'components/common/NoItemsMessage';
@@ -102,9 +101,9 @@ const SuggestionsSectionView: FC<SuggestionsSectionViewProps> = ({
     // Determine card variant based on section type
     const getVariantForSection = (section: SectionData): 'portrait' | 'landscape' => {
         // Resumable sections typically show landscape/thumb images
-        if (section.type === SectionTypeEnum.ContinueWatchingMovies ||
-            section.type === SectionTypeEnum.ContinueWatchingEpisode ||
-            section.type === SectionTypeEnum.RecentlyPlayedMusic) {
+        if (section.type === SectionTypeEnum.ContinueWatchingMovies
+            || section.type === SectionTypeEnum.ContinueWatchingEpisode
+            || section.type === SectionTypeEnum.RecentlyPlayedMusic) {
             return 'landscape';
         }
         return 'portrait';
@@ -135,7 +134,7 @@ const SuggestionsSectionView: FC<SuggestionsSectionViewProps> = ({
                 >
                     <ItemGrid
                         items={recommendation.Items as ItemDto[]}
-                        variant="portrait"
+                        variant='portrait'
                         onToggleFavorite={onToggleFavorite}
                         onTogglePlayed={onTogglePlayed}
                         onAfterAction={onAfterAction}

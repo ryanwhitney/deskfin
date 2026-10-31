@@ -16,12 +16,9 @@ export function useMatchMedia(query: string) {
 
         onChange();
 
-        // eslint-disable-next-line compat/compat
         if (typeof mql.addEventListener === 'function') {
-            // eslint-disable-next-line compat/compat
             mql.addEventListener('change', onChange);
             return () => {
-                // eslint-disable-next-line compat/compat
                 mql.removeEventListener('change', onChange);
             };
         }
@@ -37,5 +34,4 @@ export function useMatchMedia(query: string) {
 
     return matches;
 }
-
 

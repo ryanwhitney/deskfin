@@ -7,11 +7,11 @@ import {
     Popover,
     SubmenuTrigger
 } from 'react-aria-components';
-import { FocusRing } from '@react-aria/focus';
+import { FocusRing } from 'react-aria';
 
 import { playbackManager } from 'components/playback/playbackmanager';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 import globalize from 'lib/globalize';
 import qualityoptions from 'components/qualityOptions';
 
@@ -221,15 +221,15 @@ export const SettingsMenu: FC<SettingsMenuProps> = ({ player, onUpdate }) => {
     const getCurrentRepeatModeName = () => {
         if (!supportedCommands.includes('SetRepeatMode')) return '';
         const repeatMode = playbackManager.getRepeatMode(player);
-        return repeatMode === 'RepeatNone'
-            ? globalize.translate('None')
-            : globalize.translate(repeatMode);
+        return repeatMode === 'RepeatNone' ?
+            globalize.translate('None') :
+            globalize.translate(repeatMode);
     };
 
     return (
         <>
             <MenuTrigger isOpen={isOpen} onOpenChange={(open) => { setIsOpen(open); if (!open) blurOnMenuClose(); }}>
-                <FocusRing focusRingClass="focus-ring">
+                <FocusRing focusRingClass='focus-ring'>
                     <RacButton
                         ref={buttonRef}
                         className={styles.iconButton}
@@ -242,123 +242,123 @@ export const SettingsMenu: FC<SettingsMenuProps> = ({ player, onUpdate }) => {
 
                 <Popover
                     className={styles.popover}
-                    placement="top end"
+                    placement='top end'
                     offset={8}
                 >
-                <Menu className={styles.menu} key={refreshKey}>
-                    {/* Aspect Ratio */}
-                    {supportedCommands.includes('SetAspectRatio') && (
-                        <SubmenuTrigger>
+                    <Menu className={styles.menu} key={refreshKey}>
+                        {/* Aspect Ratio */}
+                        {supportedCommands.includes('SetAspectRatio') && (
+                            <SubmenuTrigger>
+                                <MenuItem
+                                    textValue={globalize.translate('AspectRatio')}
+                                    className={styles.menuItem}
+                                >
+                                    <span className={styles.itemText}>
+                                        {globalize.translate('AspectRatio')}
+                                    </span>
+                                    <span className={styles.itemSecondary}>
+                                        {getCurrentAspectRatioName()}
+                                    </span>
+                                </MenuItem>
+                                <Popover className={styles.submenuPopover} offset={-2} crossOffset={-4}>
+                                    {renderAspectRatioSubmenu()}
+                                </Popover>
+                            </SubmenuTrigger>
+                        )}
+
+                        {/* Playback Speed */}
+                        {supportedCommands.includes('PlaybackRate') && (
+                            <SubmenuTrigger>
+                                <MenuItem
+                                    textValue={globalize.translate('PlaybackRate')}
+                                    className={styles.menuItem}
+                                >
+                                    <span className={styles.itemText}>
+                                        {globalize.translate('PlaybackRate')}
+                                    </span>
+                                    <span className={styles.itemSecondary}>
+                                        {getCurrentPlaybackRateName()}
+                                    </span>
+                                </MenuItem>
+                                <Popover className={styles.submenuPopover} offset={-2} crossOffset={-4}>
+                                    {renderPlaybackRateSubmenu()}
+                                </Popover>
+                            </SubmenuTrigger>
+                        )}
+
+                        {/* Quality */}
+                        {supportedCommands.includes('SetMaxStreamingBitrate')
+                        && playbackManager.currentMediaSource(player)?.SupportsTranscoding && (
+                            <SubmenuTrigger>
+                                <MenuItem
+                                    textValue={globalize.translate('Quality')}
+                                    className={styles.menuItem}
+                                >
+                                    <span className={styles.itemText}>
+                                        {globalize.translate('Quality')}
+                                    </span>
+                                </MenuItem>
+                                <Popover className={styles.submenuPopover} offset={-2} crossOffset={-4}>
+                                    {renderQualitySubmenu()}
+                                </Popover>
+                            </SubmenuTrigger>
+                        )}
+
+                        {/* Repeat Mode */}
+                        {supportedCommands.includes('SetRepeatMode') && (
+                            <SubmenuTrigger>
+                                <MenuItem
+                                    textValue={globalize.translate('RepeatMode')}
+                                    className={styles.menuItem}
+                                >
+                                    <span className={styles.itemText}>
+                                        {globalize.translate('RepeatMode')}
+                                    </span>
+                                    <span className={styles.itemSecondary}>
+                                        {getCurrentRepeatModeName()}
+                                    </span>
+                                </MenuItem>
+                                <Popover className={styles.submenuPopover} offset={-2} crossOffset={-4}>
+                                    {renderRepeatModeSubmenu()}
+                                </Popover>
+                            </SubmenuTrigger>
+                        )}
+
+                        {/* Subtitle Offset */}
+                        {playbackManager.supportSubtitleOffset
+                        && playbackManager.supportSubtitleOffset(player)
+                        && playbackManager.canHandleOffsetOnCurrentSubtitle
+                        && playbackManager.canHandleOffsetOnCurrentSubtitle(player) && (
                             <MenuItem
-                                textValue={globalize.translate('AspectRatio')}
+                                textValue={globalize.translate('SubtitleOffset')}
                                 className={styles.menuItem}
+                                onAction={handleSubtitleOffset}
                             >
                                 <span className={styles.itemText}>
-                                    {globalize.translate('AspectRatio')}
-                                </span>
-                                <span className={styles.itemSecondary}>
-                                    {getCurrentAspectRatioName()}
+                                    {globalize.translate('SubtitleOffset')}
                                 </span>
                             </MenuItem>
-                            <Popover className={styles.submenuPopover} offset={-2} crossOffset={-4}>
-                                {renderAspectRatioSubmenu()}
-                            </Popover>
-                        </SubmenuTrigger>
-                    )}
+                        )}
 
-                    {/* Playback Speed */}
-                    {supportedCommands.includes('PlaybackRate') && (
-                        <SubmenuTrigger>
-                            <MenuItem
-                                textValue={globalize.translate('PlaybackRate')}
-                                className={styles.menuItem}
-                            >
-                                <span className={styles.itemText}>
-                                    {globalize.translate('PlaybackRate')}
-                                </span>
-                                <span className={styles.itemSecondary}>
-                                    {getCurrentPlaybackRateName()}
-                                </span>
-                            </MenuItem>
-                            <Popover className={styles.submenuPopover} offset={-2} crossOffset={-4}>
-                                {renderPlaybackRateSubmenu()}
-                            </Popover>
-                        </SubmenuTrigger>
-                    )}
-
-                    {/* Quality */}
-                    {supportedCommands.includes('SetMaxStreamingBitrate') &&
-                        playbackManager.currentMediaSource(player)?.SupportsTranscoding && (
-                        <SubmenuTrigger>
-                            <MenuItem
-                                textValue={globalize.translate('Quality')}
-                                className={styles.menuItem}
-                            >
-                                <span className={styles.itemText}>
-                                    {globalize.translate('Quality')}
-                                </span>
-                            </MenuItem>
-                            <Popover className={styles.submenuPopover} offset={-2} crossOffset={-4}>
-                                {renderQualitySubmenu()}
-                            </Popover>
-                        </SubmenuTrigger>
-                    )}
-
-                    {/* Repeat Mode */}
-                    {supportedCommands.includes('SetRepeatMode') && (
-                        <SubmenuTrigger>
-                            <MenuItem
-                                textValue={globalize.translate('RepeatMode')}
-                                className={styles.menuItem}
-                            >
-                                <span className={styles.itemText}>
-                                    {globalize.translate('RepeatMode')}
-                                </span>
-                                <span className={styles.itemSecondary}>
-                                    {getCurrentRepeatModeName()}
-                                </span>
-                            </MenuItem>
-                            <Popover className={styles.submenuPopover} offset={-2} crossOffset={-4}>
-                                {renderRepeatModeSubmenu()}
-                            </Popover>
-                        </SubmenuTrigger>
-                    )}
-
-                    {/* Subtitle Offset */}
-                    {playbackManager.supportSubtitleOffset &&
-                        playbackManager.supportSubtitleOffset(player) &&
-                        playbackManager.canHandleOffsetOnCurrentSubtitle &&
-                        playbackManager.canHandleOffsetOnCurrentSubtitle(player) && (
+                        {/* Playback Data / Stats */}
                         <MenuItem
-                            textValue={globalize.translate('SubtitleOffset')}
+                            textValue={globalize.translate('PlaybackData')}
                             className={styles.menuItem}
-                            onAction={handleSubtitleOffset}
+                            onAction={toggleStats}
                         >
                             <span className={styles.itemText}>
-                                {globalize.translate('SubtitleOffset')}
+                                {globalize.translate('PlaybackData')}
                             </span>
                         </MenuItem>
-                    )}
+                    </Menu>
+                </Popover>
+            </MenuTrigger>
 
-                    {/* Playback Data / Stats */}
-                    <MenuItem
-                        textValue={globalize.translate('PlaybackData')}
-                        className={styles.menuItem}
-                        onAction={toggleStats}
-                    >
-                        <span className={styles.itemText}>
-                            {globalize.translate('PlaybackData')}
-                        </span>
-                    </MenuItem>
-                </Menu>
-            </Popover>
-        </MenuTrigger>
-
-        <SubtitleOffsetControl
-            player={player}
-            isOpen={showSubtitleOffset}
-            onOpenChange={(open) => { setShowSubtitleOffset(open); if (!open) blurOnMenuClose(); }}
-        />
+            <SubtitleOffsetControl
+                player={player}
+                isOpen={showSubtitleOffset}
+                onOpenChange={(open) => { setShowSubtitleOffset(open); if (!open) blurOnMenuClose(); }}
+            />
         </>
     );
 };

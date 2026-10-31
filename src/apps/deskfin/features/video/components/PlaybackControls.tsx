@@ -1,12 +1,12 @@
 import React, { type FC, useState, useEffect, useCallback } from 'react';
 import { Button as RacButton } from 'react-aria-components';
-import { FocusRing } from '@react-aria/focus';
+import { FocusRing } from 'react-aria';
 
 import { playbackManager } from 'components/playback/playbackmanager';
 import { EventType } from 'constants/eventType';
 import Events from 'utils/events';
-import { IconSvgs } from 'assets/icons';
-import SvgIcon from 'components/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
 
 import { SubtitlesMenu } from './playback/SubtitlesMenu';
 import { AudioTrackMenu } from './playback/AudioTrackMenu';
@@ -126,8 +126,8 @@ export const PlaybackControls: FC = () => {
                 const activeElement = document.activeElement as HTMLElement;
                 // Blur any focused button or menu trigger
                 if (activeElement && (
-                    activeElement.tagName === 'BUTTON' ||
-                    activeElement.getAttribute('role') === 'button'
+                    activeElement.tagName === 'BUTTON'
+                    || activeElement.getAttribute('role') === 'button'
                 )) {
                     activeElement.blur();
                 }
@@ -144,8 +144,8 @@ export const PlaybackControls: FC = () => {
                 const activeElement = document.activeElement as HTMLElement;
                 // Blur any focused button or menu trigger
                 if (activeElement && (
-                    activeElement.tagName === 'BUTTON' ||
-                    activeElement.getAttribute('role') === 'button'
+                    activeElement.tagName === 'BUTTON'
+                    || activeElement.getAttribute('role') === 'button'
                 )) {
                     activeElement.blur();
                 }
@@ -278,19 +278,19 @@ export const PlaybackControls: FC = () => {
             )}
 
             {/* Rewind 10s */}
-            <FocusRing focusRingClass="focus-ring">
+            <FocusRing focusRingClass='focus-ring'>
                 <RacButton
                     ref={rewindBlur.ref}
                     className={styles.iconButton}
                     onPress={handleRewind}
-                    aria-label="Rewind"
+                    aria-label='Rewind'
                 >
                     <SvgIcon svg={IconSvgs.backward} size={20} />
                 </RacButton>
             </FocusRing>
 
             {/* Play/Pause */}
-            <FocusRing focusRingClass="focus-ring">
+            <FocusRing focusRingClass='focus-ring'>
                 <RacButton
                     ref={playPauseBlur.ref}
                     className={styles.iconButton}
@@ -302,12 +302,12 @@ export const PlaybackControls: FC = () => {
             </FocusRing>
 
             {/* Fast Forward 10s */}
-            <FocusRing focusRingClass="focus-ring">
+            <FocusRing focusRingClass='focus-ring'>
                 <RacButton
                     ref={fastForwardBlur.ref}
                     className={styles.iconButton}
                     onPress={handleFastForward}
-                    aria-label="Fast forward"
+                    aria-label='Fast forward'
                 >
                     <SvgIcon svg={IconSvgs.forward} size={20} />
                 </RacButton>
@@ -360,12 +360,12 @@ export const PlaybackControls: FC = () => {
 
             {/* Picture-in-Picture */}
             {supportsPiP && (
-                <FocusRing focusRingClass="focus-ring">
+                <FocusRing focusRingClass='focus-ring'>
                     <RacButton
                         ref={pipBlur.ref}
                         className={styles.iconButton}
                         onPress={handleTogglePiP}
-                        aria-label="Picture in Picture"
+                        aria-label='Picture in Picture'
                     >
                         <SvgIcon svg={IconSvgs.pip} size={20} />
                     </RacButton>
@@ -373,7 +373,7 @@ export const PlaybackControls: FC = () => {
             )}
 
             {/* Fullscreen */}
-            <FocusRing focusRingClass="focus-ring">
+            <FocusRing focusRingClass='focus-ring'>
                 <RacButton
                     ref={fullscreenBlur.ref}
                     className={styles.iconButton}

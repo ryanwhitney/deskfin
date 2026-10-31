@@ -1,6 +1,6 @@
 import React, { type FC, type ReactNode } from 'react';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 
 import styles from './Section.module.scss';
 

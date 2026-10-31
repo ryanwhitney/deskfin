@@ -22,9 +22,6 @@ export const getUserViewsQuery = (
 ) => queryOptions({
     queryKey: [ 'User', params?.userId, 'Views', params ],
     queryFn: ({ signal }) => fetchUserViews(api!, params, { signal }),
-    // DESKFIN: User views rarely change - cache for 5 minutes to avoid refetching on navigation
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
     enabled: !!api
 });
 

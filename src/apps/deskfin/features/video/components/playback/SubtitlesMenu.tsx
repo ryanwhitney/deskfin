@@ -8,11 +8,11 @@ import {
     Separator,
     SubmenuTrigger
 } from 'react-aria-components';
-import { FocusRing } from '@react-aria/focus';
+import { FocusRing } from 'react-aria';
 
 import { playbackManager } from 'components/playback/playbackmanager';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 import globalize from 'lib/globalize';
 
 import { SubtitleOffsetControl } from './SubtitleOffsetControl';
@@ -86,7 +86,7 @@ export const SubtitlesMenu: FC<SubtitlesMenuProps> = ({ player, onUpdate }) => {
                 {/* Off option */}
                 <MenuItem
                     key={-1}
-                    id="-1"
+                    id='-1'
                     textValue={globalize.translate('Off')}
                     className={styles.menuItem}
                     onAction={() => handleSelectSecondaryTrack(-1)}
@@ -141,9 +141,9 @@ export const SubtitlesMenu: FC<SubtitlesMenuProps> = ({ player, onUpdate }) => {
     };
 
     const showSecondarySubtitles = hasSecondarySubtitleSupport();
-    const secondaryTracks = showSecondarySubtitles
-        ? (playbackManager.secondarySubtitleTracks?.(player) || [])
-        : [];
+    const secondaryTracks = showSecondarySubtitles ?
+        (playbackManager.secondarySubtitleTracks?.(player) || []) :
+        [];
 
     // Get current secondary subtitle display name
     const getSecondarySubtitleName = () => {
@@ -159,63 +159,42 @@ export const SubtitlesMenu: FC<SubtitlesMenuProps> = ({ player, onUpdate }) => {
     };
 
     // Check if subtitle offset is supported
-    const supportsSubtitleOffset = player &&
-        playbackManager.supportSubtitleOffset?.(player) &&
-        playbackManager.canHandleOffsetOnCurrentSubtitle?.(player);
+    const supportsSubtitleOffset = player
+        && playbackManager.supportSubtitleOffset?.(player)
+        && playbackManager.canHandleOffsetOnCurrentSubtitle?.(player);
 
     return (
         <>
-        <MenuTrigger isOpen={isOpen} onOpenChange={(open) => { setIsOpen(open); if (!open) blurOnMenuClose(); }}>
-            <FocusRing focusRingClass="focus-ring">
-                <RacButton
-                    ref={buttonRef}
-                    className={styles.iconButton}
-                    aria-label={globalize.translate('Subtitles')}
-                    onPress={handlePress}
-                >
-                    <SvgIcon svg={IconSvgs.closedCaptioning} size={20} />
-                </RacButton>
-            </FocusRing>
-
-            <Popover
-                className={styles.popover}
-                placement="top end"
-                offset={8}
-            >
-                <Menu className={styles.menu} key={refreshKey}>
-                    {/* Off option */}
-                    <MenuItem
-                        key={-1}
-                        id="-1"
-                        textValue={globalize.translate('Off')}
-                        className={styles.menuItem}
-                        onAction={() => handleSelectTrack(-1)}
+            <MenuTrigger isOpen={isOpen} onOpenChange={(open) => { setIsOpen(open); if (!open) blurOnMenuClose(); }}>
+                <FocusRing focusRingClass='focus-ring'>
+                    <RacButton
+                        ref={buttonRef}
+                        className={styles.iconButton}
+                        aria-label={globalize.translate('Subtitles')}
+                        onPress={handlePress}
                     >
-                        <span className={styles.itemText}>
-                            {globalize.translate('Off')}
-                        </span>
-                        {currentIndex === -1 && (
-                            <SvgIcon
-                                svg={IconSvgs.checkmark}
-                                size={18}
-                                className={styles.checkmark}
-                            />
-                        )}
-                    </MenuItem>
+                        <SvgIcon svg={IconSvgs.closedCaptioning} size={20} />
+                    </RacButton>
+                </FocusRing>
 
-                    {/* Subtitle tracks */}
-                    {subtitleTracks.map((track) => (
+                <Popover
+                    className={styles.popover}
+                    placement='top end'
+                    offset={8}
+                >
+                    <Menu className={styles.menu} key={refreshKey}>
+                        {/* Off option */}
                         <MenuItem
-                            key={track.Index}
-                            id={String(track.Index)}
-                            textValue={track.DisplayTitle || `Track ${track.Index}`}
+                            key={-1}
+                            id='-1'
+                            textValue={globalize.translate('Off')}
                             className={styles.menuItem}
-                            onAction={() => handleSelectTrack(track.Index)}
+                            onAction={() => handleSelectTrack(-1)}
                         >
                             <span className={styles.itemText}>
-                                {track.DisplayTitle || `Track ${track.Index}`}
+                                {globalize.translate('Off')}
                             </span>
-                            {currentIndex === track.Index && (
+                            {currentIndex === -1 && (
                                 <SvgIcon
                                     svg={IconSvgs.checkmark}
                                     size={18}
@@ -223,55 +202,76 @@ export const SubtitlesMenu: FC<SubtitlesMenuProps> = ({ player, onUpdate }) => {
                                 />
                             )}
                         </MenuItem>
-                    ))}
 
-                    {/* Subtitle Offset */}
-                    {supportsSubtitleOffset && (
-                        <>
-                            <Separator className={styles.separator} />
+                        {/* Subtitle tracks */}
+                        {subtitleTracks.map((track) => (
                             <MenuItem
-                                textValue={globalize.translate('SubtitleOffset')}
+                                key={track.Index}
+                                id={String(track.Index)}
+                                textValue={track.DisplayTitle || `Track ${track.Index}`}
                                 className={styles.menuItem}
-                                onAction={handleSubtitleOffset}
+                                onAction={() => handleSelectTrack(track.Index)}
                             >
                                 <span className={styles.itemText}>
-                                    {globalize.translate('SubtitleOffset')}
+                                    {track.DisplayTitle || `Track ${track.Index}`}
                                 </span>
+                                {currentIndex === track.Index && (
+                                    <SvgIcon
+                                        svg={IconSvgs.checkmark}
+                                        size={18}
+                                        className={styles.checkmark}
+                                    />
+                                )}
                             </MenuItem>
-                        </>
-                    )}
+                        ))}
 
-                    {/* Secondary Subtitles submenu */}
-                    {showSecondarySubtitles && secondaryTracks.length > 0 && (
-                        <>
-                            <Separator className={styles.separator} />
-                            <SubmenuTrigger>
+                        {/* Subtitle Offset */}
+                        {supportsSubtitleOffset && (
+                            <>
+                                <Separator className={styles.separator} />
                                 <MenuItem
-                                    textValue={globalize.translate('SecondarySubtitles')}
+                                    textValue={globalize.translate('SubtitleOffset')}
                                     className={styles.menuItem}
+                                    onAction={handleSubtitleOffset}
                                 >
                                     <span className={styles.itemText}>
-                                        {globalize.translate('SecondarySubtitles')}
-                                    </span>
-                                    <span className={styles.itemSecondary}>
-                                        {getSecondarySubtitleName()}
+                                        {globalize.translate('SubtitleOffset')}
                                     </span>
                                 </MenuItem>
-                                <Popover className={styles.submenuPopover} offset={-2} crossOffset={-4}>
-                                    {renderSecondarySubtitlesMenu()}
-                                </Popover>
-                            </SubmenuTrigger>
-                        </>
-                    )}
-                </Menu>
-            </Popover>
-        </MenuTrigger>
+                            </>
+                        )}
 
-        <SubtitleOffsetControl
-            player={player}
-            isOpen={showSubtitleOffset}
-            onOpenChange={(open) => { setShowSubtitleOffset(open); if (!open) blurOnMenuClose(); }}
-        />
+                        {/* Secondary Subtitles submenu */}
+                        {showSecondarySubtitles && secondaryTracks.length > 0 && (
+                            <>
+                                <Separator className={styles.separator} />
+                                <SubmenuTrigger>
+                                    <MenuItem
+                                        textValue={globalize.translate('SecondarySubtitles')}
+                                        className={styles.menuItem}
+                                    >
+                                        <span className={styles.itemText}>
+                                            {globalize.translate('SecondarySubtitles')}
+                                        </span>
+                                        <span className={styles.itemSecondary}>
+                                            {getSecondarySubtitleName()}
+                                        </span>
+                                    </MenuItem>
+                                    <Popover className={styles.submenuPopover} offset={-2} crossOffset={-4}>
+                                        {renderSecondarySubtitlesMenu()}
+                                    </Popover>
+                                </SubmenuTrigger>
+                            </>
+                        )}
+                    </Menu>
+                </Popover>
+            </MenuTrigger>
+
+            <SubtitleOffsetControl
+                player={player}
+                isOpen={showSubtitleOffset}
+                onOpenChange={(open) => { setShowSubtitleOffset(open); if (!open) blurOnMenuClose(); }}
+            />
         </>
     );
 };

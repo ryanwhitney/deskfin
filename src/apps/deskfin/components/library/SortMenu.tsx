@@ -4,10 +4,10 @@ import { ItemSortBy } from '@jellyfin/sdk/lib/generated-client/models/item-sort-
 import { SortOrder } from '@jellyfin/sdk/lib/generated-client/models/sort-order';
 
 import globalize from 'lib/globalize';
-import SvgIcon from 'components/SvgIcon';
-import { IconSvgs } from 'assets/icons';
+import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
+import { IconSvgs } from 'apps/deskfin/assets/icons';
 import type { LibraryViewSettings } from 'types/library';
-import { LibraryTab } from 'types/libraryTab';
+import { LibraryTab } from 'apps/deskfin/types/libraryTab';
 
 import styles from './LibraryToolbar.module.scss';
 
@@ -161,9 +161,9 @@ export const SortMenu: FC<SortMenuProps> = ({
 
     // Find current sort option label
     const currentSortOption = sortOptions.find((opt) => opt.value === currentSortBy);
-    const currentSortLabel = currentSortOption
-        ? globalize.translate(currentSortOption.label)
-        : globalize.translate('Sort');
+    const currentSortLabel = currentSortOption ?
+        globalize.translate(currentSortOption.label) :
+        globalize.translate('Sort');
 
     const isAscending = currentSortOrder === SortOrder.Ascending;
 

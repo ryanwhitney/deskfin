@@ -24,7 +24,7 @@ const NewCollectionButton: FC = () => {
 
     return (
         <button
-            type="button"
+            type='button'
             className={styles.actionButton}
             title={globalize.translate('NewCollection')}
             onClick={showCollectionEditor}
