@@ -21,6 +21,12 @@ try {
     console.warn('Failed to get commit sha. Is git installed?', err);
 }
 
+// Server(s) prefilled into config.json for production builds, so new devices on https://media.home connect
+// through the HTTPS proxy instead of the LAN address (which browsers block as mixed content).
+// Override with JELLYFIN_SERVERS="https://a,https://b"; dev (`npm start`) keeps the empty default.
+const PRODUCTION_SERVERS = (process.env.JELLYFIN_SERVERS ?? 'https://jellyfin.home')
+    .split(',').map(server => server.trim()).filter(Boolean);
+
 const Assets = [
     'native-promise-only/npo.js',
     'libarchive.js/dist/worker-bundle.js',
@@ -41,7 +47,7 @@ const THEME_INPUTS = Object.fromEntries(
     })
 );
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
     assetsInclude: ['**/controllers/**/*.html', '**/apps/**/*.html'],
     optimizeDeps: {
         // libbitsub (PGS/VobSub subtitles) locates its wasm via import.meta.url, which pre-bundling breaks
@@ -69,7 +75,11 @@ export default defineConfig({
                 },
                 {
                     src: 'src/config.json',
-                    dest: '.'
+                    dest: '.',
+                    transform: (content: string) => {
+                        if (command !== 'build') return content;
+                        return JSON.stringify({ ...JSON.parse(content), servers: PRODUCTION_SERVERS }, null, 4) + '\n';
+                    }
                 },
                 {
                     src: 'src/robots.txt',
@@ -168,4 +178,4 @@ export default defineConfig({
         environment: 'jsdom',
         restoreMocks: true
     }
-});
+}));
