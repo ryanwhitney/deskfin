@@ -36,12 +36,12 @@ interface ViewOptions {
 // Use Vite's glob imports to pre-bundle all controller modules
 const dashboardControllers = import.meta.glob('../../apps/dashboard/controllers/**/*.js');
 const wizardControllers = import.meta.glob('../../apps/wizard/controllers/**/*.js');
-const stableControllers = import.meta.glob('../../controllers/**/*.js');
+const legacyControllers = import.meta.glob('../../apps/legacy/controllers/**/*.js');
 
 // Import HTML views as raw strings
 const dashboardViews = import.meta.glob('../../apps/dashboard/controllers/**/*.html', { query: '?raw', import: 'default' });
 const wizardViews = import.meta.glob('../../apps/wizard/controllers/**/*.html', { query: '?raw', import: 'default' });
-const stableViews = import.meta.glob('../../controllers/**/*.html', { query: '?raw', import: 'default' });
+const legacyViews = import.meta.glob('../../apps/legacy/controllers/**/*.html', { query: '?raw', import: 'default' });
 
 const importController = async (
     appType: AppType,
@@ -64,9 +64,9 @@ const importController = async (
             basePath = '../../apps/wizard/controllers/';
             break;
         default:
-            controllers = stableControllers;
-            views = stableViews;
-            basePath = '../../controllers/';
+            controllers = legacyControllers;
+            views = legacyViews;
+            basePath = '../../apps/legacy/controllers/';
             break;
     }
 
@@ -111,7 +111,7 @@ const loadView = async (
  * NOTE: Any new pages should use the generic Page component instead.
  */
 const ViewManagerPage: FunctionComponent<ViewManagerPageProps> = ({
-    appType = AppType.Stable,
+    appType = AppType.Legacy,
     controller,
     view,
     type,

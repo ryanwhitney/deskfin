@@ -1,5 +1,5 @@
 import React, { type FC, useEffect, useState } from 'react';
-import { getPlaylistsApi } from '@jellyfin/sdk/lib/utils/api/playlists-api';
+import { getPlaylistApi } from '@jellyfin/sdk/lib/utils/api/playlist-api';
 import type { ItemDto } from 'types/base/models/item-dto';
 import { useApi } from 'hooks/useApi';
 import { HomeRow } from './HomeRow';
@@ -33,7 +33,7 @@ export const PlaylistRow: FC<PlaylistRowProps> = ({
         if (!api || !user?.Id) return;
 
         try {
-            const response = await getPlaylistsApi(api).getPlaylistItems({
+            const response = await getPlaylistApi(api).getPlaylistItems({
                 playlistId,
                 userId: user.Id,
                 limit: 12,

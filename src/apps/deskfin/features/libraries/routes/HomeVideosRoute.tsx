@@ -8,9 +8,10 @@ import PageTabContent from '../components/ui/PageTabContent';
 import { LibraryViewMenu } from 'apps/deskfin/components/library/LibraryViewMenu';
 import { LibraryTab } from 'types/libraryTab';
 import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
-import { LibraryTabContent, LibraryTabMapping } from 'types/libraryTabContent';
+import { LibraryTabContent } from 'types/libraryTabContent';
 
 import layoutStyles from '../components/ui/PageLayout.module.scss';
+import { type LibraryTabMapping } from '../types/sectionsViews';
 
 const photosTabContent: LibraryTabContent = {
     viewType: LibraryTab.Photos,
@@ -62,7 +63,7 @@ const HomeVideos: FC = () => {
         <Page
             id='homevideos'
             className='mainAnimatedPage libraryPage backdropPage collectionEditorPage pageWithAbsoluteTabs withTabs'
-            backDropType='video, photo'
+            backDropType={[BaseItemKind.Video, BaseItemKind.Photo]}
         >
             <div className={layoutStyles.toolbar}>
                 <LibraryViewMenu />

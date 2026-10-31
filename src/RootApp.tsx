@@ -1,12 +1,13 @@
-import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import React, { StrictMode } from 'react';
 
+import QueryClientEventHandler from 'components/QueryClientEventHandler';
 import { ApiProvider } from 'hooks/useApi';
 import { UserSettingsProvider } from 'hooks/useUserSettings';
 import { WebConfigProvider } from 'hooks/useWebConfig';
 import browser from 'scripts/browser';
-import { queryClient } from 'utils/query/queryClient';
+import { persister, queryClient } from 'utils/query/queryClient';
 
 import RootAppRouter from 'RootAppRouter';
 
@@ -15,10 +16,17 @@ const useReactQueryDevtools = window.Proxy // '@tanstack/query-devtools' require
 
 const RootApp = () => (
     <StrictMode>
-        <QueryClientProvider client={queryClient}>
+        <PersistQueryClientProvider
+            client={queryClient}
+            persistOptions={{
+                buster: __JF_BUILD_VERSION__,
+                persister
+            }}
+        >
             <ApiProvider>
                 <UserSettingsProvider>
                     <WebConfigProvider>
+                        <QueryClientEventHandler />
                         <RootAppRouter />
                     </WebConfigProvider>
                 </UserSettingsProvider>
@@ -26,7 +34,7 @@ const RootApp = () => (
             {useReactQueryDevtools && (
                 <ReactQueryDevtools initialIsOpen={false} />
             )}
-        </QueryClientProvider>
+        </PersistQueryClientProvider>
     </StrictMode>
 );
 

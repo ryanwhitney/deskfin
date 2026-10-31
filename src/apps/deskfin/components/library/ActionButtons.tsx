@@ -34,7 +34,7 @@ export const PlayAllButton: FC<PlayAllButtonProps> = ({
                 items: [item],
                 autoplay: true,
                 queryOptions: {
-                    SortBy: [libraryViewSettings.SortBy],
+                    SortBy: libraryViewSettings.SortBy,
                     SortOrder: [libraryViewSettings.SortOrder]
                 }
             }).catch(err => {
@@ -47,7 +47,7 @@ export const PlayAllButton: FC<PlayAllButtonProps> = ({
                 queryOptions: {
                     ParentId: item?.Id ?? undefined,
                     ...getFiltersQuery(viewType, libraryViewSettings),
-                    SortBy: [libraryViewSettings.SortBy],
+                    SortBy: libraryViewSettings.SortBy,
                     SortOrder: [libraryViewSettings.SortOrder]
                 }
             }).catch(err => {

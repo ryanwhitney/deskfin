@@ -1,7 +1,7 @@
 import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
 import type { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
 import React, { FC } from 'react';
-import { useGetYears } from 'hooks/useFetchItems';
+import { useGetYears } from '../../hooks/useLibraryQueries';
 import NoItemsMessage from 'components/common/NoItemsMessage';
 import Loading from 'components/loading/LoadingComponent';
 import YearsSectionContainer from './YearsSectionContainer';

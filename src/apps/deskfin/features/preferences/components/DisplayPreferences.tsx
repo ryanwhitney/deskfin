@@ -145,10 +145,10 @@ export function DisplayPreferences({ onChange, values }: Readonly<DisplayPrefere
 
                     <FormControl fullWidth>
                         <TextField
-                            aria-describedby='display-settings-screensaver-interval-description'
-                            value={values.screensaverInterval}
+                            aria-describedby='display-settings-backdrop-screensaver-interval-description'
+                            value={values.backdropScreensaverInterval}
                             label={globalize.translate('LabelBackdropScreensaverInterval')}
-                            name='screensaverInterval'
+                            name='backdropScreensaverInterval'
                             onChange={onChange}
                             slotProps={{
                                 htmlInput: {
@@ -162,7 +162,7 @@ export function DisplayPreferences({ onChange, values }: Readonly<DisplayPrefere
                                 }
                             }}
                         />
-                        <FormHelperText id='display-settings-screensaver-interval-description'>
+                        <FormHelperText id='display-settings-backdrop-screensaver-interval-description'>
                             {globalize.translate('LabelBackdropScreensaverIntervalHelp')}
                         </FormHelperText>
                     </FormControl>

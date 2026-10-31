@@ -53,4 +53,3 @@ export default `<div class="formDialogHeader">
     </div>
 </div>
 `;
-

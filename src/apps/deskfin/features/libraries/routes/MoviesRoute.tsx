@@ -8,11 +8,11 @@ import PageTabContent from "../components/ui/PageTabContent";
 import { LibraryViewMenu } from "apps/deskfin/components/library/LibraryViewMenu";
 import { LibraryTab } from "types/libraryTab";
 import { CollectionType } from "@jellyfin/sdk/lib/generated-client/models/collection-type";
-import { LibraryTabContent, LibraryTabMapping } from "types/libraryTabContent";
-import { MovieSuggestionsSectionsView } from "types/sections";
+import { LibraryTabContent } from "types/libraryTabContent";
 
 import layoutStyles from "../components/ui/PageLayout.module.scss";
 import globalize from "lib/globalize";
+import { type LibraryTabMapping, MovieSuggestionsSectionsView } from '../types/sectionsViews';
 
 const moviesTabContent: LibraryTabContent = {
     viewType: LibraryTab.Movies,
@@ -94,7 +94,7 @@ const Movies: FC = () => {
         <Page
             id="moviesPage"
             className="mainAnimatedPage libraryPage backdropPage collectionEditorPage pageWithAbsoluteTabs withTabs"
-            backDropType="movie"
+            backDropType={[BaseItemKind.Movie]}
         >
             <h1>{globalize.translate("Movies")}</h1>
             {/* Tab bar stays mounted - never re-renders on tab change */}

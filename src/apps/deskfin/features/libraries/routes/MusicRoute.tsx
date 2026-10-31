@@ -8,10 +8,10 @@ import PageTabContent from '../components/ui/PageTabContent';
 import { LibraryViewMenu } from 'apps/deskfin/components/library/LibraryViewMenu';
 import { LibraryTab } from 'types/libraryTab';
 import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
-import { LibraryTabContent, LibraryTabMapping } from 'types/libraryTabContent';
-import { MusicSuggestionsSectionsView } from 'types/sections';
+import { LibraryTabContent } from 'types/libraryTabContent';
 
 import layoutStyles from '../components/ui/PageLayout.module.scss';
+import { type LibraryTabMapping, MusicSuggestionsSectionsView } from '../types/sectionsViews';
 
 const albumArtistsTabContent: LibraryTabContent = {
     viewType: LibraryTab.AlbumArtists,
@@ -94,7 +94,7 @@ const Music: FC = () => {
         <Page
             id='musicPage'
             className='mainAnimatedPage libraryPage backdropPage collectionEditorPage pageWithAbsoluteTabs withTabs'
-            backDropType='musicartist'
+            backDropType={[BaseItemKind.MusicArtist]}
         >
             <div className={layoutStyles.toolbar}>
                 <LibraryViewMenu />

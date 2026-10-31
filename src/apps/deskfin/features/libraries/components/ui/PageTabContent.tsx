@@ -66,7 +66,7 @@ const PageTabContent: FC<PageTabContentProps> = ({ parentId, currentTab }) => {
             <div className={styles.content}>
                 <GenresView
                     parentId={parentId}
-                    collectionType={currentTab.collectionType}
+                    collectionType={currentTab.collectionType ?? undefined}
                     itemType={currentTab.itemType || []}
                 />
             </div>
@@ -78,7 +78,7 @@ const PageTabContent: FC<PageTabContentProps> = ({ parentId, currentTab }) => {
             <div className={styles.content}>
                 <YearsView
                     parentId={parentId}
-                    collectionType={currentTab.collectionType}
+                    collectionType={currentTab.collectionType ?? undefined}
                     itemType={currentTab.itemType || []}
                 />
             </div>
@@ -93,7 +93,7 @@ const PageTabContent: FC<PageTabContentProps> = ({ parentId, currentTab }) => {
         );
     }
 
-    if (currentTab.viewType === LibraryTab.Networks) {
+    if (currentTab.viewType === LibraryTab.Studios) {
         return (
             <div className={styles.content}>
                 <NetworksView
@@ -108,7 +108,7 @@ const PageTabContent: FC<PageTabContentProps> = ({ parentId, currentTab }) => {
         <ItemsView
             viewType={currentTab.viewType}
             parentId={parentId}
-            collectionType={currentTab.collectionType}
+            collectionType={currentTab.collectionType ?? undefined}
             isBtnPlayAllEnabled={false} // currentTab.isBtnPlayAllEnabled
             isBtnQueueEnabled={currentTab.isBtnQueueEnabled}
             isBtnShuffleEnabled={false} // currentTab.isBtnShuffleEnabled

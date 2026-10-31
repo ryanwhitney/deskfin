@@ -1,15 +1,16 @@
+import type { ItemSortBy } from '@jellyfin/sdk/lib/generated-client/models/item-sort-by';
 import type { BaseItemKind } from "@jellyfin/sdk/lib/generated-client/models/base-item-kind";
 import type { CollectionType } from "@jellyfin/sdk/lib/generated-client/models/collection-type";
-import React, { type FC, useCallback } from "react";
+import React, { type FC, useCallback, useMemo } from "react";
 
-import { useLocalStorage } from "hooks/useLocalStorage";
+import { useLocalStorage } from "apps/deskfin/hooks/useLocalStorage";
 import {
     useGetItemsViewByType,
     useToggleFavoriteMutation,
     useTogglePlayedMutation,
 } from "hooks/useFetchItems";
 import { useApi } from "hooks/useApi";
-import { getDefaultLibraryViewSettings, getSettingsKey } from "utils/items";
+import { getDefaultLibraryViewSettings, getSettingsKey } from "../../utils/settings";
 import Loading from "components/loading/LoadingComponent";
 import ItemsContainer from "elements/emby-itemscontainer/ItemsContainer";
 import NoItemsMessage from "components/common/NoItemsMessage";
@@ -61,11 +62,17 @@ const ItemsView: FC<ItemsViewProps> = ({
     noItemsMessage,
 }) => {
     const { user } = useApi();
-    const [libraryViewSettings, setLibraryViewSettings] =
+    const [storedViewSettings, setLibraryViewSettings] =
         useLocalStorage<LibraryViewSettings>(
             getSettingsKey(viewType, parentId),
             getDefaultLibraryViewSettings(viewType)
         );
+    // Settings saved before the upstream sync stored SortBy as a single string
+    const libraryViewSettings = useMemo<LibraryViewSettings>(() => (
+        Array.isArray(storedViewSettings.SortBy) ?
+            storedViewSettings :
+            { ...storedViewSettings, SortBy: [storedViewSettings.SortBy as ItemSortBy] }
+    ), [storedViewSettings]);
 
     const {
         isPending,

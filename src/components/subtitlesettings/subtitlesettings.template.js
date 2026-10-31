@@ -40,6 +40,15 @@ export default `<form style="margin:0 auto;">
             </label>
             <div class="fieldDescription checkboxFieldDescription">\${RenderPgsSubtitleHelp}</div>
         </div>
+
+        <div class="selectContainer fldBitmapSubtitleAspectMode hide">
+            <select is="emby-select" id="selectBitmapSubtitleAspectMode" label="\${LabelBitmapSubtitleAspectMode}">
+                <option value="stretch">\${BitmapSubtitleAspectModeStretch}</option>
+                <option value="contain">\${BitmapSubtitleAspectModeContain}</option>
+                <option value="cover">\${BitmapSubtitleAspectModeCover}</option>
+            </select>
+            <div class="fieldDescription">\${BitmapSubtitleAspectModeHelp}</div>
+        </div>
     </div>
 
     <div class="checkboxContainer checkboxContainer-withDescription">

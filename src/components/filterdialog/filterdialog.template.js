@@ -140,6 +140,10 @@ export default `<div style="margin: 0;padding:1.5em 2em;" class="filterDialogCon
         <div class="collapseContent filterOptions">
         </div>
     </div>
+
+    <button is="emby-button" type="submit" class="resetFilters raised">
+        <span class="material-icons clear" aria-hidden="true"></span>
+        <span>\${ResetFilters}</span>
+    </button>
 </div>
 `;
-

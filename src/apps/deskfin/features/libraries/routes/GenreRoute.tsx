@@ -122,7 +122,7 @@ export default function GenrePage() {
             id="genrePage"
             className="mainAnimatedPage libraryPage backdropPage"
             isBackButtonEnabled
-            backDropType="movie,series"
+            backDropType={[BaseItemKind.Movie, BaseItemKind.Series]}
         >
             {isLoading ? (
                 <Loading />

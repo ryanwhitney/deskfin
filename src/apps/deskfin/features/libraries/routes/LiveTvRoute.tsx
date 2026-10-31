@@ -6,10 +6,10 @@ import Page from 'components/Page';
 import PageTabContent from '../components/ui/PageTabContent';
 import { LibraryViewMenu } from 'apps/deskfin/components/library/LibraryViewMenu';
 import { LibraryTab } from 'types/libraryTab';
-import { LibraryTabContent, LibraryTabMapping } from 'types/libraryTabContent';
-import { ProgramSectionsView, RecordingsSectionsView, ScheduleSectionsView } from 'types/sections';
+import { LibraryTabContent } from 'types/libraryTabContent';
 
 import layoutStyles from '../components/ui/PageLayout.module.scss';
+import { type LibraryTabMapping, ProgramSectionsView, RecordingsSectionsView, ScheduleSectionsView } from '../types/sectionsViews';
 
 const seriestimersTabContent: LibraryTabContent = {
     viewType: LibraryTab.SeriesTimers,

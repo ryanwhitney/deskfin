@@ -250,7 +250,7 @@ export default function DetailsPage() {
         <Page
             id="itemDetailsPage"
             className={`${styles.page} ${itemType?.toLowerCase()} selfBackdropPage`}
-            backDropType="movie,series,book"
+            backDropType={[BaseItemKind.Movie, BaseItemKind.Series, BaseItemKind.Book]}
         >
             <div>
                 <div className={styles.heroContainer}>

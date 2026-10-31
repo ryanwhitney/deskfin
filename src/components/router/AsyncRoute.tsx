@@ -17,7 +17,8 @@ export interface AsyncRoute {
 // Use Vite's glob imports to pre-bundle all route modules
 const dashboardRoutes = import.meta.glob('../../apps/dashboard/routes/**/*.tsx');
 const deskfinRoutes = import.meta.glob('../../apps/deskfin/features/**/routes/*.tsx');
-const stableRoutes = import.meta.glob('../../apps/stable/routes/**/*.tsx');
+const legacyRoutes = import.meta.glob('../../apps/legacy/routes/**/*.tsx');
+const modernRoutes = import.meta.glob('../../apps/modern/routes/**/*.tsx');
 
 interface RouteModule {
     default?: React.ComponentType;
@@ -38,10 +39,14 @@ const importRoute = (page: string, type: AppType): Promise<RouteModule> => {
             routes = deskfinRoutes;
             basePath = '../../apps/deskfin/features/';
             break;
-        case AppType.Stable:
+        case AppType.Modern:
+            routes = modernRoutes;
+            basePath = '../../apps/modern/routes/';
+            break;
+        case AppType.Legacy:
         default:
-            routes = stableRoutes;
-            basePath = '../../apps/stable/routes/';
+            routes = legacyRoutes;
+            basePath = '../../apps/legacy/routes/';
             break;
     }
 
@@ -62,7 +67,7 @@ const importRoute = (page: string, type: AppType): Promise<RouteModule> => {
 export const toAsyncPageRoute = ({
     path,
     page,
-    type = AppType.Stable
+    type = AppType.Legacy
 }: AsyncRoute): RouteObject => {
     return {
         path,

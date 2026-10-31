@@ -148,7 +148,8 @@ const SortButton: FC<SortButtonProps> = ({
             setLibraryViewSettings((prevState) => ({
                 ...prevState,
                 StartIndex: 0,
-                [name]: event.target.value
+                // SortBy is stored as an array; the select picks a single value
+                [name]: name === 'SortBy' ? [event.target.value] : event.target.value
             }));
         },
         [setLibraryViewSettings]
@@ -191,7 +192,7 @@ const SortButton: FC<SortButtonProps> = ({
                     <Select
                         labelId='select-sort-label'
                         id='selectSortBy'
-                        value={libraryViewSettings.SortBy}
+                        value={libraryViewSettings.SortBy[0]}
                         label={globalize.translate('LabelSortBy')}
                         name='SortBy'
                         onChange={onSelectChange}

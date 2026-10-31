@@ -5,9 +5,10 @@ import styles from './Button.module.scss';
 
 const cx = (...parts: Array<string | undefined>) => parts.filter(Boolean).join(' ');
 
-export interface ButtonProps extends Omit<RacButtonProps, 'className'> {
+export interface ButtonProps extends Omit<RacButtonProps, 'className' | 'children'> {
     className?: string;
     icon?: React.ReactNode;
+    children?: React.ReactNode;
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(

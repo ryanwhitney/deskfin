@@ -2,7 +2,7 @@ import React, { type FC, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Squircle } from '@squircle-js/react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getItemsApi } from '@jellyfin/sdk/lib/utils/api/items-api';
+import { getLibraryApi } from '@jellyfin/sdk/lib/utils/api/library-api';
 import { ItemFields } from '@jellyfin/sdk/lib/generated-client/models/item-fields';
 import { ImageType } from '@jellyfin/sdk/lib/generated-client/models/image-type';
 import {
@@ -91,7 +91,7 @@ export const PlaylistCard: FC<PlaylistCardProps> = ({ playlist, serverId, onDele
         queryFn: async () => {
             if (!api || !user?.Id || !playlist.Id) return [];
 
-            const response = await getItemsApi(api).getItems({
+            const response = await getLibraryApi(api).getItems({
                 userId: user.Id,
                 parentId: playlist.Id,
                 limit: 4,

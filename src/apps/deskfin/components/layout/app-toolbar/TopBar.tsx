@@ -15,7 +15,7 @@ import styles from './TopBar.module.scss';
 interface TopBarProps {
     isDrawerAvailable: boolean;
     isDrawerOpen: boolean;
-    onDrawerButtonClick: (event: React.MouseEvent<HTMLElement>) => void;
+    onDrawerButtonClick: (event: React.MouseEvent<Element>) => void;
 }
 
 const PUBLIC_PATHS = [

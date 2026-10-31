@@ -9,7 +9,7 @@ import { useGetProgramsSectionsWithItems, useGetTimers } from 'hooks/useFetchIte
 import globalize from 'lib/globalize';
 import type { ParentId } from 'types/library';
 import type { Section, SectionType } from 'types/sections';
-import { CardShape } from 'utils/card';
+import { CardShape } from 'components/cardbuilder/utils/shape';
 
 import { ProgramsSection } from 'apps/deskfin/components/media/ProgramsSection';
 
@@ -20,12 +20,11 @@ interface ProgramsSectionViewProps {
 }
 
 const ProgramsSectionView: FC<ProgramsSectionViewProps> = ({
-    parentId,
     sectionType,
     isUpcomingRecordingsEnabled = false
 }) => {
-    const { __legacyApiClient__ } = useApi();
-    const { isLoading, data: sectionsWithItems, refetch } = useGetProgramsSectionsWithItems(parentId, sectionType);
+    const { serverId } = useApi();
+    const { isLoading, data: sectionsWithItems, refetch } = useGetProgramsSectionsWithItems(sectionType);
     const {
         isLoading: isUpcomingRecordingsLoading,
         data: upcomingRecordings
@@ -67,7 +66,7 @@ const ProgramsSectionView: FC<ProgramsSectionViewProps> = ({
                     cardOptions={{
                         ...section.cardOptions,
                         queryKey: ['ProgramSectionWithItems'],
-                        serverId: __legacyApiClient__?.serverId()
+                        serverId: serverId
                     }}
                 />
             ))}
@@ -98,7 +97,7 @@ const ProgramsSectionView: FC<ProgramsSectionViewProps> = ({
                         allowBottomPadding: false,
                         overlayText: false,
                         showChannelLogo: true,
-                        serverId: __legacyApiClient__?.serverId()
+                        serverId: serverId
                     }}
                 />
             ))}

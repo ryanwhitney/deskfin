@@ -11,7 +11,7 @@ import {
     Checkbox
 } from 'react-aria-components';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
-import { getPlaylistsApi } from '@jellyfin/sdk/lib/utils/api/playlists-api';
+import { getPlaylistApi } from '@jellyfin/sdk/lib/utils/api/playlist-api';
 import { useNavigate } from 'react-router-dom';
 
 import { useApi } from 'hooks/useApi';
@@ -53,7 +53,7 @@ export const ManagePlaylistDialog: FC<ManagePlaylistDialogProps> = ({
 
         setIsLoadingDetails(true);
         try {
-            const playlistsApi = getPlaylistsApi(api);
+            const playlistsApi = getPlaylistApi(api);
             const response = await playlistsApi.getPlaylist({ playlistId: playlist.Id });
             setIsPublic(response.data.OpenAccess ?? false);
         } catch (error) {

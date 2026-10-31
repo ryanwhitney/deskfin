@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { appRouter } from 'components/router/appRouter';
 import { useApi } from 'hooks/useApi';
-import { useUserViews } from 'hooks/useUserViews';
+import { useUserViews } from 'hooks/api/useUserViews';
 import { useWebConfig } from 'hooks/useWebConfig';
 import globalize from 'lib/globalize';
 
@@ -18,7 +18,7 @@ import styles from './MainDrawerContent.module.scss';
 const MainDrawerContent = () => {
     const { user } = useApi();
     const location = useLocation();
-    const { data: userViewsData } = useUserViews(user?.Id);
+    const { data: userViewsData } = useUserViews({ userId: user?.Id });
     const userViews = userViewsData?.Items || [];
     const webConfig = useWebConfig();
 

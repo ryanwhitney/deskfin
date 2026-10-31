@@ -13,8 +13,10 @@ import loading from 'components/loading/loading';
 import { pluginManager } from './components/pluginManager';
 import { appRouter } from './components/router/appRouter';
 import { AppFeature } from 'constants/appFeature';
+import { EventType } from 'constants/eventType';
 import globalize from './lib/globalize';
 import { loadCoreDictionary } from 'lib/globalize/loader';
+import getServerAddress from 'lib/jellyfin-apiclient/utils/getServerAddress';
 import { initialize as initializeAutoCast } from 'scripts/autocast';
 import browser from './scripts/browser';
 import keyboardNavigation from './scripts/keyboardNavigation';
@@ -22,6 +24,8 @@ import { getPlugins } from './scripts/settings/webSettings';
 import taskButton from './scripts/taskbutton';
 import { pageClassOn, serverAddress } from './utils/dashboard';
 import Events from './utils/events';
+import { updateApiClientSdk } from 'lib/jellyfin-apiclient/utils/compat';
+import { initializeServerConnections } from './scripts/serverNotifications';
 
 import RootApp from './RootApp';
 
@@ -34,10 +38,8 @@ import './elements/emby-button/emby-button';
 import './components/playback/displayMirrorManager';
 import './components/playback/playerSelectionMenu';
 import './components/themeMediaPlayer';
-import './scripts/autoThemes';
 import './scripts/mouseManager';
 import './scripts/screensavermanager';
-import './scripts/serverNotifications';
 
 // Import site styles
 import './styles/site.scss';
@@ -67,6 +69,9 @@ build: ${__JF_BUILD_VERSION__}`);
         document.querySelector('.skinHeader').classList.remove('noHeaderRight');
     });
 
+    // Initialize app host
+    await appHost.init();
+
     // Initialize automatic (default) cast target
     initializeAutoCast();
 
@@ -75,7 +80,9 @@ build: ${__JF_BUILD_VERSION__}`);
 
     const serverPromise = (async () => {
         const s0 = performance.now();
-        const serverUrl = await serverAddress();
+        // Prefer the last used server, falling back to discovery
+        const lastServer = ServerConnections.getLastUsedServer();
+        const serverUrl = lastServer ? getServerAddress(lastServer) : await serverAddress();
         const ms = Math.round(performance.now() - s0);
         console.info(`[boot] serverAddress resolved in ${ms}ms`);
         if (serverUrl) {
@@ -97,6 +104,14 @@ build: ${__JF_BUILD_VERSION__}`);
     // Update localization on user changes
     Events.on(ServerConnections, 'localusersignedin', globalize.updateCurrentCulture);
     Events.on(ServerConnections, 'localusersignedout', globalize.updateCurrentCulture);
+    // Update sdk language on language changes
+    Events.on(document, EventType.LANGUAGE_CHANGE, () => {
+        ServerConnections.getCurrentApiClientAsync()
+            .then(updateApiClientSdk)
+            .catch(err => {
+                console.error('Failed to update ApiClient SDK on language change', err);
+            });
+    });
 
     // Load the font styles
     loadFonts();
@@ -109,11 +124,6 @@ build: ${__JF_BUILD_VERSION__}`);
     // Load frontend plugins (do not block first render)
     void loadPlugins();
 
-    // Establish the websocket connection
-    Events.on(appHost, 'resume', () => {
-        ServerConnections.currentApiClient()?.ensureWebSocket();
-    });
-
     // Register API request error handlers
     ServerConnections.getApiClients().forEach(apiClient => {
         Events.off(apiClient, 'requestfail', appRouter.onRequestFail);
@@ -123,6 +133,9 @@ build: ${__JF_BUILD_VERSION__}`);
         Events.off(apiClient, 'requestfail', appRouter.onRequestFail);
         Events.on(apiClient, 'requestfail', appRouter.onRequestFail);
     });
+
+    // Start server notifications
+    initializeServerConnections();
 
     // Render the app
     await renderApp();

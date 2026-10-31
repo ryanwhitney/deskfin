@@ -9,13 +9,14 @@ import {
 
 import { DASHBOARD_APP_PATHS, DASHBOARD_APP_ROUTES } from 'apps/dashboard/routes/routes';
 import { DESKFIN_APP_ROUTES } from 'apps/deskfin/app/routes/routes';
-import { STABLE_APP_ROUTES } from 'apps/stable/routes/routes';
+import { APP_ROUTES as LEGACY_APP_ROUTES } from 'apps/legacy/routes/routes';
+import { APP_ROUTES as MODERN_APP_ROUTES } from 'apps/modern/routes/routes';
 import { WIZARD_APP_ROUTES } from 'apps/wizard/routes/routes';
 import Backdrop from 'components/Backdrop';
 
 // Lazy load to break circular import (AppHeader → libraryMenu → pluginManager → appRouter → RootAppRouter)
 const AppHeader = React.lazy(() => import('components/AppHeader'));
-import { SETTING_KEY as LAYOUT_SETTING_KEY } from 'components/layoutManager';
+import layoutManager, { SETTING_KEY as LAYOUT_SETTING_KEY } from 'components/layoutManager';
 import BangRedirect from 'components/router/BangRedirect';
 import { createRouterHistory } from 'components/router/routerHistory';
 import { LayoutMode } from 'constants/layoutMode';
@@ -25,13 +26,14 @@ import { ThemeStorageManager } from 'themes/themeStorageManager';
 
 const layoutMode = browser.tv ? LayoutMode.Tv : localStorage.getItem(LAYOUT_SETTING_KEY);
 // Accept both 'deskfin' and 'experimental' for backwards compatibility
-const isDeskfinLayout = !layoutMode || layoutMode === LayoutMode.Deskfin || layoutMode === LayoutMode.Experimental;
+const isDeskfinLayout = !layoutMode || layoutMode === LayoutMode.Deskfin || layoutMode === 'experimental';
+const nonDeskfinRoutes = layoutManager.modern ? MODERN_APP_ROUTES : LEGACY_APP_ROUTES;
 
 const router = createHashRouter([
     {
         element: <RootAppLayout />,
         children: [
-            ...(isDeskfinLayout ? DESKFIN_APP_ROUTES : STABLE_APP_ROUTES),
+            ...(isDeskfinLayout ? DESKFIN_APP_ROUTES : nonDeskfinRoutes),
             ...DASHBOARD_APP_ROUTES,
             ...WIZARD_APP_ROUTES,
             {
@@ -65,7 +67,7 @@ function RootAppLayout() {
         >
             <Backdrop />
             <Suspense fallback={null}>
-                <AppHeader isHidden={isDeskfinLayout || isNewLayoutPath} />
+                <AppHeader isHidden={isDeskfinLayout || layoutManager.modern || isNewLayoutPath} />
             </Suspense>
 
             <Outlet />

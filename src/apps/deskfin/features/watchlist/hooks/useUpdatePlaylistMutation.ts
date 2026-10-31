@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getPlaylistsApi } from '@jellyfin/sdk/lib/utils/api/playlists-api';
+import { getPlaylistApi } from '@jellyfin/sdk/lib/utils/api/playlist-api';
 import { useApi } from 'hooks/useApi';
 
 interface UpdatePlaylistParams {
@@ -18,7 +18,7 @@ export const useUpdatePlaylistMutation = () => {
                 throw new Error('API or user not available');
             }
 
-            const playlistsApi = getPlaylistsApi(api);
+            const playlistsApi = getPlaylistApi(api);
 
             await playlistsApi.updatePlaylist({
                 playlistId,

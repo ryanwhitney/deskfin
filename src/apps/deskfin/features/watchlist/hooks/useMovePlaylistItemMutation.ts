@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { getPlaylistsApi } from '@jellyfin/sdk/lib/utils/api/playlists-api';
+import { getPlaylistApi } from '@jellyfin/sdk/lib/utils/api/playlist-api';
 import { useApi } from 'hooks/useApi';
 
 interface MovePlaylistItemParams {
@@ -18,7 +18,7 @@ export const useMovePlaylistItemMutation = () => {
         mutationFn: async ({ playlistId, itemId, newIndex }: MovePlaylistItemParams) => {
             if (!api) throw new Error('API not available');
 
-            const playlistsApi = getPlaylistsApi(api);
+            const playlistsApi = getPlaylistApi(api);
             await playlistsApi.moveItem({
                 playlistId,
                 itemId,

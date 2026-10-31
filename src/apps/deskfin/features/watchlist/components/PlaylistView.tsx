@@ -1,7 +1,8 @@
+import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
 import React, { type FC, useEffect, useState, useMemo, useCallback } from 'react';
 import { Button, Menu, MenuItem, MenuTrigger, Popover, Section, Header } from 'react-aria-components';
-import { getPlaylistsApi } from '@jellyfin/sdk/lib/utils/api/playlists-api';
-import { getUserLibraryApi } from '@jellyfin/sdk/lib/utils/api/user-library-api';
+import { getPlaylistApi } from '@jellyfin/sdk/lib/utils/api/playlist-api';
+import { getLibraryApi } from '@jellyfin/sdk/lib/utils/api/library-api';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
 import type { ItemDto } from 'types/base/models/item-dto';
 
@@ -54,8 +55,8 @@ export const PlaylistView: FC<PlaylistViewProps> = ({ playlistId }) => {
 
         setIsLoading(true);
         try {
-            const userLibraryApi = getUserLibraryApi(api);
-            const playlistsApi = getPlaylistsApi(api);
+            const userLibraryApi = getLibraryApi(api);
+            const playlistsApi = getPlaylistApi(api);
 
             // Fetch playlist details as BaseItemDto to get the Name
             const playlistResponse = await userLibraryApi.getItem({
@@ -160,7 +161,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({ playlistId }) => {
         <Page
             id='playlistPage'
             className='libraryPage backdropPage pageWithAbsoluteTabs withTabs'
-            backDropType='movie'
+            backDropType={[BaseItemKind.Movie]}
         >
             <h1>{playlist.Name ?? 'Unnamed List'}</h1>
             <div className={toolbarStyles.gridContainer}>

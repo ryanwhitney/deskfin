@@ -29,7 +29,7 @@ export default function CollectionsRoute() {
         <Page
             id="collectionsPage"
             className="libraryPage backdropPage collectionEditorPage pageWithAbsoluteTabs withTabs"
-            backDropType="movie"
+            backDropType={[BaseItemKind.Movie]}
         >
             <h1>{globalize.translate("Collections")}</h1>
             <ItemsView

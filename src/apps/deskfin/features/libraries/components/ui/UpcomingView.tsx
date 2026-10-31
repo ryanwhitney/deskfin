@@ -1,6 +1,7 @@
 import React, { type FC, useCallback } from 'react';
 
-import { useGetGroupsUpcomingEpisodes, useToggleFavoriteMutation, useTogglePlayedMutation } from 'hooks/useFetchItems';
+import { useToggleFavoriteMutation, useTogglePlayedMutation } from 'hooks/useFetchItems';
+import { useGetGroupsUpcomingEpisodes } from '../../hooks/useLibraryQueries';
 import Loading from 'components/loading/LoadingComponent';
 import NoItemsMessage from 'components/common/NoItemsMessage';
 import type { LibraryViewProps } from 'types/library';

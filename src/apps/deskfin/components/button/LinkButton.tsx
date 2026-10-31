@@ -5,9 +5,10 @@ import styles from './Button.module.scss';
 
 const cx = (...parts: Array<string | undefined>) => parts.filter(Boolean).join(' ');
 
-export interface LinkButtonProps extends Omit<RacLinkProps, 'className'> {
+export interface LinkButtonProps extends Omit<RacLinkProps, 'className' | 'children'> {
     className?: string;
     icon?: React.ReactNode;
+    children?: React.ReactNode;
 }
 
 export const LinkButton = forwardRef<HTMLAnchorElement, LinkButtonProps>(function LinkButton(

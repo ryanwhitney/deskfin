@@ -9,9 +9,10 @@ import Page from 'components/Page';
 import PageTabContent from '../components/ui/PageTabContent';
 import { LibraryViewMenu } from 'apps/deskfin/components/library/LibraryViewMenu';
 import { LibraryTab } from 'types/libraryTab';
-import type { LibraryTabContent, LibraryTabMapping } from 'types/libraryTabContent';
+import type { LibraryTabContent } from 'types/libraryTabContent';
 
 import layoutStyles from '../components/ui/PageLayout.module.scss';
+import { type LibraryTabMapping } from '../types/sectionsViews';
 
 const booksTabContent: LibraryTabContent = {
     viewType: LibraryTab.Books,
@@ -36,7 +37,7 @@ const Books: FC = () => {
         <Page
             id='booksPage'
             className='mainAnimatedPage libraryPage backdropPage collectionEditorPage pageWithAbsoluteTabs withTabs'
-            backDropType='book'
+            backDropType={[BaseItemKind.Book]}
         >
             <div className={layoutStyles.toolbar}>
                 <LibraryViewMenu />

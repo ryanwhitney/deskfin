@@ -9,7 +9,7 @@ import { isLibraryPath } from 'utils/libraryPaths';
 import { appRouter } from 'components/router/appRouter';
 import { useApi } from 'hooks/useApi';
 import useCurrentTab from 'hooks/useCurrentTab';
-import { useUserViews } from 'hooks/useUserViews';
+import { useUserViews } from 'hooks/api/useUserViews';
 import { useWebConfig } from 'hooks/useWebConfig';
 import globalize from 'lib/globalize';
 
@@ -66,7 +66,7 @@ const UserViewNav = () => {
     const {
         data: userViews,
         isPending
-    } = useUserViews(user?.Id);
+    } = useUserViews({ userId: user?.Id });
 
     const primaryViews = useMemo(() => (
         userViews?.Items?.slice(0, maxViews)

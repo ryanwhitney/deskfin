@@ -1,11 +1,13 @@
+import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
 import React, { type FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
-import { getPersonsApi } from '@jellyfin/sdk/lib/utils/api/persons-api';
+import { getPersonApi } from '@jellyfin/sdk/lib/utils/api/person-api';
 
 import globalize from 'lib/globalize';
 import { useApi } from 'hooks/useApi';
-import { useUserViews } from 'hooks/useUserViews';
+import { ServerConnections } from 'lib/jellyfin-apiclient';
+import { useUserViews } from 'hooks/api/useUserViews';
 import { useToggleFavoriteMutation, useTogglePlayedMutation } from 'hooks/useFetchItems';
 import { useTitle } from 'apps/deskfin/hooks/useTitle';
 import { formatLibraryTitle } from 'apps/deskfin/utils/titleUtils';
@@ -13,7 +15,7 @@ import * as userSettings from 'scripts/settings/userSettings';
 import { clearBackdrop } from 'components/backdrop/backdrop';
 import Page from 'components/Page';
 import layoutManager from 'components/layoutManager';
-import { DEFAULT_SECTIONS, HomeSectionType } from 'types/homeSectionType';
+import { DEFAULT_SECTIONS, HomeSectionType } from 'constants/homeSectionType';
 import type { ItemDto } from 'types/base/models/item-dto';
 import { LinkButton } from 'apps/deskfin/components/button/LinkButton';
 
@@ -44,12 +46,13 @@ const getAllSectionsToShow = (sectionCount: number): HomeSectionType[] => {
 };
 
 const Home: FC = () => {
-    const { api, user, __legacyApiClient__: apiClient } = useApi();
+    const { api, user, serverId } = useApi();
+    const apiClient = serverId ? ServerConnections.getApiClient(serverId) : undefined;
     const documentRef = useRef<Document>(document);
     const [searchParams] = useSearchParams();
     const isFavoritesTab = searchParams.get('tab') === '1';
 
-    const { data: userViewsResp } = useUserViews(user?.Id);
+    const { data: userViewsResp } = useUserViews({ userId: user?.Id });
     const userViews = (userViewsResp?.Items || []) as BaseItemDto[];
 
     const { data: userPlaylists = [] } = useGetUserPlaylists({ enabled: !isFavoritesTab });
@@ -183,7 +186,7 @@ const Home: FC = () => {
             apiClient.getItems(userId, { ...baseOptions, IncludeItemTypes: 'Series' }),
             apiClient.getItems(userId, { ...baseOptions, IncludeItemTypes: 'Episode' }),
             apiClient.getItems(userId, { ...baseOptions, IncludeItemTypes: 'BoxSet' }),
-            getPersonsApi(api).getPersons({
+            getPersonApi(api).getPersons({
                 userId: user.Id,
                 isFavorite: true,
                 limit: 24,
@@ -249,7 +252,7 @@ const Home: FC = () => {
             id="indexPage"
             className="mainAnimatedPage homePage libraryPage allLibraryPage backdropPage"
             isBackButtonEnabled={false}
-            backDropType="movie,series,book"
+            backDropType={[BaseItemKind.Movie, BaseItemKind.Series, BaseItemKind.Book]}
         >
             <div className={styles.page}>
                 {isFavoritesTab ? (

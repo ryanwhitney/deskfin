@@ -10,4 +10,3 @@ export default `<div class="formDialogHeader formDialogHeader-clear justify-cont
 
 <div class="formDialogFooter formDialogFooter-clear formDialogFooter-flex" style="margin:1em"></div>
 `;
-

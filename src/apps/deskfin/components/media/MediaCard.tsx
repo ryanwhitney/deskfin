@@ -1,9 +1,10 @@
 import React, { type FC, useMemo, useState } from "react";
 import { Squircle } from "@squircle-js/react";
-import { getPlaylistsApi } from "@jellyfin/sdk/lib/utils/api/playlists-api";
+import { getPlaylistApi } from "@jellyfin/sdk/lib/utils/api/playlist-api";
 
 import SvgIcon from "components/SvgIcon";
 import { IconSvgs, getLegacyCommandIcon } from "assets/icons";
+import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
 import type { ItemDto } from "types/base/models/item-dto";
 import { playbackManager } from "components/playback/playbackmanager";
 import { useApi } from "hooks/useApi";
@@ -114,7 +115,7 @@ export const MediaCard: FC<MediaCardProps> = ({
 
         try {
             // Fetch the playlist item count to get the correct last index
-            const response = await getPlaylistsApi(api).getPlaylistItems({
+            const response = await getPlaylistApi(api).getPlaylistItems({
                 playlistId: playlistContext.playlistId,
                 userId: currentUser.Id,
                 limit: 1
@@ -425,7 +426,7 @@ export const MediaCard: FC<MediaCardProps> = ({
                                                     <React.Fragment key={cmd.id}>
                                                         {menuItem}
                                                         <WatchlistMenuItem
-                                                            item={item}
+                                                            item={item as BaseItemDto}
                                                             onCreateNew={() => {
                                                                 setIsMoreOpen(false);
                                                                 setIsCreateDialogOpen(true);
@@ -570,7 +571,7 @@ export const MediaCard: FC<MediaCardProps> = ({
             <CreateWatchlistDialog
                 isOpen={isCreateDialogOpen}
                 onClose={() => setIsCreateDialogOpen(false)}
-                initialItem={item}
+                initialItem={item as BaseItemDto}
             />
         </div>
     );

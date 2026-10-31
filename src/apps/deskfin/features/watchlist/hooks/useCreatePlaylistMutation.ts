@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getPlaylistsApi } from '@jellyfin/sdk/lib/utils/api/playlists-api';
+import { getPlaylistApi } from '@jellyfin/sdk/lib/utils/api/playlist-api';
 import type { PlaylistCreationResult } from '@jellyfin/sdk/lib/generated-client/models/playlist-creation-result';
 import { useApi } from 'hooks/useApi';
 
@@ -20,7 +20,7 @@ const createPlaylist = async (
 
     const { name, isPublic = false, itemIds = [] } = params;
 
-    const response = await getPlaylistsApi(api).createPlaylist({
+    const response = await getPlaylistApi(api).createPlaylist({
         createPlaylistDto: {
             Name: name,
             Ids: itemIds,

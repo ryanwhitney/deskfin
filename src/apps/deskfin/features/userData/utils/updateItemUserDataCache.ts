@@ -8,10 +8,11 @@ type UserDataPatch = Partial<NonNullable<ItemDto['UserData']>>;
 const patchItem = (item: ItemDto, patch: UserDataPatch): ItemDto => {
     return {
         ...item,
+        // The SDK marks some UserData fields (e.g. Key) required; a patch onto missing UserData can't supply them
         UserData: {
             ...(item.UserData ?? {}),
             ...patch
-        }
+        } as NonNullable<ItemDto['UserData']>
     };
 };
 

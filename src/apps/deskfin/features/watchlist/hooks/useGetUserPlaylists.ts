@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getItemsApi } from '@jellyfin/sdk/lib/utils/api/items-api';
+import { getLibraryApi } from '@jellyfin/sdk/lib/utils/api/library-api';
 import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
 import { useApi } from 'hooks/useApi';
@@ -14,7 +14,7 @@ const fetchUserPlaylists = async (
 ): Promise<BaseItemDto[]> => {
     if (!api || !userId) return [];
 
-    const response = await getItemsApi(api).getItems({
+    const response = await getLibraryApi(api).getItems({
         userId,
         includeItemTypes: [BaseItemKind.Playlist],
         recursive: true

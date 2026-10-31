@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getUserLibraryApi } from '@jellyfin/sdk/lib/utils/api/user-library-api';
+import { getLibraryApi } from '@jellyfin/sdk/lib/utils/api/library-api';
 import { useApi } from 'hooks/useApi';
 
 /**
@@ -13,7 +13,7 @@ export const useSpecialFeatures = (itemId: string | null | undefined, enabled = 
         queryFn: async () => {
             if (!api || !itemId) return [];
 
-            const userLibraryApi = getUserLibraryApi(api);
+            const userLibraryApi = getLibraryApi(api);
             const response = await userLibraryApi.getSpecialFeatures({
                 itemId,
                 userId: user?.Id

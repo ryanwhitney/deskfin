@@ -7,7 +7,7 @@ export const buildCardImageUrl = (
     item: {
         Id?: string | null;
         Type?: string | null;
-        ImageTags?: Record<string, string> | null;
+        ImageTags?: Record<string, string | null> | null;
         PrimaryImageTag?: string | null;
         BackdropImageTags?: string[] | null;
         ParentBackdropImageTags?: string[] | null;

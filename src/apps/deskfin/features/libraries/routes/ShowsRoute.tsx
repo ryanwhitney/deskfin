@@ -8,11 +8,11 @@ import PageTabContent from "../components/ui/PageTabContent";
 import { LibraryViewMenu } from "apps/deskfin/components/library/LibraryViewMenu";
 import { LibraryTab } from "types/libraryTab";
 import { CollectionType } from "@jellyfin/sdk/lib/generated-client/models/collection-type";
-import { LibraryTabContent, LibraryTabMapping } from "types/libraryTabContent";
-import { TvShowSuggestionsSectionsView } from "types/sections";
+import { LibraryTabContent } from "types/libraryTabContent";
 
 import layoutStyles from "../components/ui/PageLayout.module.scss";
 import globalize from "lib/globalize";
+import { type LibraryTabMapping, TvShowSuggestionsSectionsView } from '../types/sectionsViews';
 
 const episodesTabContent: LibraryTabContent = {
     viewType: LibraryTab.Episodes,
@@ -29,7 +29,7 @@ const seriesTabContent: LibraryTabContent = {
 };
 
 const networksTabContent: LibraryTabContent = {
-    viewType: LibraryTab.Networks,
+    viewType: LibraryTab.Studios,
     itemType: [BaseItemKind.Series],
     isBtnFilterEnabled: false,
     isBtnGridListEnabled: false,
@@ -91,7 +91,7 @@ const Shows: FC = () => {
         <Page
             id="tvshowsPage"
             className="mainAnimatedPage libraryPage backdropPage collectionEditorPage pageWithAbsoluteTabs withTabs"
-            backDropType="series"
+            backDropType={[BaseItemKind.Series]}
         >
             <h1>{globalize.translate("Shows")}</h1>
             <div className={layoutStyles.toolbar}>

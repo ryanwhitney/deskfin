@@ -29,8 +29,7 @@ const Assets = [
     '@jellyfin/libass-wasm/dist/js/subtitles-octopus-worker.js',
     '@jellyfin/libass-wasm/dist/js/subtitles-octopus-worker.wasm',
     '@jellyfin/libass-wasm/dist/js/subtitles-octopus-worker-legacy.js',
-    'pdfjs-dist/build/pdf.worker.mjs',
-    'libpgs/dist/libpgs.worker.js'
+    'pdfjs-dist/build/pdf.worker.mjs'
 ];
 
 const THEME_ENTRIES = fg.globSync('themes/*/theme.scss', { cwd: path.resolve(__dirname, 'src') });
@@ -44,6 +43,10 @@ const THEME_INPUTS = Object.fromEntries(
 
 export default defineConfig({
     assetsInclude: ['**/controllers/**/*.html', '**/apps/**/*.html'],
+    optimizeDeps: {
+        // libbitsub (PGS/VobSub subtitles) locates its wasm via import.meta.url, which pre-bundling breaks
+        exclude: ['libbitsub']
+    },
     plugins: [
         react({
             // Enable Fast Refresh for better HMR

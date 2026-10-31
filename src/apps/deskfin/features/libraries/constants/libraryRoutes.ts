@@ -138,7 +138,7 @@ export const LibraryRoutes: LibraryRoute[] = [
             {
                 index: 4,
                 label: 'TabNetworks',
-                view: LibraryTab.Networks
+                view: LibraryTab.Studios
             },
             {
                 index: 5,

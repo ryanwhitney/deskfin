@@ -151,9 +151,8 @@ export const EpisodeRow: FC<EpisodeRowProps> = ({ episode, queryKey, showSeriesA
             <div className={styles.actions} onClick={(e) => e.stopPropagation()}>
                 <IconButton
                     className={styles.actionBtn}
-                    title={t('Play', 'Play')}
                     aria-label={t('Play', 'Play')}
-                    tabIndex={isActive ? 0 : -1}
+                    excludeFromTabOrder={!isActive}
                     onClick={onPlayClick}
                     icon={<SvgIcon svg={IconSvgs.play} size={18} />}
                 />

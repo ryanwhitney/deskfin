@@ -2,10 +2,7 @@ import type { RecommendationDto } from '@jellyfin/sdk/lib/generated-client/model
 import { RecommendationType } from '@jellyfin/sdk/lib/generated-client/models/recommendation-type';
 import React, { type FC, useCallback } from 'react';
 
-import {
-    useGetMovieRecommendations,
-    useGetSuggestionSectionsWithItems
-} from 'hooks/useFetchItems';
+import { useGetSuggestionSectionsWithItems } from 'hooks/useFetchItems';
 import { useToggleFavoriteMutation, useTogglePlayedMutation } from 'hooks/useFetchItems';
 import globalize from 'lib/globalize';
 import Loading from 'components/loading/LoadingComponent';
@@ -13,6 +10,8 @@ import NoItemsMessage from 'components/common/NoItemsMessage';
 import type { ParentId } from 'types/library';
 import { type Section as SectionData, type SectionType, SectionType as SectionTypeEnum } from 'types/sections';
 import type { ItemDto } from 'types/base/models/item-dto';
+
+import { useGetMovieRecommendations } from '../../hooks/useLibraryQueries';
 
 import { Section } from 'apps/deskfin/components/media/Section';
 import { ItemGrid } from 'apps/deskfin/components/media/ItemGrid';

@@ -4,7 +4,7 @@ import { TopBar } from './TopBar';
 interface AppToolbarProps {
     isDrawerAvailable: boolean
     isDrawerOpen: boolean
-    onDrawerButtonClick: (event: React.MouseEvent<HTMLElement>) => void
+    onDrawerButtonClick: (event: React.MouseEvent<Element>) => void
 }
 
 const AppToolbar: FC<AppToolbarProps> = ({

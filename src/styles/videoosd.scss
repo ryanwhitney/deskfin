@@ -1,4 +1,11 @@
-@use 'mixins' as *;
+@use "mixins" as *;
+
+.videoOsd-appBar {
+    margin-left: env(safe-area-inset-left);
+    margin-right: env(safe-area-inset-right);
+    padding-left: 1em;
+    padding-right: 1em;
+}
 
 #videoOsdPage {
     z-index: 1300;
@@ -59,7 +66,10 @@
 .chapterThumbContainer {
     box-shadow: 0 0 1.9vh #000;
     flex-grow: 1;
-    position: relative;
+}
+
+.chapterBubblePosition {
+    position: relative !important;
 }
 
 .chapterThumb {
@@ -93,6 +103,7 @@
     background: none;
     padding: 0.25em 0.5em;
     user-select: none;
+    min-width: fit-content;
 }
 
 .chapterThumbText {
@@ -101,6 +112,8 @@
     opacity: 1;
     color: #fff;
     text-shadow: 0 0 25px #000, 0 0 6px #000;
+    white-space: nowrap;
+    min-width: fit-content;
 }
 
 .chapterThumbText-dim {

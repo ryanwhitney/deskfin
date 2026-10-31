@@ -140,14 +140,14 @@ export const SortMenu: FC<SortMenuProps> = ({
     setLibraryViewSettings
 }) => {
     const sortOptions = getSortOptions(viewType);
-    const currentSortBy = libraryViewSettings.SortBy;
+    const currentSortBy = libraryViewSettings.SortBy[0];
     const currentSortOrder = libraryViewSettings.SortOrder;
 
     const onSortBySelect = useCallback((value: ItemSortBy) => {
         setLibraryViewSettings((prev) => ({
             ...prev,
             StartIndex: 0,
-            SortBy: value
+            SortBy: [value]
         }));
     }, [setLibraryViewSettings]);
 
