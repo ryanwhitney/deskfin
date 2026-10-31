@@ -131,7 +131,8 @@ module.exports = (env = {}) => {
         },
         resolve: {
             extensions: ['.tsx', '.ts', '.js'],
-            modules: [SRC, path.resolve(__dirname, 'node_modules')],
+            // 'node_modules' (relative) keeps normal nested lookup, e.g. a package's own node_modules/
+            modules: [SRC, 'node_modules'],
             // Upstream's lib/legacy polyfills features every deskfin target browser has natively.
             alias: Object.fromEntries(LEGACY_POLYFILLS.map(polyfill => [polyfill, false]))
         },
@@ -203,6 +204,9 @@ module.exports = (env = {}) => {
             publicPath: '',
             clean: true
         },
+        // Size hints flag lazily-loaded workers/WASM (PDF, subtitles, archives) and the uncompressed entry;
+        // neither reflects what a page actually downloads up front.
+        performance: { hints: false },
         optimization: {
             runtimeChunk: 'single',
             minimizer: [
