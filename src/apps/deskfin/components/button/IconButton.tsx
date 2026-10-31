@@ -10,7 +10,7 @@ export interface IconButtonProps extends Omit<RacButtonProps, 'className'> {
     icon?: React.ReactNode;
 }
 
-export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton(
+export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(function IconButtonRender(
     { icon, className, children, ...rest },
     ref
 ) {
@@ -26,3 +26,5 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
         </FocusRing>
     );
 });
+
+IconButton.displayName = 'IconButton';

@@ -26,6 +26,7 @@
     "@vitest/coverage-v8": "3.2.7",
     "caniuse-lite": "1.0.30001815",
     "confusing-browser-globals": "1.0.11",
+    "es-check": "9.8.1",
     "eslint": "9.39.5",
     "eslint-plugin-compat": "6.2.1",
     "eslint-plugin-import": "2.32.0",
@@ -117,20 +118,12 @@
     "sass-embedded": "1.100.0"
   },
   "browserslist": [
-    "last 2 Firefox versions",
     "last 2 Chrome versions",
-    "last 2 ChromeAndroid versions",
-    "last 2 Safari versions",
-    "iOS > 10",
     "last 2 Edge versions",
-    "Chrome 27",
-    "Chrome 38",
-    "Chrome 47",
-    "Chrome 53",
-    "Chrome 56",
-    "Chrome 63",
-    "Edge 18",
-    "Firefox ESR"
+    "last 2 Firefox versions",
+    "Firefox ESR",
+    "last 2 Safari major versions",
+    "last 2 iOS major versions"
   ],
   "scripts": {
     "start": "npm run serve",
@@ -139,6 +132,8 @@
     "build:development": "rspack build --node-env development",
     "build:production": "rspack build --node-env production",
     "build:check": "tsc --noEmit",
+    "build:es-check": "npm run build:production && npm run escheck",
+    "escheck": "es-check",
     "lint": "eslint",
     "test": "vitest --watch=false --config vite.config.ts",
     "test:watch": "vitest --config vite.config.ts",

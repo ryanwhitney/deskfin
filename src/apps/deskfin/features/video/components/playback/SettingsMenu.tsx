@@ -18,13 +18,14 @@ import qualityoptions from 'components/qualityOptions';
 import { SubtitleOffsetControl } from './SubtitleOffsetControl';
 import { useBlurOnMousePress } from './useBlurOnMousePress';
 import styles from './SettingsMenu.module.scss';
+import type { Player, PlayerOption, QualityOption, Track } from '../../types';
 
 interface SettingsMenuProps {
-    player: any;
+    player: Player | null | undefined;
     onUpdate: () => void;
 }
 
-let statsOverlay: any = null;
+let statsOverlay: { toggle: () => void } | null = null;
 
 export const SettingsMenu: FC<SettingsMenuProps> = ({ player, onUpdate }) => {
     const [supportedCommands, setSupportedCommands] = useState<string[]>([]);
@@ -65,7 +66,7 @@ export const SettingsMenu: FC<SettingsMenuProps> = ({ player, onUpdate }) => {
         onUpdate();
     };
 
-    const handleQualitySelect = (bitrate: number, isAuto: boolean) => {
+    const handleQualitySelect = (bitrate: number | undefined, isAuto: boolean) => {
         if (!player) return;
         playbackManager.setMaxStreamingBitrate({
             enableAutomaticBitrateDetection: isAuto,
@@ -98,7 +99,7 @@ export const SettingsMenu: FC<SettingsMenuProps> = ({ player, onUpdate }) => {
 
         return (
             <Menu className={styles.menu}>
-                {ratios.map((ratio: any) => (
+                {ratios.map((ratio: PlayerOption) => (
                     <MenuItem
                         key={ratio.id}
                         id={ratio.id}
@@ -122,7 +123,7 @@ export const SettingsMenu: FC<SettingsMenuProps> = ({ player, onUpdate }) => {
 
         return (
             <Menu className={styles.menu}>
-                {rates.map((rate: any) => (
+                {rates.map((rate: PlayerOption) => (
                     <MenuItem
                         key={rate.id}
                         id={rate.id}
@@ -170,19 +171,20 @@ export const SettingsMenu: FC<SettingsMenuProps> = ({ player, onUpdate }) => {
 
     const renderQualitySubmenu = () => {
         const mediaSource = playbackManager.currentMediaSource(player);
-        const videoStream = mediaSource?.MediaStreams?.filter((s: any) => s.Type === 'Video')[0];
+        const videoStream = mediaSource?.MediaStreams?.filter((s: Track) => s.Type === 'Video')[0];
 
-        const options = qualityoptions.getVideoQualityOptions({
+        const options: QualityOption[] = qualityoptions.getVideoQualityOptions({
             currentMaxBitrate: playbackManager.getMaxStreamingBitrate(player),
             isAutomaticBitrateEnabled: playbackManager.enableAutomaticBitrateDetection(player),
             videoCodec: videoStream?.Codec,
             videoBitRate: videoStream?.BitRate,
             enableAuto: true
-        });
+        // Upstream can include an undefined entry when no option is above the source bitrate
+        }).filter(option => option !== undefined);
 
         return (
             <Menu className={styles.menu}>
-                {options.map((option: any) => (
+                {options.map((option: QualityOption) => (
                     <MenuItem
                         key={option.bitrate || 'auto'}
                         id={String(option.bitrate || 'auto')}
@@ -208,14 +210,14 @@ export const SettingsMenu: FC<SettingsMenuProps> = ({ player, onUpdate }) => {
         if (!supportedCommands.includes('SetAspectRatio')) return '';
         const currentId = playbackManager.getAspectRatio(player);
         return playbackManager.getSupportedAspectRatios(player)
-            .find((i: any) => i.id === currentId)?.name || '';
+            .find((i: PlayerOption) => i.id === currentId)?.name || '';
     };
 
     const getCurrentPlaybackRateName = () => {
         if (!supportedCommands.includes('PlaybackRate')) return '';
         const currentId = playbackManager.getPlaybackRate(player);
         return playbackManager.getSupportedPlaybackRates(player)
-            .find((i: any) => i.id === currentId)?.name || '';
+            .find((i: PlayerOption) => i.id === currentId)?.name || '';
     };
 
     const getCurrentRepeatModeName = () => {
@@ -228,7 +230,10 @@ export const SettingsMenu: FC<SettingsMenuProps> = ({ player, onUpdate }) => {
 
     return (
         <>
-            <MenuTrigger isOpen={isOpen} onOpenChange={(open) => { setIsOpen(open); if (!open) blurOnMenuClose(); }}>
+            <MenuTrigger isOpen={isOpen} onOpenChange={(open) => {
+                setIsOpen(open);
+                if (!open) blurOnMenuClose();
+            }}>
                 <FocusRing focusRingClass='focus-ring'>
                     <RacButton
                         ref={buttonRef}
@@ -357,7 +362,10 @@ export const SettingsMenu: FC<SettingsMenuProps> = ({ player, onUpdate }) => {
             <SubtitleOffsetControl
                 player={player}
                 isOpen={showSubtitleOffset}
-                onOpenChange={(open) => { setShowSubtitleOffset(open); if (!open) blurOnMenuClose(); }}
+                onOpenChange={(open) => {
+                    setShowSubtitleOffset(open);
+                    if (!open) blurOnMenuClose();
+                }}
             />
         </>
     );

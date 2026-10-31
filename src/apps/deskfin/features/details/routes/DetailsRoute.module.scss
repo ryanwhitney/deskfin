@@ -4,13 +4,6 @@
     color: #eee;
 }
 
-:global(.page.person) {
-    .heroImg {
-        filter: blur(100px);
-        -webkit-filter: blur(100px);
-    }
-}
-
 .hero {
     position: relative;
     background: #0f0f0f;
@@ -48,7 +41,7 @@
     align-items: start;
     position: relative;
     z-index: 1;
-    padding: 145px 0px 36px;
+    padding: 145px 0 36px;
     height: fit-content;
 
     @media (max-width: 600px) {
@@ -67,15 +60,16 @@
     background: linear-gradient(135deg, #1f1f1f, #2a2a2a);
     box-shadow:
         0 1px 14px rgba(0, 0, 0, 0.15),
-        0 0px 3px -5px rgba(0, 0, 0, 0.5),
-        0px 30px 100px 30px rgba(0, 0, 0, 0.15);
+        0 0 3px -5px rgba(0, 0, 0, 0.5),
+        0 30px 100px 30px rgba(0, 0, 0, 0.15);
     overflow: hidden;
+
     @media (max-width: 600px) {
         width: 50vw;
         box-shadow:
             0 1px 14px rgba(0, 0, 0, 0.15),
-            0 0px 3px -5px rgba(0, 0, 0, 0.5),
-            0px 30px 100px 30px rgba(0, 0, 0, 0.15);
+            0 0 3px -5px rgba(0, 0, 0, 0.5),
+            0 30px 100px 30px rgba(0, 0, 0, 0.15);
         border-radius: 11px;
     }
 }
@@ -86,6 +80,7 @@
     object-fit: cover;
     display: block;
 }
+
 .heroInfo {
     display: flex;
     flex-direction: column;
@@ -98,21 +93,23 @@
     font-weight: 700;
     line-height: 1.15;
 }
+
 .titleLogo {
     max-width: 100%;
     max-height: 200px;
     object-fit: contain;
     object-position: left;
 }
+
 .originalTitle,
 .breadcrumb {
-    color: $grey-transparent;
     font-weight: 600;
     margin-top: -4px;
     white-space: nowrap;
     color: #b8b8b8;
     font-size: 15px;
 }
+
 .breadcrumbs {
     display: flex;
     margin-top: -4px;
@@ -120,6 +117,7 @@
     align-items: center;
     flex-wrap: nowrap;
 }
+
 .breadcrumbLink {
     color: $grey-transparent;
     text-decoration: none;
@@ -210,6 +208,7 @@
     color: inherit;
     border-radius: 100px;
     padding: 0 4px;
+
     &:hover {
         text-decoration: underline;
     }
@@ -412,5 +411,11 @@
     .factRow {
         grid-template-columns: 1fr;
         gap: 4px;
+    }
+}
+
+.personPage {
+    .heroImg {
+        filter: blur(100px);
     }
 }

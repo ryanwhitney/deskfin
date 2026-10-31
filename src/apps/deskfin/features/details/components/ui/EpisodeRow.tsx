@@ -1,4 +1,5 @@
-import React, { type FC, useMemo, useState } from 'react';
+import React, { type FC, type MouseEvent, useMemo, useState } from 'react';
+import { useFocusWithin } from 'react-aria';
 
 import { playbackManager } from 'components/playback/playbackmanager';
 import { ServerConnections } from 'lib/jellyfin-apiclient';
@@ -12,6 +13,7 @@ import PlayedButton from 'apps/deskfin/features/userData/components/PlayedButton
 
 import styles from './EpisodeRow.module.scss';
 import { translateOr } from 'apps/deskfin/utils/translate';
+import { ItemCrumb } from 'apps/deskfin/components/breadcrumb/ItemCrumb';
 
 interface EpisodeRowProps {
     episode: ItemDto;
@@ -27,18 +29,18 @@ const buildEpisodeThumb = (episode: ItemDto, maxWidth = 640) => {
     const apiClient = ServerConnections.currentApiClient();
     if (!apiClient || !episode.Id) return '';
     const thumbTag = episode.ImageTags?.Thumb;
-    const primaryTag = episode.ImageTags?.Primary || episode.PrimaryImageTag;
     const backdropTag = episode.BackdropImageTags?.[0];
-    const tag = thumbTag || backdropTag || primaryTag;
-    if (!tag) return '';
+    const primaryTag = episode.ImageTags?.Primary || episode.PrimaryImageTag;
 
-    const type = thumbTag ? 'Thumb' : (backdropTag ? 'Backdrop' : 'Primary');
-    return apiClient.getImageUrl(episode.Id, { type, tag, maxWidth });
+    if (thumbTag) return apiClient.getImageUrl(episode.Id, { type: 'Thumb', tag: thumbTag, maxWidth });
+    if (backdropTag) return apiClient.getImageUrl(episode.Id, { type: 'Backdrop', tag: backdropTag, maxWidth });
+    if (primaryTag) return apiClient.getImageUrl(episode.Id, { type: 'Primary', tag: primaryTag, maxWidth });
+    return '';
 };
 
 const formatEpisodeLabel = (episode: ItemDto) => {
-    const s = (episode as any).ParentIndexNumber as number | undefined;
-    const e = (episode as any).IndexNumber as number | undefined;
+    const s = episode.ParentIndexNumber ?? undefined;
+    const e = episode.IndexNumber ?? undefined;
     const prefix = (s != null || e != null) ?
         `S${s ?? '?'}:E${e ?? '?'}` :
         '';
@@ -46,16 +48,21 @@ const formatEpisodeLabel = (episode: ItemDto) => {
     return prefix ? `${prefix}: ${name}` : name;
 };
 
+const stopPropagation = (e: MouseEvent) => e.stopPropagation();
+
 export const EpisodeRow: FC<EpisodeRowProps> = ({ episode, queryKey, showSeriesAndSeason = true, isRovingFocused = false, className }) => {
     const href = `#/details?id=${episode.Id}`;
     const img = useMemo(() => buildEpisodeThumb(episode, 720), [ episode ]);
     const [ isFocusWithin, setIsFocusWithin ] = useState(false);
+    const { focusWithinProps } = useFocusWithin({ onFocusWithinChange: setIsFocusWithin });
     const isActive = isRovingFocused || isFocusWithin;
-
-    const seriesId = (episode as any).SeriesId as string | undefined;
-    const seriesName = (episode as any).SeriesName as string | undefined;
-    const seasonId = (episode as any).SeasonId as string | undefined;
-    const seasonName = (episode as any).SeasonName as string | undefined;
+    const { SeriesId: seriesId, SeriesName: seriesName, SeasonId: seasonId, SeasonName: seasonName } = episode;
+    const crumbProps = {
+        linkClassName: styles.subLink,
+        textClassName: 'episodeSubText',
+        tabIndex: isActive ? 0 : -1,
+        onClick: stopPropagation
+    };
 
     const onPlayClick: React.MouseEventHandler = (e) => {
         e.preventDefault();
@@ -75,16 +82,12 @@ export const EpisodeRow: FC<EpisodeRowProps> = ({ episode, queryKey, showSeriesA
     };
 
     return (
+        // The whole row is clickable for pointer users; keyboard users open it with Enter (EpisodesSection grid).
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
         <div
             className={[ styles.row, className ?? '' ].filter(Boolean).join(' ')}
             onClick={onRowClick}
-            onFocusCapture={() => setIsFocusWithin(true)}
-            onBlurCapture={(e) => {
-                const next = (e.relatedTarget as Node | null);
-                if (!next || !(e.currentTarget as HTMLElement).contains(next)) {
-                    setIsFocusWithin(false);
-                }
-            }}
+            {...focusWithinProps}
         >
             <div className={styles.thumb}>
                 <div className={styles.thumbImg}>
@@ -117,27 +120,9 @@ export const EpisodeRow: FC<EpisodeRowProps> = ({ episode, queryKey, showSeriesA
 
                 {showSeriesAndSeason && (seriesName || seasonName) ? (
                     <div className={styles.subheads}>
-                        {seriesId && seriesName ? (
-                            <a
-                                className={styles.subLink}
-                                href={`#/details?id=${seriesId}`}
-                                tabIndex={isActive ? 0 : -1}
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                {seriesName}
-                            </a>
-                        ) : seriesName ? <span className='episodeSubText'>{seriesName}</span> : null}
+                        <ItemCrumb {...crumbProps} itemId={seriesId} name={seriesName} />
                         {seriesName && seasonName ? <span className={styles.subSep}>›</span> : null}
-                        {seasonId && seasonName ? (
-                            <a
-                                className={styles.subLink}
-                                href={`#/details?id=${seasonId}`}
-                                tabIndex={isActive ? 0 : -1}
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                {seasonName}
-                            </a>
-                        ) : seasonName ? <span className='episodeSubText'>{seasonName}</span> : null}
+                        <ItemCrumb {...crumbProps} itemId={seasonId} name={seasonName} />
                     </div>
                 ) : null}
 
@@ -148,7 +133,8 @@ export const EpisodeRow: FC<EpisodeRowProps> = ({ episode, queryKey, showSeriesA
                 ) : null}
             </div>
 
-            <div className={styles.actions} onClick={(e) => e.stopPropagation()}>
+            {/* Only stops row clicks from firing when a button here is clicked */}
+            <div className={styles.actions} role='presentation' onClick={stopPropagation}>
                 <IconButton
                     className={styles.actionBtn}
                     aria-label={t('Play', 'Play')}

@@ -63,7 +63,7 @@ export const CreateWatchlistDialog: FC<CreateWatchlistDialogProps> = ({
         >
             <Modal className={styles.modal}>
                 <Dialog className={styles.dialog}>
-                    {({ close }) => (
+                    {() => (
                         <form onSubmit={handleSubmit}>
                             <Heading slot='title' className={styles.title}>
                                 Create New List
@@ -73,6 +73,8 @@ export const CreateWatchlistDialog: FC<CreateWatchlistDialogProps> = ({
                                 <TextField
                                     className={styles.field}
                                     isRequired
+                                    // The dialog opens to name a list, so the name field takes focus
+                                    // eslint-disable-next-line jsx-a11y/no-autofocus
                                     autoFocus
                                 >
                                     <Label className={styles.label}>List name</Label>

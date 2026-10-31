@@ -1,4 +1,5 @@
 import React, { type ButtonHTMLAttributes, type FC, type ReactNode } from 'react';
+import omit from 'lodash-es/omit';
 import { Link, type LinkProps } from 'react-router-dom';
 
 import styles from './ToolbarMenu.module.scss';
@@ -28,11 +29,9 @@ export const ToolbarMenuItem: FC<ToolbarMenuItemLinkProps | ToolbarMenuItemButto
     const classes = [ styles.item, props.className ?? '' ].filter(Boolean).join(' ');
 
     if (props.as === 'link') {
-        const { as, className, ...rest } = props;
-        return <Link {...rest} className={classes} />;
+        return <Link {...omit(props, [ 'as', 'className' ])} className={classes} />;
     }
 
-    const { as, className, type = 'button', ...rest } = props;
-    return <button {...rest} type={type} className={classes} />;
+    return <button {...omit(props, [ 'as', 'className' ])} type={props.type ?? 'button'} className={classes} />;
 };
 

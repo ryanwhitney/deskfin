@@ -2,7 +2,8 @@ import React, { type FC, useState, useEffect, useCallback } from 'react';
 import {
     Button as RacButton,
     MenuTrigger,
-    Popover
+    Popover,
+    type PressEvent
 } from 'react-aria-components';
 import { FocusRing } from 'react-aria';
 
@@ -13,9 +14,10 @@ import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
 
 import { useBlurOnMousePress } from './useBlurOnMousePress';
 import styles from './VolumeControl.module.scss';
+import type { Player } from '../../types';
 
 interface VolumeControlProps {
-    player: any;
+    player: Player | null | undefined;
 }
 
 export const VolumeControl: FC<VolumeControlProps> = ({ player }) => {
@@ -62,7 +64,7 @@ export const VolumeControl: FC<VolumeControlProps> = ({ player }) => {
         }
     };
 
-    const handleToggleMute = useCallback((e: any) => {
+    const handleToggleMute = useCallback((e: PressEvent) => {
         if (!player) return;
 
         playbackManager.toggleMute(player);
@@ -78,7 +80,10 @@ export const VolumeControl: FC<VolumeControlProps> = ({ player }) => {
     };
 
     return (
-        <MenuTrigger isOpen={isOpen} onOpenChange={(open) => { setIsOpen(open); if (!open) blurOnMenuClose(); }}>
+        <MenuTrigger isOpen={isOpen} onOpenChange={(open) => {
+            setIsOpen(open);
+            if (!open) blurOnMenuClose();
+        }}>
             <FocusRing focusRingClass='focus-ring'>
                 <RacButton
                     ref={buttonRef}

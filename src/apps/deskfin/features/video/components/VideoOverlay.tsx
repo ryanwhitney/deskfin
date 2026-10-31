@@ -1,11 +1,11 @@
 import React, { type FC, useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Button as RacButton } from 'react-aria-components';
+import { Button as RacButton, type PressEvent } from 'react-aria-components';
 import { FocusRing } from 'react-aria';
 
 import { playbackManager } from 'components/playback/playbackmanager';
 import { EventType } from 'constants/eventType';
-import Events from 'utils/events';
+import Events, { type Event } from 'utils/events';
 import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
 import { IconSvgs } from 'apps/deskfin/assets/icons';
 
@@ -68,7 +68,7 @@ export const VideoOverlay: FC = () => {
         }
     }, []);
 
-    const handleBack = useCallback((e: any) => {
+    const handleBack = useCallback((e: PressEvent) => {
         // Stop playback
         playbackManager.stop();
 
@@ -136,7 +136,7 @@ export const VideoOverlay: FC = () => {
         };
 
         // Sync visibility with video OSD
-        const onOsdVisibilityChange = (_e: any, visible: boolean) => {
+        const onOsdVisibilityChange = (_e: Event, visible: boolean) => {
             setIsVisible(visible);
         };
 

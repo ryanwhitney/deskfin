@@ -38,8 +38,8 @@ export const useRemoveFromPlaylistMutation = () => {
             removeFromPlaylist(api, params),
         onSuccess: () => {
             // Invalidate playlists to refresh counts/contents
-            queryClient.invalidateQueries({ queryKey: ['UserPlaylists'] });
-            queryClient.invalidateQueries({ queryKey: ['PlaylistItems'] });
+            void queryClient.invalidateQueries({ queryKey: ['UserPlaylists'] });
+            void queryClient.invalidateQueries({ queryKey: ['PlaylistItems'] });
         }
     });
 };

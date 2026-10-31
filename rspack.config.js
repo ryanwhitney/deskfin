@@ -24,14 +24,8 @@ const DESKFIN = path.join(SRC, 'apps/deskfin');
 const DESKFIN_ICONS = path.join(DESKFIN, 'assets/icons');
 const NODE_MODULES_REGEX = /[\\/]node_modules[\\/]/;
 
-const BROWSERS = [
-    'last 2 Chrome versions',
-    'last 2 Edge versions',
-    'last 2 Firefox versions',
-    'Firefox ESR',
-    'last 2 Safari major versions',
-    'last 2 iOS major versions'
-];
+// Target browsers live in package.json "browserslist" (also read by es-check and eslint-plugin-compat).
+const BROWSERS = packageJson.browserslist;
 
 // Third-party polyfills imported by upstream's src/lib/legacy, dropped from deskfin's modern build.
 // (Upstream's own small shims in lib/legacy still load; so do regenerator-runtime, which some prebuilt

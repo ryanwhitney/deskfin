@@ -1,5 +1,4 @@
-import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
-import React from 'react';
+import React, { type FC } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 
 import Page from 'components/Page';
@@ -7,6 +6,35 @@ import { ServerConnections } from 'lib/jellyfin-apiclient';
 import { useItem } from 'hooks/useItem';
 import { PlaylistView } from 'apps/deskfin/features/watchlist/components/PlaylistView';
 import { translateOr } from 'apps/deskfin/utils/translate';
+import { getLibraryPath } from 'apps/deskfin/utils/libraryPaths';
+
+const currentServerId = () => ServerConnections.currentApiClient()?.serverId() || '';
+
+/** Builds a query string from the non-empty params, in order, with encoded values. */
+const toQuery = (params: [string, string][]) => params
+    .filter(([, value]) => value)
+    .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+    .join('&');
+
+/** Redirects a library folder to its deskfin page, or to the legacy list for other library types. */
+const LibraryRedirect: FC<{ parentId: string }> = ({ parentId }) => {
+    // isPending (not isLoading): the query also counts as pending while it waits for the API client and user
+    const { data: parent, isPending } = useItem(parentId);
+
+    if (isPending) {
+        return <Page id='listPage' className='mainAnimatedPage libraryPage'></Page>;
+    }
+
+    const libraryPath = getLibraryPath(parent?.CollectionType, parentId);
+    if (libraryPath) {
+        return <Navigate replace to={libraryPath} />;
+    }
+
+    // Unknown / legacy library type: fall back to the legacy list ViewManager route.
+    // (We can add a generic React "folder browser" later once we inventory remaining collection types.)
+    const query = toQuery([[ 'parentId', parentId ], [ 'serverId', currentServerId() ]]);
+    return <Navigate replace to={`/legacylist?${query}`} />;
+};
 
 /**
  * Compatibility route for legacy `#/list?parentId=...`.
@@ -26,13 +54,19 @@ export default function ListRoute() {
         return <PlaylistView playlistId={playlistId} />;
     }
 
-    // If we have a genreId/studioId/musicGenreId, we need to redirect to the legacy list
-    // controller which handles these special item types properly
-    const hasSpecialFilter = genreId || musicGenreId || studioId;
+    // Genre/studio links go to the legacy list controller, which handles these special item types properly
+    if (genreId || musicGenreId || studioId) {
+        const query = toQuery([
+            [ 'parentId', parentId ],
+            [ 'genreId', genreId ],
+            [ 'musicGenreId', musicGenreId ],
+            [ 'studioId', studioId ],
+            [ 'serverId', params.get('serverId') || currentServerId() ]
+        ]);
+        return <Navigate replace to={`/legacylist?${query}`} />;
+    }
 
-    const { data: parent, isLoading } = useItem(parentId || undefined);
-
-    if (!parentId && !hasSpecialFilter) {
+    if (!parentId) {
         return (
             <Page id='listPage' className='mainAnimatedPage libraryPage'>
                 {translateOr('MessageNoItemsAvailable', 'No items available')}
@@ -40,90 +74,5 @@ export default function ListRoute() {
         );
     }
 
-    // For genre/studio links, redirect to legacy list which handles them properly
-    if (hasSpecialFilter) {
-        const serverId =
-            params.get('serverId')
-            || ServerConnections.currentApiClient()?.serverId()
-            || '';
-        const serverIdParam = serverId ?
-            `&serverId=${encodeURIComponent(serverId)}` :
-            '';
-        const parentIdParam = parentId ?
-            `&parentId=${encodeURIComponent(parentId)}` :
-            '';
-        const genreParam = genreId ?
-            `&genreId=${encodeURIComponent(genreId)}` :
-            '';
-        const musicGenreParam = musicGenreId ?
-            `&musicGenreId=${encodeURIComponent(musicGenreId)}` :
-            '';
-        const studioParam = studioId ?
-            `&studioId=${encodeURIComponent(studioId)}` :
-            '';
-
-        // Build URL without leading &
-        const queryParams = [
-            parentIdParam,
-            genreParam,
-            musicGenreParam,
-            studioParam,
-            serverIdParam
-        ]
-            .filter(Boolean)
-            .join('')
-            .replace(/^&/, '');
-
-        return <Navigate replace to={`/legacylist?${queryParams}`} />;
-    }
-
-    if (isLoading) {
-        return (
-            <Page id='listPage' className='mainAnimatedPage libraryPage'></Page>
-        );
-    }
-
-    const collectionType = parent?.CollectionType;
-
-    if (collectionType === CollectionType.Movies) {
-        return <Navigate replace to={`/movies?topParentId=${parentId}`} />;
-    }
-    if (collectionType === CollectionType.Tvshows) {
-        return <Navigate replace to={`/tv?topParentId=${parentId}`} />;
-    }
-    if (collectionType === CollectionType.Music) {
-        return <Navigate replace to={`/music?topParentId=${parentId}`} />;
-    }
-    if (collectionType === CollectionType.Homevideos) {
-        return <Navigate replace to={`/homevideos?topParentId=${parentId}`} />;
-    }
-    if (collectionType === CollectionType.Books) {
-        return <Navigate replace to={`/books?topParentId=${parentId}`} />;
-    }
-    if (collectionType === CollectionType.Livetv) {
-        return <Navigate replace to={'/livetv'} />;
-    }
-    if (collectionType === CollectionType.Boxsets) {
-        return (
-            <Navigate
-                replace
-                to={`/collections?topParentId=${parentId}&collectionType=${CollectionType.Boxsets}`}
-            />
-        );
-    }
-
-    // Unknown / legacy library type: fall back to the legacy list ViewManager route.
-    // (We can add a generic React "folder browser" later once we inventory remaining collection types.)
-    const serverId = ServerConnections.currentApiClient()?.serverId();
-    const serverIdParam = serverId ?
-        `&serverId=${encodeURIComponent(serverId)}` :
-        '';
-    return (
-        <Navigate
-            replace
-            to={`/legacylist?parentId=${encodeURIComponent(
-                parentId
-            )}${serverIdParam}`}
-        />
-    );
+    return <LibraryRedirect parentId={parentId} />;
 }

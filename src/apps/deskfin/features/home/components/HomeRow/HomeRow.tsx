@@ -10,11 +10,12 @@ import {
     canNavigate
 } from '../../utils/cardHelpers';
 import styles from '../../routes/HomeRoute.module.scss';
+import type { UserDto } from '@jellyfin/sdk/lib/generated-client/models/user-dto';
 
 interface HomeRowProps {
     title: string;
     items: ItemDto[];
-    user: any;
+    user: UserDto | undefined;
     onAfterAction: () => void;
     onToggleFavorite: (item: ItemDto) => void;
     onTogglePlayed: (item: ItemDto) => void;

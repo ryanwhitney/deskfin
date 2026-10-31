@@ -19,8 +19,6 @@ import { ToolbarLink } from 'apps/deskfin/components/toolbar/ToolbarLink';
 import toolbarLinkStyles from 'apps/deskfin/components/toolbar/ToolbarLink.module.scss';
 
 const MAX_USER_VIEWS_MD = 3;
-const MAX_USER_VIEWS_LG = 5;
-const MAX_USER_VIEWS_XL = 8;
 
 const HOME_PATH = '/home';
 const LIST_PATH = '/list';
@@ -63,10 +61,7 @@ const UserViewNav = () => {
     }, [ webConfig.menuLinks ]);
 
     const { user } = useApi();
-    const {
-        data: userViews,
-        isPending
-    } = useUserViews({ userId: user?.Id });
+    const { data: userViews } = useUserViews({ userId: user?.Id });
 
     const primaryViews = useMemo(() => (
         userViews?.Items?.slice(0, maxViews)

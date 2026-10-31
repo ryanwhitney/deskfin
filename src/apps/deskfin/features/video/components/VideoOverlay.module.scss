@@ -9,11 +9,6 @@
     cursor: pointer;
 }
 
-// Ensure OSD controls sit above our click area
-:global(.videoOsdBottom) {
-    z-index: 1401;
-}
-
 .overlay {
     position: fixed;
     top: 0;

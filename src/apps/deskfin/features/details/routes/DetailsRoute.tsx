@@ -18,6 +18,8 @@ import { useGetItems } from 'apps/deskfin/hooks/api/useGetItems';
 import { useTitle } from 'apps/deskfin/hooks/useTitle';
 import { formatItemTitle } from 'apps/deskfin/utils/titleUtils';
 import { ItemKind } from 'types/base/models/item-kind';
+import type { ItemDto } from 'types/base/models/item-dto';
+import { ItemCrumb } from 'apps/deskfin/components/breadcrumb/ItemCrumb';
 import { ItemGrid } from 'apps/deskfin/components/media/ItemGrid';
 
 import FavoriteButton from 'apps/deskfin/features/userData/components/FavoriteButton';
@@ -37,6 +39,47 @@ import { useSpecialFeatures } from '../hooks/useSpecialFeatures';
 import styles from './DetailsRoute.module.scss';
 import { translateOr } from 'apps/deskfin/utils/translate';
 
+/** A titled grid of items (collection contents, a person's movies or shows). */
+const GridSection = ({ title, items, isLoading, emptyMessage, onToggleFavorite, onTogglePlayed }: {
+    title: string;
+    items: ItemDto[];
+    isLoading: boolean;
+    emptyMessage: string;
+    onToggleFavorite: (item: ItemDto) => void;
+    onTogglePlayed: (item: ItemDto) => void;
+}) => (
+    <div className={styles.section}>
+        <h2 className={styles.sectionTitle}>{title}</h2>
+        <ItemGrid
+            items={items}
+            variant='portrait'
+            isLoading={isLoading}
+            emptyMessage={emptyMessage}
+            onToggleFavorite={onToggleFavorite}
+            onTogglePlayed={onTogglePlayed}
+        />
+    </div>
+);
+
+const crumbClasses = { linkClassName: styles.breadcrumbLink, textClassName: styles.breadcrumbText };
+
+/** "Series / Season" above an episode or season title. */
+const DetailsBreadcrumbs = ({ seriesId, seriesName, seasonId, seasonName }: {
+    seriesId?: string;
+    seriesName?: string;
+    seasonId?: string;
+    seasonName?: string;
+}) => {
+    if (!seriesName && !seasonName) return null;
+    return (
+        <div className={styles.breadcrumbs}>
+            <ItemCrumb {...crumbClasses} itemId={seriesId} name={seriesName} />
+            {seriesName && seasonName && <span className={styles.breadcrumbSep}>/</span>}
+            <ItemCrumb {...crumbClasses} itemId={seasonId} name={seasonName} />
+        </div>
+    );
+};
+
 export default function DetailsPage() {
     const [params] = useSearchParams();
     const itemId = params.get('id') || '';
@@ -45,14 +88,14 @@ export default function DetailsPage() {
     const { data: item, isLoading, error } = useItem(itemId);
 
     // For episodes/seasons, fetch related items for fallback images
-    const seriesId = (item as any)?.SeriesId as string | undefined;
-    const seasonId = (item as any)?.SeasonId as string | undefined;
+    const seriesId = item?.SeriesId ?? undefined;
+    const seasonId = item?.SeasonId ?? undefined;
     const { data: seriesItem } = useItem(seriesId);
     const { data: seasonItem } = useItem(seasonId);
 
     // Extract names for title formatting and breadcrumbs
-    const seriesName = (item as any)?.SeriesName as string | undefined;
-    const seasonName = (item as any)?.SeasonName as string | undefined;
+    const seriesName = item?.SeriesName ?? undefined;
+    const seasonName = item?.SeasonName ?? undefined;
 
     // Set title with proper formatting for episodes/seasons
     useTitle(
@@ -250,7 +293,7 @@ export default function DetailsPage() {
     return (
         <Page
             id='itemDetailsPage'
-            className={`${styles.page} ${itemType?.toLowerCase()} selfBackdropPage`}
+            className={`${styles.page} ${isPerson ? styles.personPage : ''} ${itemType?.toLowerCase()} selfBackdropPage`}
             backDropType={[BaseItemKind.Movie, BaseItemKind.Series, BaseItemKind.Book]}
         >
             <div>
@@ -299,55 +342,12 @@ export default function DetailsPage() {
                                     </h1>
 
                                     {/* Breadcrumbs for episodes */}
-                                    {(seriesName || seasonName) && (
-                                        <div className={styles.breadcrumbs}>
-                                            {seriesId && seriesName ? (
-                                                <a
-                                                    href={`#/details?id=${seriesId}`}
-                                                    className={
-                                                        styles.breadcrumbLink
-                                                    }
-                                                >
-                                                    {seriesName}
-                                                </a>
-                                            ) : seriesName ? (
-                                                <span
-                                                    className={
-                                                        styles.breadcrumbText
-                                                    }
-                                                >
-                                                    {seriesName}
-                                                </span>
-                                            ) : null}
-                                            {seriesName && seasonName && (
-                                                <span
-                                                    className={
-                                                        styles.breadcrumbSep
-                                                    }
-                                                >
-                                                    /
-                                                </span>
-                                            )}
-                                            {seasonId && seasonName ? (
-                                                <a
-                                                    href={`#/details?id=${seasonId}`}
-                                                    className={
-                                                        styles.breadcrumbLink
-                                                    }
-                                                >
-                                                    {seasonName}
-                                                </a>
-                                            ) : seasonName ? (
-                                                <span
-                                                    className={
-                                                        styles.breadcrumbText
-                                                    }
-                                                >
-                                                    {seasonName}
-                                                </span>
-                                            ) : null}
-                                        </div>
-                                    )}
+                                    <DetailsBreadcrumbs
+                                        seriesId={seriesId}
+                                        seriesName={seriesName}
+                                        seasonId={seasonId}
+                                        seasonName={seasonName}
+                                    />
 
                                     {item.OriginalTitle
                                         && item.OriginalTitle !== item.Name && (
@@ -415,73 +415,52 @@ export default function DetailsPage() {
 
                     {/* BoxSet: show items */}
                     {isBoxSet && (
-                        <div className={styles.section}>
-                            <h2 className={styles.sectionTitle}>
-                                {translateOr('Items', 'Items')}
-                            </h2>
-                            <ItemGrid
-                                items={boxSetItems}
-                                variant='portrait'
-                                isLoading={isBoxSetItemsPending}
-                                emptyMessage='No items available'
-                                onToggleFavorite={handleToggleFavorite}
-                                onTogglePlayed={handleTogglePlayed}
-                            />
-                        </div>
+                        <GridSection
+                            title={translateOr('Items', 'Items')}
+                            items={boxSetItems}
+                            isLoading={isBoxSetItemsPending}
+                            emptyMessage='No items available'
+                            onToggleFavorite={handleToggleFavorite}
+                            onTogglePlayed={handleTogglePlayed}
+                        />
                     )}
 
                     {/* Person: show movies */}
                     {isPerson && personMovies.length > 0 && (
-                        <div className={styles.section}>
-                            <h2 className={styles.sectionTitle}>
-                                {globalize.translate('Movies')}
-                            </h2>
-                            <ItemGrid
-                                items={personMovies}
-                                variant='portrait'
-                                isLoading={isPersonMoviesPending}
-                                emptyMessage='No movies available'
-                                onToggleFavorite={handleToggleFavorite}
-                                onTogglePlayed={handleTogglePlayed}
-                            />
-                        </div>
+                        <GridSection
+                            title={globalize.translate('Movies')}
+                            items={personMovies}
+                            isLoading={isPersonMoviesPending}
+                            emptyMessage='No movies available'
+                            onToggleFavorite={handleToggleFavorite}
+                            onTogglePlayed={handleTogglePlayed}
+                        />
                     )}
 
                     {/* Person: show TV shows */}
                     {isPerson && personShows.length > 0 && (
-                        <div className={styles.section}>
-                            <h2 className={styles.sectionTitle}>
-                                {globalize.translate('Shows')}
-                            </h2>
-                            <ItemGrid
-                                items={personShows}
-                                variant='portrait'
-                                isLoading={isPersonShowsPending}
-                                emptyMessage='No shows available'
-                                onToggleFavorite={handleToggleFavorite}
-                                onTogglePlayed={handleTogglePlayed}
-                            />
-                        </div>
-                    )}
-
-                    {/* Extras/Special Features section */}
-                    {!isPerson && extras.length > 0 && (
-                        <ExtrasSection extras={extras} />
-                    )}
-
-                    {/* Cast section (not for Person items) */}
-                    {!isPerson && <DetailsCast title='Cast' people={cast} />}
-
-                    {/* Guest Stars section (not for Person items) */}
-                    {!isPerson && (
-                        <DetailsCast
-                            title={globalize.translate('HeaderGuestCast')}
-                            people={guestStars}
+                        <GridSection
+                            title={globalize.translate('Shows')}
+                            items={personShows}
+                            isLoading={isPersonShowsPending}
+                            emptyMessage='No shows available'
+                            onToggleFavorite={handleToggleFavorite}
+                            onTogglePlayed={handleTogglePlayed}
                         />
                     )}
 
-                    {/* Crew section (not for Person items) */}
-                    {!isPerson && <DetailsCast title='Crew' people={crew} />}
+                    {/* Extras, cast and crew (not for Person items) */}
+                    {!isPerson && (
+                        <>
+                            {extras.length > 0 && <ExtrasSection extras={extras} />}
+                            <DetailsCast title='Cast' people={cast} />
+                            <DetailsCast
+                                title={globalize.translate('HeaderGuestCast')}
+                                people={guestStars}
+                            />
+                            <DetailsCast title='Crew' people={crew} />
+                        </>
+                    )}
                 </div>
             </div>
         </Page>

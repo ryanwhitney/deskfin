@@ -13,6 +13,7 @@
 
     @supports (corner-shape: superellipse(2)) {
         border-radius: calc(var(--squircle-radius) * 2);
+        // stylelint-disable-next-line property-no-unknown -- newer than stylelint's property list
         corner-shape: superellipse(2.13);
     }
 }

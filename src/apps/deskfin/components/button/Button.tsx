@@ -11,7 +11,7 @@ export interface ButtonProps extends Omit<RacButtonProps, 'className' | 'childre
     children?: React.ReactNode;
 }
 
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function ButtonRender(
     { icon, className, children, ...rest },
     ref
 ) {
@@ -28,3 +28,5 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
         </FocusRing>
     );
 });
+
+Button.displayName = 'Button';

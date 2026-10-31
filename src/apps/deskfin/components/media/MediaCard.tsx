@@ -1,13 +1,11 @@
-import React, { type FC, useMemo, useState } from 'react';
+import React, { type FC, type MouseEvent, useMemo, useState } from 'react';
 import { Squircle } from 'apps/deskfin/components/squircle/Squircle';
-import { getPlaylistApi } from '@jellyfin/sdk/lib/utils/api/playlist-api';
 
 import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
 import { IconSvgs, getLegacyCommandIcon } from 'apps/deskfin/assets/icons';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
 import type { ItemDto } from 'types/base/models/item-dto';
 import { playbackManager } from 'components/playback/playbackmanager';
-import { useApi } from 'hooks/useApi';
 
 import {
     Button as RacButton,
@@ -17,18 +15,17 @@ import {
     Popover,
     Separator
 } from 'react-aria-components';
-import { FocusRing } from 'react-aria';
+import { FocusRing, useFocusWithin } from 'react-aria';
 
 import * as itemContextMenu from 'components/itemContextMenu';
 import { ActionMenuStyles } from 'apps/deskfin/components/menu/ActionMenu';
+import { type MenuCommand, withMenuKeys } from 'apps/deskfin/components/menu/menuKeys';
 import { WatchlistMenuItem } from 'apps/deskfin/features/watchlist/components/WatchlistMenuItem';
 import { CreateWatchlistDialog } from 'apps/deskfin/features/watchlist/components/CreateWatchlistDialog';
-import { useRemoveFromPlaylistMutation } from 'apps/deskfin/features/watchlist/hooks/useRemoveFromPlaylistMutation';
-import { useMovePlaylistItemMutation } from 'apps/deskfin/features/watchlist/hooks/useMovePlaylistItemMutation';
+import { type PlaylistContext, usePlaylistItemActions } from 'apps/deskfin/features/watchlist/hooks/usePlaylistItemActions';
 
 import styles from './MediaCard.module.scss';
-
-type Command = { name?: string; id?: string; icon?: string; divider?: boolean };
+import type { UserDto } from '@jellyfin/sdk/lib/generated-client/models/user-dto';
 
 export type MediaCardVariant = 'portrait' | 'landscape';
 
@@ -36,7 +33,7 @@ export const MediaCardStyles = styles;
 
 export type MediaCardProps = {
     item: ItemDto;
-    user: any;
+    user: UserDto | undefined;
     variant?: MediaCardVariant;
     imageUrl?: string;
     /** Load this card's image right away at high priority (cards visible at first paint); others load lazily. */
@@ -51,10 +48,190 @@ export type MediaCardProps = {
     onToggleFavorite: (item: ItemDto) => void;
     onTogglePlayed: (item: ItemDto) => void;
     onAfterAction: () => void;
-    playlistContext?: {
-        playlistId: string;
-        playlistName: string;
+    playlistContext?: PlaylistContext;
+};
+
+const stopPropagation = (e: MouseEvent) => e.stopPropagation();
+
+/** A menu row with a leading icon. */
+const MenuRow: FC<{
+    textValue: string;
+    icon?: string;
+    iconStyle?: React.CSSProperties;
+    onAction: () => void;
+    children: React.ReactNode;
+}> = ({ textValue, icon, iconStyle, onAction, children }) => (
+    <MenuItem className={ActionMenuStyles.item} textValue={textValue} onAction={onAction}>
+        <span className={ActionMenuStyles.icon} aria-hidden='true' style={iconStyle}>
+            {icon ? <SvgIcon svg={icon} size={18} /> : null}
+        </span>
+        <span className={ActionMenuStyles.text}>{children}</span>
+    </MenuItem>
+);
+
+/** Reorder/remove options shown when the card is inside a playlist. */
+const PlaylistItemMenuItems: FC<{
+    playlistName: string;
+    actions: ReturnType<typeof usePlaylistItemActions>;
+}> = ({ playlistName, actions }) => (
+    <>
+        <MenuRow
+            textValue='Move to front'
+            icon={IconSvgs.chevronDown}
+            iconStyle={{ transform: 'rotate(180deg)' }}
+            onAction={() => { void actions.moveToFront(); }}
+        >
+            Move to front
+        </MenuRow>
+        <MenuRow textValue='Move to back' icon={IconSvgs.chevronDown} onAction={() => { void actions.moveToBack(); }}>
+            Move to back
+        </MenuRow>
+        <MenuRow
+            textValue={`Remove from ${playlistName}`}
+            icon={IconSvgs.delete}
+            onAction={() => { void actions.remove(); }}
+        >
+            Remove from {playlistName}
+        </MenuRow>
+    </>
+);
+
+interface MediaCardMenuProps {
+    item: ItemDto;
+    user: UserDto | undefined;
+    isOpen: boolean;
+    onOpenChange: (open: boolean) => void;
+    onToggleFavorite: (item: ItemDto) => void;
+    onTogglePlayed: (item: ItemDto) => void;
+    onAfterAction: () => void;
+    onCreatePlaylist: () => void;
+    playlistContext?: PlaylistContext;
+}
+
+/** The card's "More" menu: favorite/watched, upstream's item commands, and playlist options. */
+const MediaCardMenu: FC<MediaCardMenuProps> = ({
+    item,
+    user,
+    isOpen,
+    onOpenChange,
+    onToggleFavorite,
+    onTogglePlayed,
+    onAfterAction,
+    onCreatePlaylist,
+    playlistContext
+}) => {
+    const [ commands, setCommands ] = useState<MenuCommand[]>([]);
+    const playlistActions = usePlaylistItemActions(item, playlistContext, onAfterAction);
+    const isFavorite = !!item.UserData?.IsFavorite;
+    const isPlayed = !!item.UserData?.Played;
+
+    const menuOptions = useMemo(() => ({
+        item,
+        user,
+        play: true,
+        queue: true,
+        shuffle: true,
+        instantMix: true,
+        playlist: true,
+        edit: true,
+        editImages: true,
+        editSubtitles: true,
+        deleteItem: true,
+        positionTo: null
+    }), [ item, user ]);
+
+    // Load on first open.
+    const handleOpenChange = (open: boolean) => {
+        onOpenChange(open);
+        if (open && !commands.length) {
+            void itemContextMenu
+                .getCommands(menuOptions)
+                .then((cmds) => setCommands(cmds as MenuCommand[]))
+                .catch(() => setCommands([]));
+        }
     };
+
+    const onCommand = async (id: string) => {
+        try {
+            const result = await itemContextMenu.executeCommand(item, id, menuOptions);
+            if (result?.updated || result?.deleted) {
+                onAfterAction();
+            }
+        } catch (e) {
+            console.error('[MediaCard] command failed', id, e);
+        }
+    };
+
+    const renderCommand = (cmd: ReturnType<typeof withMenuKeys>[number]) => {
+        // Skip AddToPlaylist - we'll use WatchlistMenuItem instead
+        if (cmd.id === 'addtoplaylist') return null;
+        if (cmd.divider) return <Separator key={cmd.key} className={ActionMenuStyles.divider} />;
+        const id = cmd.id;
+        if (!id) return null;
+
+        const menuItem = (
+            <MenuRow key={id} textValue={cmd.name ?? id} icon={getLegacyCommandIcon(cmd.icon)} onAction={() => { void onCommand(id); }}>
+                {cmd.name ?? id}
+            </MenuRow>
+        );
+        if (id !== 'addtocollection') return menuItem;
+
+        // After AddToCollection, insert our playlist options
+        return (
+            <React.Fragment key={id}>
+                {menuItem}
+                <WatchlistMenuItem item={item as BaseItemDto} onCreateNew={onCreatePlaylist} />
+                {playlistContext && item.PlaylistItemId && (
+                    <PlaylistItemMenuItems playlistName={playlistContext.playlistName} actions={playlistActions} />
+                )}
+            </React.Fragment>
+        );
+    };
+
+    return (
+        <MenuTrigger isOpen={isOpen} onOpenChange={handleOpenChange}>
+            <FocusRing focusRingClass='focus-ring'>
+                <RacButton className={styles.iconBtn} aria-label='More'>
+                    <SvgIcon svg={IconSvgs.ellipsis} size={18} />
+                </RacButton>
+            </FocusRing>
+            <Popover className={ActionMenuStyles.popover}>
+                <Menu className={ActionMenuStyles.menu} aria-label='More options'>
+                    <MenuRow
+                        textValue={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                        icon={IconSvgs.heart}
+                        iconStyle={{ color: isFavorite ? '#ff4d6d' : undefined }}
+                        onAction={() => onToggleFavorite(item)}
+                    >
+                        {isFavorite ? 'Remove from favorites' : 'Add to favorites'}
+                    </MenuRow>
+                    <MenuRow
+                        textValue={isPlayed ? 'Mark as unwatched' : 'Mark as watched'}
+                        icon={IconSvgs.checkmark}
+                        iconStyle={{ color: isPlayed ? '#4ade80' : undefined }}
+                        onAction={() => onTogglePlayed(item)}
+                    >
+                        {isPlayed ? 'Mark as unwatched' : 'Mark as watched'}
+                    </MenuRow>
+                    {commands.length > 0 && <Separator className={ActionMenuStyles.divider} />}
+                    {withMenuKeys(commands).map(renderCommand)}
+                </Menu>
+            </Popover>
+        </MenuTrigger>
+    );
+};
+
+/** Subtitle line: a link when it has a destination, plain text otherwise. */
+const CardSubtitle: FC<{ subtitle?: string; subtitleHref?: string }> = ({ subtitle, subtitleHref }) => {
+    if (!subtitle) return null;
+    if (!subtitleHref) return <div className={styles.subTitle}>{subtitle}</div>;
+    return (
+        <FocusRing focusRingClass='focus-ring'>
+            <a className={styles.subTitle} href={subtitleHref} onClick={stopPropagation}>
+                {subtitle}
+            </a>
+        </FocusRing>
+    );
 };
 
 export const MediaCard: FC<MediaCardProps> = ({
@@ -75,72 +252,16 @@ export const MediaCard: FC<MediaCardProps> = ({
     onAfterAction,
     playlistContext
 }) => {
-    const { api, user: currentUser } = useApi();
-    const [isMoreOpen, setIsMoreOpen] = useState(false);
-    const [isFocusWithin, setIsFocusWithin] = useState(false);
-    const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+    const [ isMoreOpen, setIsMoreOpen ] = useState(false);
+    const [ isCreateDialogOpen, setIsCreateDialogOpen ] = useState(false);
+    const [ isFocusWithin, setIsFocusWithin ] = useState(false);
+    const { focusWithinProps } = useFocusWithin({ onFocusWithinChange: setIsFocusWithin });
     const isActive = isRovingFocused || isFocusWithin || isMoreOpen;
-
-    const { mutateAsync: removeFromPlaylist } = useRemoveFromPlaylistMutation();
-    const { mutateAsync: movePlaylistItem } = useMovePlaylistItemMutation();
-
-    const handleRemoveFromPlaylist = async () => {
-        if (!playlistContext || !item.PlaylistItemId) return;
-
-        try {
-            await removeFromPlaylist({
-                playlistId: playlistContext.playlistId,
-                entryIds: [item.PlaylistItemId]
-            });
-            onAfterAction();
-        } catch (error) {
-            console.error('[MediaCard] Failed to remove from playlist:', error);
-        }
-    };
-
-    const handleMoveToFront = async () => {
-        if (!playlistContext || !item.PlaylistItemId) return;
-
-        try {
-            await movePlaylistItem({
-                playlistId: playlistContext.playlistId,
-                itemId: item.PlaylistItemId,
-                newIndex: 0
-            });
-            onAfterAction();
-        } catch (error) {
-            console.error('[MediaCard] Failed to move to front:', error);
-        }
-    };
-
-    const handleMoveToBack = async () => {
-        if (!playlistContext || !item.PlaylistItemId || !api || !currentUser?.Id) return;
-
-        try {
-            // Fetch the playlist item count to get the correct last index
-            const response = await getPlaylistApi(api).getPlaylistItems({
-                playlistId: playlistContext.playlistId,
-                userId: currentUser.Id,
-                limit: 1
-            });
-            const totalCount = response.data.TotalRecordCount ?? 0;
-            if (totalCount === 0) return;
-
-            await movePlaylistItem({
-                playlistId: playlistContext.playlistId,
-                itemId: item.PlaylistItemId,
-                newIndex: totalCount - 1
-            });
-            onAfterAction();
-        } catch (error) {
-            console.error('[MediaCard] Failed to move to back:', error);
-        }
-    };
-
-    const isFavorite = !!item.UserData?.IsFavorite;
     const isPlayed = !!item.UserData?.Played;
+    // Lowercase attribute: React 18 doesn't know `fetchPriority` yet
+    const priorityProps = isImagePriority ? { fetchpriority: 'high' } : undefined;
 
-    const onOpenDetails: React.MouseEventHandler = (e) => {
+    const onOpenDetails = (e: MouseEvent) => {
         const el = e.target as HTMLElement | null;
         if (el?.closest('a,button,[role="menu"],[role="menuitem"]')) return;
 
@@ -151,61 +272,24 @@ export const MediaCard: FC<MediaCardProps> = ({
         }
     };
 
-    const onPlay: React.MouseEventHandler = (e) => {
+    const onPlay = (e: MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
         void playbackManager.play({
-            items: [item],
+            items: [ item ],
             startPositionTicks: item.UserData?.PlaybackPositionTicks || 0
         });
     };
 
-    const [commands, setCommands] = useState<Command[]>([]);
-    const menuOptions = useMemo(
-        () => ({
-            item,
-            user,
-            play: true,
-            queue: true,
-            shuffle: true,
-            instantMix: true,
-            playlist: true,
-            edit: true,
-            editImages: true,
-            editSubtitles: true,
-            deleteItem: true,
-            positionTo: null
-        }),
-        [item, user]
-    );
-
-    // Load on first open.
-    const onOpenChange = (open: boolean) => {
-        setIsMoreOpen(open);
-        if (open && !commands.length) {
-            void itemContextMenu
-                .getCommands(menuOptions)
-                .then((cmds) => setCommands(cmds as Command[]))
-                .catch(() => setCommands([]));
-        }
-    };
-
-    const onCommand = async (id: string) => {
-        try {
-            const result = await itemContextMenu.executeCommand(
-                item,
-                id,
-                menuOptions
-            );
-            if (result?.updated || result?.deleted) {
-                onAfterAction();
-            }
-        } catch (e) {
-            console.error('[MediaCard] command failed', id, e);
-        }
+    const onCreatePlaylist = () => {
+        setIsMoreOpen(false);
+        setIsCreateDialogOpen(true);
     };
 
     return (
+        // The whole card is clickable for pointer users; keyboard and screen-reader users open details via the
+        // title link (and, in card rows, the grid's Enter key).
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
         <div
             className={[
                 styles.card,
@@ -216,13 +300,7 @@ export const MediaCard: FC<MediaCardProps> = ({
                 .filter(Boolean)
                 .join(' ')}
             onClick={onOpenDetails}
-            onFocusCapture={() => setIsFocusWithin(true)}
-            onBlurCapture={(e) => {
-                const next = e.relatedTarget as Node | null;
-                if (!next || !(e.currentTarget as HTMLElement).contains(next)) {
-                    setIsFocusWithin(false);
-                }
-            }}
+            {...focusWithinProps}
         >
             <Squircle
                 radius={16}
@@ -249,8 +327,7 @@ export const MediaCard: FC<MediaCardProps> = ({
                                 className={styles.thumbImg}
                                 loading={isImagePriority ? 'eager' : 'lazy'}
                                 decoding='async'
-                                // Lowercase attribute: React 18 doesn't know `fetchPriority` yet
-                                {...(isImagePriority ? { fetchpriority: 'high' } : {})}
+                                {...priorityProps}
                             />
                         ) : (
                             <div className={styles.thumbPlaceholder} />
@@ -266,246 +343,17 @@ export const MediaCard: FC<MediaCardProps> = ({
                         ) : null}
 
                         <div className={styles.actions}>
-                            <MenuTrigger
+                            <MediaCardMenu
+                                item={item}
+                                user={user}
                                 isOpen={isMoreOpen}
-                                onOpenChange={onOpenChange}
-                            >
-                                <FocusRing focusRingClass='focus-ring'>
-                                    <RacButton
-                                        className={styles.iconBtn}
-                                        aria-label='More'
-                                    >
-                                        <SvgIcon
-                                            svg={IconSvgs.ellipsis}
-                                            size={18}
-                                        />
-                                    </RacButton>
-                                </FocusRing>
-                                <Popover className={ActionMenuStyles.popover}>
-                                    <Menu
-                                        className={ActionMenuStyles.menu}
-                                        aria-label='More options'
-                                    >
-                                        <MenuItem
-                                            className={ActionMenuStyles.item}
-                                            textValue={
-                                                isFavorite ?
-                                                    'Remove from favorites' :
-                                                    'Add to favorites'
-                                            }
-                                            onAction={() =>
-                                                onToggleFavorite(item)
-                                            }
-                                        >
-                                            <span
-                                                className={
-                                                    ActionMenuStyles.icon
-                                                }
-                                                aria-hidden='true'
-                                                style={{
-                                                    color: isFavorite ?
-                                                        '#ff4d6d' :
-                                                        undefined
-                                                }}
-                                            >
-                                                <SvgIcon
-                                                    svg={IconSvgs.heart}
-                                                    size={18}
-                                                />
-                                            </span>
-                                            <span
-                                                className={
-                                                    ActionMenuStyles.text
-                                                }
-                                            >
-                                                {isFavorite ?
-                                                    'Remove from favorites' :
-                                                    'Add to favorites'}
-                                            </span>
-                                        </MenuItem>
-                                        <MenuItem
-                                            className={ActionMenuStyles.item}
-                                            textValue={
-                                                isPlayed ?
-                                                    'Mark as unwatched' :
-                                                    'Mark as watched'
-                                            }
-                                            onAction={() =>
-                                                onTogglePlayed(item)
-                                            }
-                                        >
-                                            <span
-                                                className={
-                                                    ActionMenuStyles.icon
-                                                }
-                                                aria-hidden='true'
-                                                style={{
-                                                    color: isPlayed ?
-                                                        '#4ade80' :
-                                                        undefined
-                                                }}
-                                            >
-                                                <SvgIcon
-                                                    svg={IconSvgs.checkmark}
-                                                    size={18}
-                                                />
-                                            </span>
-                                            <span
-                                                className={
-                                                    ActionMenuStyles.text
-                                                }
-                                            >
-                                                {isPlayed ?
-                                                    'Mark as unwatched' :
-                                                    'Mark as watched'}
-                                            </span>
-                                        </MenuItem>
-                                        {commands.length > 0 && (
-                                            <Separator
-                                                className={
-                                                    ActionMenuStyles.divider
-                                                }
-                                            />
-                                        )}
-                                        {commands.map((cmd, idx) => {
-                                            // Skip AddToPlaylist - we'll use WatchlistMenuItem instead
-                                            if (cmd.id === 'addtoplaylist') return null;
-
-                                            if (cmd.divider) {
-                                                return (
-                                                    <Separator
-                                                        key={`div-${idx}`}
-                                                        className={
-                                                            ActionMenuStyles.divider
-                                                        }
-                                                    />
-                                                );
-                                            }
-                                            if (!cmd.id) return null;
-
-                                            // Render the command
-                                            const menuItem = (
-                                                <MenuItem
-                                                    key={cmd.id}
-                                                    className={
-                                                        ActionMenuStyles.item
-                                                    }
-                                                    textValue={
-                                                        cmd.name ?? cmd.id
-                                                    }
-                                                    onAction={() => {
-                                                        void onCommand(cmd.id!);
-                                                    }}
-                                                >
-                                                    <span
-                                                        className={
-                                                            ActionMenuStyles.icon
-                                                        }
-                                                        aria-hidden='true'
-                                                    >
-                                                        {getLegacyCommandIcon(
-                                                            cmd.icon
-                                                        ) && (
-                                                            <SvgIcon
-                                                                svg={
-                                                                    getLegacyCommandIcon(
-                                                                        cmd.icon
-                                                                    )!
-                                                                }
-                                                                size={18}
-                                                            />
-                                                        )}
-                                                    </span>
-                                                    <span
-                                                        className={
-                                                            ActionMenuStyles.text
-                                                        }
-                                                    >
-                                                        {cmd.name ?? cmd.id}
-                                                    </span>
-                                                </MenuItem>
-                                            );
-
-                                            // After AddToCollection, insert our playlist options
-                                            if (cmd.id === 'addtocollection') {
-                                                return (
-                                                    <React.Fragment key={cmd.id}>
-                                                        {menuItem}
-                                                        <WatchlistMenuItem
-                                                            item={item as BaseItemDto}
-                                                            onCreateNew={() => {
-                                                                setIsMoreOpen(false);
-                                                                setIsCreateDialogOpen(true);
-                                                            }}
-                                                        />
-                                                        {playlistContext && item.PlaylistItemId && (
-                                                            <>
-                                                                <MenuItem
-                                                                    className={ActionMenuStyles.item}
-                                                                    textValue='Move to front'
-                                                                    onAction={() => void handleMoveToFront()}
-                                                                >
-                                                                    <span
-                                                                        className={ActionMenuStyles.icon}
-                                                                        aria-hidden='true'
-                                                                        style={{ transform: 'rotate(180deg)' }}
-                                                                    >
-                                                                        <SvgIcon
-                                                                            svg={IconSvgs.chevronDown}
-                                                                            size={18}
-                                                                        />
-                                                                    </span>
-                                                                    <span className={ActionMenuStyles.text}>
-                                                                        Move to front
-                                                                    </span>
-                                                                </MenuItem>
-                                                                <MenuItem
-                                                                    className={ActionMenuStyles.item}
-                                                                    textValue='Move to back'
-                                                                    onAction={() => void handleMoveToBack()}
-                                                                >
-                                                                    <span
-                                                                        className={ActionMenuStyles.icon}
-                                                                        aria-hidden='true'
-                                                                    >
-                                                                        <SvgIcon
-                                                                            svg={IconSvgs.chevronDown}
-                                                                            size={18}
-                                                                        />
-                                                                    </span>
-                                                                    <span className={ActionMenuStyles.text}>
-                                                                        Move to back
-                                                                    </span>
-                                                                </MenuItem>
-                                                                <MenuItem
-                                                                    className={ActionMenuStyles.item}
-                                                                    textValue={`Remove from ${playlistContext.playlistName}`}
-                                                                    onAction={() => void handleRemoveFromPlaylist()}
-                                                                >
-                                                                    <span
-                                                                        className={ActionMenuStyles.icon}
-                                                                        aria-hidden='true'
-                                                                    >
-                                                                        <SvgIcon
-                                                                            svg={IconSvgs.delete}
-                                                                            size={18}
-                                                                        />
-                                                                    </span>
-                                                                    <span className={ActionMenuStyles.text}>
-                                                                        Remove from {playlistContext.playlistName}
-                                                                    </span>
-                                                                </MenuItem>
-                                                            </>
-                                                        )}
-                                                    </React.Fragment>
-                                                );
-                                            }
-
-                                            return menuItem;
-                                        })}
-                                    </Menu>
-                                </Popover>
-                            </MenuTrigger>
+                                onOpenChange={setIsMoreOpen}
+                                onToggleFavorite={onToggleFavorite}
+                                onTogglePlayed={onTogglePlayed}
+                                onAfterAction={onAfterAction}
+                                onCreatePlaylist={onCreatePlaylist}
+                                playlistContext={playlistContext}
+                            />
                         </div>
 
                         {isPlayed && (
@@ -552,26 +400,12 @@ export const MediaCard: FC<MediaCardProps> = ({
                     <a
                         className={styles.title}
                         href={titleHref}
-                        onClick={(e) => e.stopPropagation()}
+                        onClick={stopPropagation}
                     >
                         {title}
                     </a>
                 </FocusRing>
-                {subtitle ? (
-                    subtitleHref ? (
-                        <FocusRing focusRingClass='focus-ring'>
-                            <a
-                                className={styles.subTitle}
-                                href={subtitleHref}
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                {subtitle}
-                            </a>
-                        </FocusRing>
-                    ) : (
-                        <div className={styles.subTitle}>{subtitle}</div>
-                    )
-                ) : null}
+                <CardSubtitle subtitle={subtitle} subtitleHref={subtitleHref} />
             </div>
 
             <CreateWatchlistDialog

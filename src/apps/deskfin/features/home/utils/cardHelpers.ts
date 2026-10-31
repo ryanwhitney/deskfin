@@ -1,5 +1,6 @@
 import { ServerConnections } from 'lib/jellyfin-apiclient';
 import type { ItemDto } from 'types/base/models/item-dto';
+import { toCount } from 'apps/deskfin/utils/count';
 
 type ImageCandidate = { itemId: string; type: 'Primary' | 'Thumb' | 'Backdrop'; tag: string };
 
@@ -72,48 +73,65 @@ export const buildCardImageUrl = (
     return apiClient.getImageUrl(chosen.itemId, { type: chosen.type, tag: chosen.tag, maxWidth });
 };
 
-export const getCardMeta = (item: ItemDto) => {
+export interface CardMeta {
+    title: string;
+    titleHref: string;
+    subtitle: string;
+    subtitleHref: string | undefined;
+}
+
+/** "2019", "2019–2023" or "2019–present" for a series; empty without a start year. */
+const formatYearRange = (start: number | undefined, end: number | undefined) => {
+    if (!start) return '';
+    if (!end) return `${start}–present`;
+    return end === start ? `${start}` : `${start}–${end}`;
+};
+
+/** "S1, E8", "S1" or "E8" for an episode; empty when neither number is known. */
+const formatEpisodeNumber = (season: number | null | undefined, episode: number | null | undefined) => {
+    const parts = [];
+    if (season != null) parts.push(`S${season}`);
+    if (episode != null) parts.push(`E${episode}`);
+    return parts.join(', ');
+};
+
+const getEpisodeMeta = (item: ItemDto, detailsHref: string): CardMeta => {
+    const prefix = formatEpisodeNumber(item.ParentIndexNumber, item.IndexNumber);
+    const epTitle = item.Name || '';
+    return {
+        title: item.SeriesName || item.Name || '',
+        titleHref: item.SeriesId ? `#/details?id=${item.SeriesId}` : detailsHref,
+        subtitle: prefix ? `${prefix}: ${epTitle}` : epTitle,
+        subtitleHref: detailsHref
+    };
+};
+
+const getDefaultMeta = (item: ItemDto, detailsHref: string): CardMeta => {
+    const firstArtist = item.ArtistItems?.[0];
+    return {
+        title: item.Name || '',
+        titleHref: detailsHref,
+        subtitle: item.SeriesName || item.AlbumArtist || item.Artists?.[0] || firstArtist?.Name || '',
+        subtitleHref: firstArtist?.Id ? `#/details?id=${firstArtist.Id}` : detailsHref
+    };
+};
+
+export const getCardMeta = (item: ItemDto): CardMeta => {
     const detailsHref = `#/details?id=${item.Id}`;
-    const type = item.Type as string | undefined;
-
     const year = item.ProductionYear ?? (item.PremiereDate ? new Date(item.PremiereDate).getFullYear() : undefined);
-    const endYear = item.EndDate ? new Date(item.EndDate).getFullYear() : undefined;
 
-    if (type === 'Movie') {
-        return { title: item.Name || '', titleHref: detailsHref, subtitle: year ? `${year}` : '', subtitleHref: undefined };
+    switch (item.Type) {
+        case 'Movie':
+            return { title: item.Name || '', titleHref: detailsHref, subtitle: year ? `${year}` : '', subtitleHref: undefined };
+        case 'Series': {
+            const endYear = item.EndDate ? new Date(item.EndDate).getFullYear() : undefined;
+            return { title: item.Name || '', titleHref: detailsHref, subtitle: formatYearRange(year, endYear), subtitleHref: undefined };
+        }
+        case 'Episode':
+            return getEpisodeMeta(item, detailsHref);
+        default:
+            return getDefaultMeta(item, detailsHref);
     }
-
-    if (type === 'Series') {
-        const start = year;
-        const subtitle = start ? (endYear ? (endYear === start ? `${start}` : `${start}–${endYear}`) : `${start}–present`) : '';
-        return { title: item.Name || '', titleHref: detailsHref, subtitle, subtitleHref: undefined };
-    }
-
-    if (type === 'Episode') {
-        const seriesId = (item as any).SeriesId as string | undefined;
-        const seriesName = item.SeriesName as string | undefined;
-        const parentIndex = (item as any).ParentIndexNumber as number | undefined;
-        const index = (item as any).IndexNumber as number | undefined;
-        const s = parentIndex != null ? `S${parentIndex}` : '';
-        const e = index != null ? ` E${index}` : '';
-        const prefix = (s || e) ? `${s}${s && e ? ',' : ''}${e}` : '';
-        const epTitle = item.Name || '';
-        const subtitle = prefix ? `${prefix}: ${epTitle}` : epTitle;
-
-        return {
-            title: seriesName || item.Name || '',
-            titleHref: seriesId ? `#/details?id=${seriesId}` : detailsHref,
-            subtitle,
-            subtitleHref: detailsHref
-        };
-    }
-
-    const artistItems = (item as any).ArtistItems as Array<{ Id?: string; Name?: string }> | undefined;
-    const firstArtist = artistItems?.[0];
-    const subtitleText = (item.SeriesName || item.AlbumArtist || item.Artists?.[0] || firstArtist?.Name || '') as string;
-    const subtitleHref = firstArtist?.Id ? `#/details?id=${firstArtist.Id}` : detailsHref;
-
-    return { title: item.Name || '', titleHref: detailsHref, subtitle: subtitleText, subtitleHref };
 };
 
 export const getProgressPct = (item: ItemDto): number => {
@@ -125,12 +143,12 @@ export const getProgressPct = (item: ItemDto): number => {
 
 export const getOverlayCount = (item: ItemDto): number | undefined => {
     const raw =
-        (item as any).ChildCount
-        ?? (item as any).RecursiveItemCount
-        ?? (item as any).SeriesCount
-        ?? (item as any).EpisodeCount;
+        item.ChildCount
+        ?? item.RecursiveItemCount
+        ?? item.SeriesCount
+        ?? item.EpisodeCount;
 
-    const n = typeof raw === 'number' ? raw : (typeof raw === 'string' ? parseInt(raw, 10) : 0);
+    const n = toCount(raw);
     if (!Number.isFinite(n) || n <= 0) return undefined;
 
     const t = item.Type;

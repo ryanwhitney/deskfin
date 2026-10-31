@@ -15,9 +15,11 @@
 // Plain text items (year, runtime)
 .plainItem {
     padding: 0 4px;
+
     &:first-child {
         padding-left: 0;
     }
+
     & + .plainItem {
         &::before {
             content: "•";

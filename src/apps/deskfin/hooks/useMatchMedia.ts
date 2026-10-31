@@ -16,19 +16,9 @@ export function useMatchMedia(query: string) {
 
         onChange();
 
-        if (typeof mql.addEventListener === 'function') {
-            mql.addEventListener('change', onChange);
-            return () => {
-                mql.removeEventListener('change', onChange);
-            };
-        }
-
-        // Safari < 14
-        // eslint-disable-next-line deprecation/deprecation
-        mql.addListener(onChange);
+        mql.addEventListener('change', onChange);
         return () => {
-            // eslint-disable-next-line deprecation/deprecation
-            mql.removeListener(onChange);
+            mql.removeEventListener('change', onChange);
         };
     }, [query]);
 

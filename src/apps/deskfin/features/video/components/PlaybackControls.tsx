@@ -1,10 +1,10 @@
 import React, { type FC, useState, useEffect, useCallback } from 'react';
-import { Button as RacButton } from 'react-aria-components';
+import { Button as RacButton, type PressEvent } from 'react-aria-components';
 import { FocusRing } from 'react-aria';
 
 import { playbackManager } from 'components/playback/playbackmanager';
 import { EventType } from 'constants/eventType';
-import Events from 'utils/events';
+import Events, { type Event } from 'utils/events';
 import { IconSvgs } from 'apps/deskfin/assets/icons';
 import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
 
@@ -135,7 +135,7 @@ export const PlaybackControls: FC = () => {
         };
 
         // Subscribe to OSD visibility
-        const onOsdVisibilityChange = (_e: any, visible: boolean) => {
+        const onOsdVisibilityChange = (_e: Event, visible: boolean) => {
             setIsVisible(visible);
 
             // When hiding controls, blur any focused button to prevent
@@ -193,49 +193,49 @@ export const PlaybackControls: FC = () => {
     }, [updatePlayerState]);
 
     // Transport controls
-    const handlePrevious = useCallback((e: any) => {
+    const handlePrevious = useCallback((e: PressEvent) => {
         if (player) {
             playbackManager.previousTrack(player);
         }
         previousBlur.handlePress(e);
     }, [player, previousBlur]);
 
-    const handleRewind = useCallback((e: any) => {
+    const handleRewind = useCallback((e: PressEvent) => {
         if (player) {
             playbackManager.rewind(player);
         }
         rewindBlur.handlePress(e);
     }, [player, rewindBlur]);
 
-    const handlePlayPause = useCallback((e: any) => {
+    const handlePlayPause = useCallback((e: PressEvent) => {
         if (player) {
             playbackManager.playPause(player);
         }
         playPauseBlur.handlePress(e);
     }, [player, playPauseBlur]);
 
-    const handleFastForward = useCallback((e: any) => {
+    const handleFastForward = useCallback((e: PressEvent) => {
         if (player) {
             playbackManager.fastForward(player);
         }
         fastForwardBlur.handlePress(e);
     }, [player, fastForwardBlur]);
 
-    const handleNext = useCallback((e: any) => {
+    const handleNext = useCallback((e: PressEvent) => {
         if (player) {
             playbackManager.nextTrack(player);
         }
         nextBlur.handlePress(e);
     }, [player, nextBlur]);
 
-    const handleToggleFullscreen = useCallback((e: any) => {
+    const handleToggleFullscreen = useCallback((e: PressEvent) => {
         if (player) {
             playbackManager.toggleFullscreen(player);
         }
         fullscreenBlur.handlePress(e);
     }, [player, fullscreenBlur]);
 
-    const handleTogglePiP = useCallback((e: any) => {
+    const handleTogglePiP = useCallback((e: PressEvent) => {
         if (player) {
             playbackManager.togglePictureInPicture(player);
         }

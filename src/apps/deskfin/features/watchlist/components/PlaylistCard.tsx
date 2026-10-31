@@ -152,6 +152,8 @@ export const PlaylistCard: FC<PlaylistCardProps> = ({ playlist, serverId, onDele
     };
 
     return (
+        // Pointer convenience: keyboard users open the playlist from its title link (to be added on the accessibility branch).
+        // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
         <div className={styles.card} onClick={handleCardClick}>
             <Squircle
                 radius={16}
@@ -191,7 +193,7 @@ export const PlaylistCard: FC<PlaylistCardProps> = ({ playlist, serverId, onDele
                                         <MenuItem
                                             className={ActionMenuStyles.item}
                                             textValue={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-                                            onAction={() => void handleToggleFavorite()}
+                                            onAction={() => { void handleToggleFavorite(); }}
                                         >
                                             <span
                                                 className={ActionMenuStyles.icon}
@@ -272,7 +274,7 @@ export const PlaylistCard: FC<PlaylistCardProps> = ({ playlist, serverId, onDele
                                     Delete Playlist
                                 </Heading>
                                 <p className={styles.deleteMessage}>
-                                    Are you sure you want to delete "{playlist.Name}"? This action cannot be undone.
+                                    Are you sure you want to delete &quot;{playlist.Name}&quot;? This action cannot be undone.
                                 </p>
                                 <div className={styles.deleteActions}>
                                     <RacButton
@@ -283,7 +285,7 @@ export const PlaylistCard: FC<PlaylistCardProps> = ({ playlist, serverId, onDele
                                     </RacButton>
                                     <RacButton
                                         className={styles.deleteBtn}
-                                        onPress={() => void handleDelete()}
+                                        onPress={() => { void handleDelete(); }}
                                         isDisabled={isDeleting}
                                     >
                                         {isDeleting ? 'Deleting...' : 'Delete'}

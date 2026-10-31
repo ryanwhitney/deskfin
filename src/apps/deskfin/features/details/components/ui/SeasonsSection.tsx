@@ -3,6 +3,7 @@ import globalize from 'lib/globalize';
 import type { ItemDto } from 'types/base/models/item-dto';
 import { SeasonCard } from './SeasonCard';
 import { buildImageUrl } from '../../utils/imageUrl';
+import { toCount } from 'apps/deskfin/utils/count';
 import styles from '../../routes/DetailsRoute.module.scss';
 
 interface SeasonsSectionProps {
@@ -18,10 +19,7 @@ export const SeasonsSection: FC<SeasonsSectionProps> = ({ seasons }) => {
             <div className={styles.cardRow}>
                 {seasons.map(s => {
                     const sImg = buildImageUrl(s, 'Primary', 400);
-                    const sCountRaw = (s as any).ChildCount ?? (s as any).EpisodeCount;
-                    const sCount = typeof sCountRaw === 'number' ?
-                        sCountRaw :
-                        (typeof sCountRaw === 'string' ? parseInt(sCountRaw, 10) : 0);
+                    const sCount = toCount(s.ChildCount ?? s.EpisodeCount);
 
                     return (
                         <SeasonCard

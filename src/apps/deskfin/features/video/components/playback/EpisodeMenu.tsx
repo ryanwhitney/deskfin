@@ -1,4 +1,4 @@
-import React, { type FC, useState, useEffect, useCallback, useRef } from 'react';
+import React, { type FC, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Button as RacButton, DialogTrigger, Popover } from 'react-aria-components';
 import { FocusRing } from 'react-aria';
 import ChevronLeft from '@mui/icons-material/ChevronLeft';
@@ -17,11 +17,12 @@ import type { ItemDto } from 'types/base/models/item-dto';
 
 import { useBlurOnMousePress } from './useBlurOnMousePress';
 import styles from './EpisodeMenu.module.scss';
+import type { Player } from '../../types';
 
 type MenuView = 'episodes' | 'seasons';
 
 interface EpisodeMenuProps {
-    player: any;
+    player: Player | null | undefined;
 }
 
 export const EpisodeMenu: FC<EpisodeMenuProps> = ({ player }) => {
@@ -34,8 +35,8 @@ export const EpisodeMenu: FC<EpisodeMenuProps> = ({ player }) => {
 
     // Get current item info
     const currentItem = playbackManager.currentItem(player) as ItemDto | null;
-    const seriesId = (currentItem as any)?.SeriesId as string | undefined;
-    const currentSeasonId = (currentItem as any)?.SeasonId as string | undefined;
+    const seriesId = currentItem?.SeriesId ?? undefined;
+    const currentSeasonId = currentItem?.SeasonId ?? undefined;
     const currentEpisodeId = currentItem?.Id;
     const isEpisode = currentItem?.Type === 'Episode';
 
@@ -77,7 +78,7 @@ export const EpisodeMenu: FC<EpisodeMenuProps> = ({ player }) => {
     }, { enabled: !!selectedSeasonId && !!user?.Id && isOpen });
 
     const seasons = seasonsResult?.Items ?? [];
-    const episodes = episodesResult?.Items ?? [];
+    const episodes = useMemo(() => episodesResult?.Items ?? [], [ episodesResult ]);
     const hasMultipleSeasons = seasons.length > 1;
 
     // Get current season name
@@ -85,7 +86,7 @@ export const EpisodeMenu: FC<EpisodeMenuProps> = ({ player }) => {
     const seasonName = selectedSeason?.Name ?? globalize.translate('Season');
 
     const handleEpisodeSelect = useCallback((episode: ItemDto) => {
-        playbackManager.play({
+        void playbackManager.play({
             items: [episode]
         });
         setIsOpen(false);
@@ -177,7 +178,7 @@ export const EpisodeMenu: FC<EpisodeMenuProps> = ({ player }) => {
                             {!isLoading && (
                                 <div className={styles.scrollList} ref={listRef}>
                                     {episodes.map((episode) => {
-                                        const episodeNum = (episode as any).IndexNumber;
+                                        const episodeNum = episode.IndexNumber;
                                         const episodeName = episode.Name;
                                         const displayText = episodeNum ?
                                             `${episodeNum}. ${episodeName}` :

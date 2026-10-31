@@ -131,118 +131,114 @@ const ItemsView: FC<ItemsViewProps> = ({
 
     const cardVariant = getCardVariant();
 
-    return (
-        <>
-            {isPending ? (
-                <Loading />
-            ) : (
-                <ItemsContainer
-                    parentId={parentId}
-                    reloadItems={refetch}
-                    queryKey={['ItemsViewByType']}
-                >
-                    <div className={styles.gridContainer}>
-                        {/* Header: count on left, all actions on right */}
-                        <div className={styles.gridHeader}>
-                            <div className={styles.itemCount}>
-                                {totalRecordCount}{' '}
-                                {totalRecordCount === 1 ? 'item' : 'items'}
-                            </div>
-                            <div className={styles.gridActions}>
-                                {isBtnPlayAllEnabled && items.length > 0 && (
-                                    <PlayAllButton
-                                        item={item}
-                                        items={items}
-                                        viewType={viewType}
-                                        hasFilters={hasFilters}
-                                        libraryViewSettings={
-                                            libraryViewSettings
-                                        }
-                                    />
-                                )}
-                                {isBtnShuffleEnabled
-                                    && totalRecordCount > 1 && (
-                                    <ShuffleButton
-                                        item={item}
-                                        items={items}
-                                        viewType={viewType}
-                                        hasFilters={hasFilters}
-                                        libraryViewSettings={
-                                            libraryViewSettings
-                                        }
-                                    />
-                                )}
-                                {isBtnNewCollectionEnabled && (
-                                    <NewCollectionButton />
-                                )}
-                                {isBtnFilterEnabled && (
-                                    <FilterMenu
-                                        parentId={parentId}
-                                        itemType={itemType}
-                                        viewType={viewType}
-                                        hasFilters={hasFilters}
-                                        libraryViewSettings={
-                                            libraryViewSettings
-                                        }
-                                        setLibraryViewSettings={
-                                            setLibraryViewSettings
-                                        }
-                                    />
-                                )}
-                                {isBtnSortEnabled && (
-                                    <SortMenu
-                                        viewType={viewType}
-                                        libraryViewSettings={
-                                            libraryViewSettings
-                                        }
-                                        setLibraryViewSettings={
-                                            setLibraryViewSettings
-                                        }
-                                    />
-                                )}
-                            </div>
-                        </div>
+    if (isPending) return <Loading />;
 
-                        {/* Grid or empty message */}
-                        {!items.length ? (
-                            <NoItemsMessage message={noItemsMessage} />
-                        ) : (
-                            <div
-                                className={styles.grid}
-                                data-variant={cardVariant}
-                            >
-                                {items.map((cardItem) => (
-                                    <MediaCard
-                                        key={cardItem.Id}
-                                        item={cardItem}
-                                        user={user}
-                                        variant={cardVariant}
-                                        imageUrl={buildCardImageUrl(cardItem, {
-                                            variant: cardVariant
-                                        })}
-                                        title={getCardMeta(cardItem).title}
-                                        titleHref={
-                                            getCardMeta(cardItem).titleHref
-                                        }
-                                        subtitle={
-                                            getCardMeta(cardItem).subtitle
-                                        }
-                                        subtitleHref={
-                                            getCardMeta(cardItem).subtitleHref
-                                        }
-                                        progressPct={getProgressPct(cardItem)}
-                                        overlayCount={getOverlayCount(cardItem)}
-                                        onToggleFavorite={onToggleFavorite}
-                                        onTogglePlayed={onTogglePlayed}
-                                        onAfterAction={onAfterAction}
-                                    />
-                                ))}
-                            </div>
+    return (
+        <ItemsContainer
+            parentId={parentId}
+            reloadItems={refetch}
+            queryKey={['ItemsViewByType']}
+        >
+            <div className={styles.gridContainer}>
+                {/* Header: count on left, all actions on right */}
+                <div className={styles.gridHeader}>
+                    <div className={styles.itemCount}>
+                        {totalRecordCount}{' '}
+                        {totalRecordCount === 1 ? 'item' : 'items'}
+                    </div>
+                    <div className={styles.gridActions}>
+                        {isBtnPlayAllEnabled && items.length > 0 && (
+                            <PlayAllButton
+                                item={item}
+                                items={items}
+                                viewType={viewType}
+                                hasFilters={hasFilters}
+                                libraryViewSettings={
+                                    libraryViewSettings
+                                }
+                            />
+                        )}
+                        {isBtnShuffleEnabled
+                                    && totalRecordCount > 1 && (
+                            <ShuffleButton
+                                item={item}
+                                items={items}
+                                viewType={viewType}
+                                hasFilters={hasFilters}
+                                libraryViewSettings={
+                                    libraryViewSettings
+                                }
+                            />
+                        )}
+                        {isBtnNewCollectionEnabled && (
+                            <NewCollectionButton />
+                        )}
+                        {isBtnFilterEnabled && (
+                            <FilterMenu
+                                parentId={parentId}
+                                itemType={itemType}
+                                viewType={viewType}
+                                hasFilters={hasFilters}
+                                libraryViewSettings={
+                                    libraryViewSettings
+                                }
+                                setLibraryViewSettings={
+                                    setLibraryViewSettings
+                                }
+                            />
+                        )}
+                        {isBtnSortEnabled && (
+                            <SortMenu
+                                viewType={viewType}
+                                libraryViewSettings={
+                                    libraryViewSettings
+                                }
+                                setLibraryViewSettings={
+                                    setLibraryViewSettings
+                                }
+                            />
                         )}
                     </div>
-                </ItemsContainer>
-            )}
-        </>
+                </div>
+
+                {/* Grid or empty message */}
+                {!items.length ? (
+                    <NoItemsMessage message={noItemsMessage} />
+                ) : (
+                    <div
+                        className={styles.grid}
+                        data-variant={cardVariant}
+                    >
+                        {items.map((cardItem) => (
+                            <MediaCard
+                                key={cardItem.Id}
+                                item={cardItem}
+                                user={user}
+                                variant={cardVariant}
+                                imageUrl={buildCardImageUrl(cardItem, {
+                                    variant: cardVariant
+                                })}
+                                title={getCardMeta(cardItem).title}
+                                titleHref={
+                                    getCardMeta(cardItem).titleHref
+                                }
+                                subtitle={
+                                    getCardMeta(cardItem).subtitle
+                                }
+                                subtitleHref={
+                                    getCardMeta(cardItem).subtitleHref
+                                }
+                                progressPct={getProgressPct(cardItem)}
+                                overlayCount={getOverlayCount(cardItem)}
+                                onToggleFavorite={onToggleFavorite}
+                                onTogglePlayed={onTogglePlayed}
+                                onAfterAction={onAfterAction}
+                            />
+                        ))}
+                    </div>
+                )}
+            </div>
+        </ItemsContainer>
     );
 };
 

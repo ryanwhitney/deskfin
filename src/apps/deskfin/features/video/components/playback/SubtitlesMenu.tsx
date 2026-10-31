@@ -18,14 +18,15 @@ import globalize from 'lib/globalize';
 import { SubtitleOffsetControl } from './SubtitleOffsetControl';
 import { useBlurOnMousePress } from './useBlurOnMousePress';
 import styles from './TrackMenu.module.scss';
+import type { Player, Track } from '../../types';
 
 interface SubtitlesMenuProps {
-    player: any;
+    player: Player | null | undefined;
     onUpdate: () => void;
 }
 
 export const SubtitlesMenu: FC<SubtitlesMenuProps> = ({ player, onUpdate }) => {
-    const [subtitleTracks, setSubtitleTracks] = useState<any[]>([]);
+    const [subtitleTracks, setSubtitleTracks] = useState<Track[]>([]);
     const [currentIndex, setCurrentIndex] = useState<number>(-1);
     const [secondaryIndex, setSecondaryIndex] = useState<number>(-1);
     const [isOpen, setIsOpen] = useState(false);
@@ -62,16 +63,16 @@ export const SubtitlesMenu: FC<SubtitlesMenuProps> = ({ player, onUpdate }) => {
         }
     }, [isOpen, player]);
 
-    const handleSelectTrack = (index: number) => {
-        if (!player) return;
+    const handleSelectTrack = (index: number | undefined) => {
+        if (!player || index === undefined) return;
 
         playbackManager.setSubtitleStreamIndex(index, player);
         setCurrentIndex(index);
         onUpdate();
     };
 
-    const handleSelectSecondaryTrack = (index: number) => {
-        if (!player) return;
+    const handleSelectSecondaryTrack = (index: number | undefined) => {
+        if (!player || index === undefined) return;
 
         playbackManager.setSecondarySubtitleStreamIndex(index, player);
         setSecondaryIndex(index);
@@ -104,7 +105,7 @@ export const SubtitlesMenu: FC<SubtitlesMenuProps> = ({ player, onUpdate }) => {
                 </MenuItem>
 
                 {/* Secondary subtitle tracks */}
-                {secondaryTracks.map((track: any) => (
+                {secondaryTracks.map((track: Track) => (
                     <MenuItem
                         key={track.Index}
                         id={String(track.Index)}
@@ -134,7 +135,7 @@ export const SubtitlesMenu: FC<SubtitlesMenuProps> = ({ player, onUpdate }) => {
         if (!playbackManager.playerHasSecondarySubtitleSupport?.(player)) return false;
         if (currentIndex === -1) return false;
 
-        const currentTrack = subtitleTracks.find((t: any) => t.Index === currentIndex);
+        const currentTrack = subtitleTracks.find((t: Track) => t.Index === currentIndex);
         if (!currentTrack) return false;
 
         return playbackManager.trackHasSecondarySubtitleSupport?.(currentTrack, player) || false;
@@ -150,7 +151,7 @@ export const SubtitlesMenu: FC<SubtitlesMenuProps> = ({ player, onUpdate }) => {
         if (secondaryIndex === -1) {
             return globalize.translate('Off');
         }
-        const track = secondaryTracks.find((t: any) => t.Index === secondaryIndex);
+        const track = secondaryTracks.find((t: Track) => t.Index === secondaryIndex);
         return track?.DisplayTitle || `Track ${secondaryIndex}`;
     };
 
@@ -165,7 +166,10 @@ export const SubtitlesMenu: FC<SubtitlesMenuProps> = ({ player, onUpdate }) => {
 
     return (
         <>
-            <MenuTrigger isOpen={isOpen} onOpenChange={(open) => { setIsOpen(open); if (!open) blurOnMenuClose(); }}>
+            <MenuTrigger isOpen={isOpen} onOpenChange={(open) => {
+                setIsOpen(open);
+                if (!open) blurOnMenuClose();
+            }}>
                 <FocusRing focusRingClass='focus-ring'>
                     <RacButton
                         ref={buttonRef}
@@ -270,7 +274,10 @@ export const SubtitlesMenu: FC<SubtitlesMenuProps> = ({ player, onUpdate }) => {
             <SubtitleOffsetControl
                 player={player}
                 isOpen={showSubtitleOffset}
-                onOpenChange={(open) => { setShowSubtitleOffset(open); if (!open) blurOnMenuClose(); }}
+                onOpenChange={(open) => {
+                    setShowSubtitleOffset(open);
+                    if (!open) blurOnMenuClose();
+                }}
             />
         </>
     );

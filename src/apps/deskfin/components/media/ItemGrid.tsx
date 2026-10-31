@@ -11,8 +11,10 @@ import {
 import Loading from 'components/loading/LoadingComponent';
 import globalize from 'lib/globalize';
 
+import type { PlaylistContext } from 'apps/deskfin/features/watchlist/hooks/usePlaylistItemActions';
 import styles from './ItemGrid.module.scss';
 
+const noop = () => undefined;
 export type ItemGridVariant = 'portrait' | 'landscape' | 'square' | 'banner';
 
 export interface ItemGridProps {
@@ -26,10 +28,7 @@ export interface ItemGridProps {
     onAfterAction?: () => void;
     className?: string;
     children?: ReactNode;
-    playlistContext?: {
-        playlistId: string;
-        playlistName: string;
-    };
+    playlistContext?: PlaylistContext;
 }
 
 export const ItemGrid: FC<ItemGridProps> = ({
@@ -98,9 +97,9 @@ export const ItemGrid: FC<ItemGridProps> = ({
     }
 
     // Default rendering with MediaCard
-    const handleToggleFavorite = onToggleFavorite || (() => {});
-    const handleTogglePlayed = onTogglePlayed || (() => {});
-    const handleAfterAction = onAfterAction || (() => {});
+    const handleToggleFavorite = onToggleFavorite || noop;
+    const handleTogglePlayed = onTogglePlayed || noop;
+    const handleAfterAction = onAfterAction || noop;
 
     const renderCards = () =>
         items.map((item) => {

@@ -46,7 +46,7 @@ export const useCreatePlaylistMutation = () => {
             createPlaylist(api, user?.Id, params),
         onSuccess: () => {
             // Invalidate playlists to show new list
-            queryClient.invalidateQueries({ queryKey: ['UserPlaylists'] });
+            void queryClient.invalidateQueries({ queryKey: ['UserPlaylists'] });
         }
     });
 };

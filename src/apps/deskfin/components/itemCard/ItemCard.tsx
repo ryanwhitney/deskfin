@@ -30,6 +30,13 @@ export type ItemCardProps = {
  * It intentionally supports passing existing classNames so features can keep
  * their current styling (e.g. Details cards, Home cards) while we migrate.
  */
+/** Alt text from the card title; element titles (e.g. formatted links) get none. */
+const getAltText = (title: React.ReactNode) => {
+    if (typeof title === 'string') return title;
+    if (React.isValidElement(title)) return '';
+    return String(title ?? '');
+};
+
 export function ItemCard({
     href,
     title,
@@ -41,9 +48,7 @@ export function ItemCard({
     classes
 }: Readonly<ItemCardProps>) {
     // Convert title to string for alt text
-    const altText = typeof title === 'string' ? title :
-        React.isValidElement(title) ? '' :
-            String(title ?? '');
+    const altText = getAltText(title);
 
     return (
         <a

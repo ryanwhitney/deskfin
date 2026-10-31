@@ -91,7 +91,7 @@ export const SelectPlaylistDialog: FC<SelectPlaylistDialogProps> = ({
                                         key={playlist.Id}
                                         type='button'
                                         className={styles.item}
-                                        onClick={() => void handleAddToPlaylist(playlist.Id!)}
+                                        onClick={() => { void handleAddToPlaylist(playlist.Id!); }}
                                         disabled={isAdding}
                                     >
                                         <span className={styles.itemIcon}>

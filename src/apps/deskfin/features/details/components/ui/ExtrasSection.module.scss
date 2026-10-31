@@ -49,14 +49,6 @@ $containerPadding: 48px;
     color: inherit;
     transition: transform 150ms ease;
 
-    &:hover {
-        transform: scale(1.02);
-
-        .playOverlay {
-            opacity: 1;
-        }
-    }
-
     &:focus-visible {
         outline: 2px solid $focus-ring;
         outline-offset: 4px;
@@ -149,5 +141,13 @@ $containerPadding: 48px;
 
     .card {
         width: 200px;
+    }
+}
+
+.card:hover {
+    transform: scale(1.02);
+
+    .playOverlay {
+        opacity: 1;
     }
 }

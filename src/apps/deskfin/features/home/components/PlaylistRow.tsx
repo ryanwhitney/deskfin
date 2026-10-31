@@ -1,4 +1,4 @@
-import React, { type FC, useEffect, useState } from 'react';
+import React, { type FC, useCallback, useEffect, useState } from 'react';
 import { getPlaylistApi } from '@jellyfin/sdk/lib/utils/api/playlist-api';
 import type { ItemDto } from 'types/base/models/item-dto';
 import { useApi } from 'hooks/useApi';
@@ -29,7 +29,7 @@ export const PlaylistRow: FC<PlaylistRowProps> = ({
     const { api, user } = useApi();
     const [items, setItems] = useState<ItemDto[]>([]);
 
-    const fetchPlaylistItems = async () => {
+    const fetchPlaylistItems = useCallback(async () => {
         if (!api || !user?.Id) return;
 
         try {
@@ -47,11 +47,11 @@ export const PlaylistRow: FC<PlaylistRowProps> = ({
             console.error('[PlaylistRow] Failed to fetch playlist items:', error);
             setItems([]);
         }
-    };
+    }, [api, playlistId, user?.Id]);
 
     useEffect(() => {
         void fetchPlaylistItems();
-    }, [api, playlistId, user?.Id]);
+    }, [fetchPlaylistItems]);
 
     const handleAfterAction = () => {
         // Refetch playlist items to reflect changes

@@ -15,7 +15,7 @@ import globalize from 'lib/globalize';
 import styles from './LibraryToolbar.module.scss';
 
 // Custom Tab wrapper with SelectionIndicator (per React Aria docs)
-function Tab(props: TabProps) {
+function Tab(props: Readonly<TabProps>) {
     return (
         <RACTab {...props} className={styles.tab}>
             {composeRenderProps(props.children, (children) => (

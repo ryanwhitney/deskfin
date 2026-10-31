@@ -127,101 +127,101 @@ export const ManagePlaylistDialog: FC<ManagePlaylistDialogProps> = ({
             <Modal className={styles.modal}>
                 <Dialog className={styles.dialog}>
                     {() => (
-                        <>
-                            {showDeleteConfirm ? (
-                                <>
-                                    <Heading slot='title' className={styles.title}>
-                                        Delete List?
-                                    </Heading>
+                        showDeleteConfirm ? (
+                            <>
+                                <Heading slot='title' className={styles.title}>
+                                    Delete List?
+                                </Heading>
 
-                                    <div className={styles.content}>
-                                        <p style={{ margin: 0 }}>
-                                            Are you sure you want to delete "{playlist.Name}"? This action cannot be undone.
-                                        </p>
-                                    </div>
+                                <div className={styles.content}>
+                                    <p style={{ margin: 0 }}>
+                                        Are you sure you want to delete &quot;{playlist.Name}&quot;? This action cannot be undone.
+                                    </p>
+                                </div>
 
-                                    <div className={styles.actions}>
+                                <div className={styles.actions}>
+                                    <Button
+                                        type='button'
+                                        className={styles.button}
+                                        onPress={() => setShowDeleteConfirm(false)}
+                                        isDisabled={isPending}
+                                    >
+                                        {globalize.translate('Cancel')}
+                                    </Button>
+                                    <Button
+                                        type='button'
+                                        className={[styles.button, styles.buttonDanger].join(' ')}
+                                        onPress={() => { void handleDelete(); }}
+                                        isDisabled={isPending}
+                                    >
+                                        {isDeleting ? 'Deleting...' : 'Delete List'}
+                                    </Button>
+                                </div>
+                            </>
+                        ) : (
+                            <form onSubmit={handleSubmit}>
+                                <Heading slot='title' className={styles.title}>
+                                    Manage List
+                                </Heading>
+
+                                <div className={styles.content}>
+                                    <TextField
+                                        className={styles.field}
+                                        isRequired
+                                        // The dialog opens to name a list, so the name field takes focus
+                                        // eslint-disable-next-line jsx-a11y/no-autofocus
+                                        autoFocus
+                                    >
+                                        <Label className={styles.label}>List name</Label>
+                                        <Input
+                                            className={styles.input}
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
+                                            placeholder='Enter list name'
+                                        />
+                                    </TextField>
+
+                                    <Checkbox
+                                        className={styles.checkbox}
+                                        isSelected={isPublic}
+                                        onChange={setIsPublic}
+                                    >
+                                        <div className={styles.checkboxBox} />
+                                        <span className={styles.checkboxLabel}>
+                                            Make this list public (visible to all users)
+                                        </span>
+                                    </Checkbox>
+                                </div>
+
+                                <div className={styles.actionsSpread}>
+                                    <Button
+                                        type='button'
+                                        className={[styles.button, styles.buttonDangerOutline].join(' ')}
+                                        onPress={() => setShowDeleteConfirm(true)}
+                                        isDisabled={isPending}
+                                    >
+                                        Delete List
+                                    </Button>
+                                    <div className={styles.actionsRight}>
                                         <Button
                                             type='button'
                                             className={styles.button}
-                                            onPress={() => setShowDeleteConfirm(false)}
+                                            onPress={handleCancel}
                                             isDisabled={isPending}
                                         >
                                             {globalize.translate('Cancel')}
                                         </Button>
                                         <Button
-                                            type='button'
-                                            className={[styles.button, styles.buttonDanger].join(' ')}
-                                            onPress={() => void handleDelete()}
-                                            isDisabled={isPending}
+                                            type='submit'
+                                            className={[styles.button, styles.buttonPrimary].join(' ')}
+                                            isDisabled={isPending || !name.trim()}
                                         >
-                                            {isDeleting ? 'Deleting...' : 'Delete List'}
+                                            {isUpdating ? 'Saving...' : 'Save Changes'}
                                         </Button>
                                     </div>
-                                </>
-                            ) : (
-                                <form onSubmit={handleSubmit}>
-                                    <Heading slot='title' className={styles.title}>
-                                        Manage List
-                                    </Heading>
-
-                                    <div className={styles.content}>
-                                        <TextField
-                                            className={styles.field}
-                                            isRequired
-                                            autoFocus
-                                        >
-                                            <Label className={styles.label}>List name</Label>
-                                            <Input
-                                                className={styles.input}
-                                                value={name}
-                                                onChange={(e) => setName(e.target.value)}
-                                                placeholder='Enter list name'
-                                            />
-                                        </TextField>
-
-                                        <Checkbox
-                                            className={styles.checkbox}
-                                            isSelected={isPublic}
-                                            onChange={setIsPublic}
-                                        >
-                                            <div className={styles.checkboxBox} />
-                                            <span className={styles.checkboxLabel}>
-                                                Make this list public (visible to all users)
-                                            </span>
-                                        </Checkbox>
-                                    </div>
-
-                                    <div className={styles.actionsSpread}>
-                                        <Button
-                                            type='button'
-                                            className={[styles.button, styles.buttonDangerOutline].join(' ')}
-                                            onPress={() => setShowDeleteConfirm(true)}
-                                            isDisabled={isPending}
-                                        >
-                                            Delete List
-                                        </Button>
-                                        <div className={styles.actionsRight}>
-                                            <Button
-                                                type='button'
-                                                className={styles.button}
-                                                onPress={handleCancel}
-                                                isDisabled={isPending}
-                                            >
-                                                {globalize.translate('Cancel')}
-                                            </Button>
-                                            <Button
-                                                type='submit'
-                                                className={[styles.button, styles.buttonPrimary].join(' ')}
-                                                isDisabled={isPending || !name.trim()}
-                                            >
-                                                {isUpdating ? 'Saving...' : 'Save Changes'}
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </form>
-                            )}
-                        </>
+                                </div>
+                            </form>
+                        )
                     )}
                 </Dialog>
             </Modal>

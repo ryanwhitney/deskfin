@@ -8,9 +8,10 @@ import { IconSvgs } from 'apps/deskfin/assets/icons';
 import globalize from 'lib/globalize';
 
 import styles from './SubtitleOffsetControl.module.scss';
+import type { Player } from '../../types';
 
 interface SubtitleOffsetControlProps {
-    player: any;
+    player: Player | null | undefined;
     isOpen: boolean;
     onOpenChange: (isOpen: boolean) => void;
 }

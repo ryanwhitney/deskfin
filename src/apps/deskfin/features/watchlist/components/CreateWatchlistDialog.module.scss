@@ -126,10 +126,6 @@
     transition: all 0.15s;
     outline: none;
 
-    &:hover:not([data-disabled]) {
-        background: $hover-bg;
-    }
-
     &:focus-visible {
         border-color: $focus-ring;
     }
@@ -137,6 +133,10 @@
     &[data-disabled] {
         opacity: 0.5;
         cursor: not-allowed;
+    }
+
+    &:hover:not([data-disabled]) {
+        background: $hover-bg;
     }
 }
 

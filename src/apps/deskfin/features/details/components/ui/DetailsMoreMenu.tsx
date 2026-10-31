@@ -24,6 +24,7 @@ import { IconSvgs, getLegacyCommandIcon } from 'apps/deskfin/assets/icons';
 import { ActionMenuStyles } from 'apps/deskfin/components/menu/ActionMenu';
 import iconButtonStyles from 'apps/deskfin/components/button/Button.module.scss';
 import { translateOr } from 'apps/deskfin/utils/translate';
+import { type MenuCommand, withMenuKeys } from 'apps/deskfin/components/menu/menuKeys';
 
 interface DetailsMoreMenuProps {
     item: ItemDto;
@@ -31,12 +32,7 @@ interface DetailsMoreMenuProps {
     className?: string;
 }
 
-type Command = {
-    name?: string;
-    id?: string;
-    icon?: string;
-    divider?: boolean;
-};
+type Command = MenuCommand;
 
 const t = translateOr;
 
@@ -125,11 +121,11 @@ export const DetailsMoreMenu: FC<DetailsMoreMenuProps> = ({
                     className={ActionMenuStyles.menu}
                     aria-label={t('ButtonMore', 'More')}
                 >
-                    {commands.map((cmd, idx) => {
+                    {withMenuKeys(commands).map((cmd) => {
                         if (cmd.divider) {
                             return (
                                 <Separator
-                                    key={`div-${idx}`}
+                                    key={cmd.key}
                                     className={ActionMenuStyles.divider}
                                 />
                             );

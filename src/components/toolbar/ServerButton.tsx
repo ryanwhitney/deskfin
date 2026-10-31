@@ -6,10 +6,7 @@ import { IconSvgs } from 'apps/deskfin/assets/icons';
 import { useSystemInfo } from 'hooks/useSystemInfo';
 
 const ServerButton: FC = () => {
-    const {
-        data: systemInfo,
-        isPending
-    } = useSystemInfo();
+    const { data: systemInfo } = useSystemInfo();
 
     return (
         <Link

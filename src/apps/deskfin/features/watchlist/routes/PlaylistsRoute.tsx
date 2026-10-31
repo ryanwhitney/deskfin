@@ -84,7 +84,7 @@ const PlaylistsRoute: FC = () => {
                                 key={playlist.Id}
                                 playlist={playlist}
                                 serverId={user?.ServerId ?? undefined}
-                                onDeleted={() => void refetch()}
+                                onDeleted={() => { void refetch(); }}
                             />
                         ))}
                     </div>

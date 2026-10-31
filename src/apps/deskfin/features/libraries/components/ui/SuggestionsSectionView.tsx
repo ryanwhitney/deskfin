@@ -126,9 +126,9 @@ const SuggestionsSectionView: FC<SuggestionsSectionViewProps> = ({
                 </Section>
             ))}
 
-            {movieRecommendationsItems?.map((recommendation, index) => (
+            {movieRecommendationsItems?.map(recommendation => (
                 <Section
-                    key={`${recommendation.CategoryId}-${index}`}
+                    key={`${recommendation.CategoryId}-${recommendation.RecommendationType}`}
                     title={getRecommendationTitle(recommendation)}
                     titleHref={undefined}
                 >

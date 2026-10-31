@@ -26,6 +26,7 @@ import { ItemGrid } from 'apps/deskfin/components/media/ItemGrid';
 import { useGetUserPlaylists } from 'apps/deskfin/features/watchlist/hooks/useGetUserPlaylists';
 import styles from './HomeRoute.module.scss';
 import { translateOr } from 'apps/deskfin/utils/translate';
+import { getLibraryPath } from 'apps/deskfin/utils/libraryPaths';
 
 const t = translateOr;
 
@@ -61,6 +62,12 @@ const shared = <T,>(key: string, load: () => Promise<T>): Promise<T> => {
 
 /** Stable empty list, so "no user views yet" doesn't look like a change on every render. */
 const NO_VIEWS: BaseItemDto[] = [];
+
+/** "All …" link text for a library's latest row. */
+const LATEST_ALL_LINK_TEXT: Partial<Record<string, string>> = {
+    movies: 'All movies',
+    tvshows: 'All shows'
+};
 
 const Home: FC = () => {
     const { api, user, serverId } = useApi();
@@ -211,7 +218,7 @@ const Home: FC = () => {
     const refreshFavorites = useCallback(async () => {
         if (!apiClient || !api || !user?.Id) return;
 
-        const baseOptions: any = {
+        const baseOptions: Record<string, unknown> = {
             SortBy: 'SortName', SortOrder: 'Ascending', Filters: 'IsFavorite',
             Recursive: true, Fields: 'PrimaryImageAspectRatio,MediaSourceCount',
             CollapseBoxSetItems: false, ExcludeLocationTypes: 'Virtual',
@@ -261,7 +268,8 @@ const Home: FC = () => {
 
     useEffect(() => {
         clearBackdrop();
-        documentRef.current.querySelector('.skinHeader')?.classList.add('noHomeButtonHeader');
+        const doc = documentRef.current;
+        doc.querySelector('.skinHeader')?.classList.add('noHomeButtonHeader');
 
         let cancelIdle: (() => void) | undefined;
         if (isFavoritesTab) {
@@ -270,17 +278,21 @@ const Home: FC = () => {
             void loadPrioritySections();
             // Safari lacks requestIdleCallback
             if ('requestIdleCallback' in window) {
-                const handle = requestIdleCallback(() => void loadOtherSections(), { timeout: 1500 });
+                const handle = requestIdleCallback(() => {
+                    void loadOtherSections();
+                }, { timeout: 1500 });
                 cancelIdle = () => cancelIdleCallback(handle);
             } else {
-                const handle = setTimeout(() => void loadOtherSections(), 0);
+                const handle = setTimeout(() => {
+                    void loadOtherSections();
+                }, 0);
                 cancelIdle = () => clearTimeout(handle);
             }
         }
 
         return () => {
             cancelIdle?.();
-            documentRef.current.querySelector('.skinHeader')?.classList.remove('noHomeButtonHeader');
+            doc.querySelector('.skinHeader')?.classList.remove('noHomeButtonHeader');
         };
     }, [isFavoritesTab, loadPrioritySections, loadOtherSections, refreshFavorites]);
 
@@ -369,15 +381,8 @@ const Home: FC = () => {
                                 <h2 className={styles.sectionTitle}>{t('HeaderMyMedia', 'My Media')}</h2>
                                 <div className={styles.row}>
                                     {userViews.map(v => {
-                                        const ct = v.CollectionType;
-                                        const base = ct === 'movies' ? 'movies' :
-                                            ct === 'tvshows' ? 'tv' :
-                                                ct === 'music' ? 'music' :
-                                                    ct === 'homevideos' ? 'homevideos' :
-                                                        ct === 'books' ? 'books' :
-                                                            ct === 'boxsets' ? 'collections' :
-                                                                'list';
-                                        const href = base === 'list' ? `#/list?parentId=${v.Id}` : `#/${base}?topParentId=${v.Id}`;
+                                        const path = getLibraryPath(v.CollectionType, v.Id);
+                                        const href = path ? `#${path}` : `#/list?parentId=${v.Id}`;
 
                                         return (
                                             <LinkButton
@@ -432,15 +437,8 @@ const Home: FC = () => {
                         )}
 
                         {sectionOrder.includes(HomeSectionType.LatestMedia) && latestByLibrary.map(({ library, items }) => {
-                            const ct = library.CollectionType;
-                            const isMovies = ct === 'movies';
-                            const isTvShows = ct === 'tvshows';
-                            const linkHref = isMovies ? `#/movies?topParentId=${library.Id}` :
-                                isTvShows ? `#/tv?topParentId=${library.Id}` :
-                                    undefined;
-                            const linkText = isMovies ? 'All movies' :
-                                isTvShows ? 'All shows' :
-                                    undefined;
+                            const linkText = LATEST_ALL_LINK_TEXT[library.CollectionType ?? ''];
+                            const linkHref = linkText ? `#${getLibraryPath(library.CollectionType, library.Id)}` : undefined;
 
                             return (
                                 <HomeRow

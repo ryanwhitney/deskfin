@@ -35,7 +35,7 @@ export const DetailsCast: FC<DetailsCastProps> = ({ title, people }) => {
         <div className={styles.scrollSection}>
             <h2 className={styles.sectionTitle}>{title}</h2>
             <div className={styles.peopleRow}>
-                {people.map((p, idx) => {
+                {people.map(p => {
                     const imageUrl = buildPersonImageUrl(p);
                     const content = (
                         <>
@@ -69,7 +69,7 @@ export const DetailsCast: FC<DetailsCastProps> = ({ title, people }) => {
                         </a>
                     ) : (
                         <div
-                            key={`${p.Name}-${idx}`}
+                            key={`${p.Type}-${p.Name}-${p.Role ?? ''}`}
                             className={`${styles.personCard} ${styles.personCardStatic}`}
                         >
                             {content}

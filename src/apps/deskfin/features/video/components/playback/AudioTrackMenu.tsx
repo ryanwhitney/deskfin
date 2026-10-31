@@ -16,14 +16,15 @@ import globalize from 'lib/globalize';
 
 import { useBlurOnMousePress } from './useBlurOnMousePress';
 import styles from './TrackMenu.module.scss';
+import type { Player, Track } from '../../types';
 
 interface AudioTrackMenuProps {
-    player: any;
+    player: Player | null | undefined;
     onUpdate: () => void;
 }
 
 export const AudioTrackMenu: FC<AudioTrackMenuProps> = ({ player, onUpdate }) => {
-    const [audioTracks, setAudioTracks] = useState<any[]>([]);
+    const [audioTracks, setAudioTracks] = useState<Track[]>([]);
     const [currentIndex, setCurrentIndex] = useState<number | undefined>();
     const [isOpen, setIsOpen] = useState(false);
     const { ref: buttonRef, handlePress, blurOnMenuClose } = useBlurOnMousePress();
@@ -47,7 +48,10 @@ export const AudioTrackMenu: FC<AudioTrackMenuProps> = ({ player, onUpdate }) =>
     };
 
     return (
-        <MenuTrigger isOpen={isOpen} onOpenChange={(open) => { setIsOpen(open); if (!open) blurOnMenuClose(); }}>
+        <MenuTrigger isOpen={isOpen} onOpenChange={(open) => {
+            setIsOpen(open);
+            if (!open) blurOnMenuClose();
+        }}>
             <FocusRing focusRingClass='focus-ring'>
                 <RacButton
                     ref={buttonRef}

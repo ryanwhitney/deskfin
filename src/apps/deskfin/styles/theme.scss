@@ -99,6 +99,7 @@ $grid-landscape-gap-ratio: math.div($grid-gap-base, $grid-landscape-base); // 0.
 @function grid-calculate-max-width($columns) {
     $portrait-width: $columns * $grid-portrait-base + ($columns - 1) * $grid-gap-base;
     $landscape-width: $columns * $grid-landscape-base + ($columns - 1) * $grid-gap-base;
+
     @return max($portrait-width, $landscape-width);
 }
 
@@ -230,14 +231,4 @@ $grid-breakpoints: (
 @mixin grid-section-landscape {
     @include grid-width;
     @include grid-layout-landscape;
-}
-
-// ============================================================================
-// GLOBAL STYLES
-// ============================================================================
-
-// Shared focus ring class for React Aria FocusRing component
-:global(.focus-ring) {
-    outline: 2px solid white;
-    outline-offset: 2px;
 }

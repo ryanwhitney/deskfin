@@ -5,8 +5,7 @@ import { ImageType } from '@jellyfin/sdk/lib/generated-client/models/image-type'
 import globalize from 'lib/globalize';
 import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
 import { IconSvgs } from 'apps/deskfin/assets/icons';
-import type { LibraryViewSettings } from 'types/library';
-import { ViewMode } from 'types/library';
+import { type LibraryViewSettings, ViewMode } from 'types/library';
 import { LibraryTab } from 'apps/deskfin/types/libraryTab';
 
 import styles from './LibraryToolbar.module.scss';

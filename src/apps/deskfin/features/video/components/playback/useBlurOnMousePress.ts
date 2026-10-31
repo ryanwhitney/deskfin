@@ -1,4 +1,5 @@
 import { useRef, useCallback, useEffect } from 'react';
+import type { PressEvent } from 'react-aria-components';
 
 // Track globally whether the last pointer interaction was mouse/touch
 // This is needed because focus can be restored to elements that weren't
@@ -50,7 +51,7 @@ export function useBlurOnMousePress<T extends HTMLElement = HTMLButtonElement>()
         return () => element.removeEventListener('focus', handleFocus);
     }, []);
 
-    const handlePress = useCallback((e: any) => {
+    const handlePress = useCallback((e: PressEvent) => {
         // Only blur if this was a mouse or touch interaction
         // Keyboard interactions (pointerType === undefined or 'keyboard') keep focus
         if ((e.pointerType === 'mouse' || e.pointerType === 'touch') && ref.current) {

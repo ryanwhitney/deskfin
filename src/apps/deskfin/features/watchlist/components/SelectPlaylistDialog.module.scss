@@ -94,11 +94,6 @@
     transition: all 0.15s;
     outline: none;
 
-    &:hover:not(:disabled) {
-        background: $hover-bg;
-        border-color: $border-muted;
-    }
-
     &:focus-visible {
         border-color: $focus-ring;
     }
@@ -106,6 +101,11 @@
     &:disabled {
         opacity: 0.5;
         cursor: not-allowed;
+    }
+
+    &:hover:not(:disabled) {
+        background: $hover-bg;
+        border-color: $border-muted;
     }
 }
 

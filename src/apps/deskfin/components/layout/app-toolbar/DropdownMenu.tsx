@@ -35,7 +35,7 @@ const DropdownMenu = ({
         setStyle({
             position: 'absolute',
             top,
-            left: align === 'right' ? left : left,
+            left,
             transform: align === 'right' ? 'translateX(-100%)' : 'none',
             zIndex: 1300
         });

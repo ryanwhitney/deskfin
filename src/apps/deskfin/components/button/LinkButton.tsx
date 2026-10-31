@@ -11,7 +11,7 @@ export interface LinkButtonProps extends Omit<RacLinkProps, 'className' | 'child
     children?: React.ReactNode;
 }
 
-export const LinkButton = forwardRef<HTMLAnchorElement, LinkButtonProps>(function LinkButton(
+export const LinkButton = forwardRef<HTMLAnchorElement, LinkButtonProps>(function LinkButtonRender(
     { icon, className, children, ...rest },
     ref
 ) {
@@ -28,3 +28,5 @@ export const LinkButton = forwardRef<HTMLAnchorElement, LinkButtonProps>(functio
         </FocusRing>
     );
 });
+
+LinkButton.displayName = 'LinkButton';

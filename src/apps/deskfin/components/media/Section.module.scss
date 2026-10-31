@@ -3,6 +3,7 @@
 // Container for grid sections - constrained and centered like grids
 .section {
     margin-bottom: $space-6;
+
     @include grid-section-container;
 }
 
@@ -12,6 +13,7 @@
     justify-content: space-between;
     gap: $space-3;
     margin-bottom: $space-3;
+
     @include grid-section-content;
 }
 
@@ -26,11 +28,6 @@
 
 .titleLink:hover {
     color: $text-muted;
-}
-
-.titleLink:hover .chevron {
-    opacity: 1;
-    transform: rotate(-90deg) translateY(2px);
 }
 
 .title {
@@ -66,6 +63,7 @@
     // ItemGrid inside handles the actual grid layout
     // If variant is provided and no ItemGrid is used, content becomes a grid
     display: block;
+
     @include grid-section-content;
 
     // If used as a direct grid (when variant is set and children are not ItemGrid)
@@ -97,4 +95,9 @@
 .section[data-compact="true"] .title,
 .section[data-compact="true"] .titleStatic {
     font-size: 18px;
+}
+
+.titleLink:hover .chevron {
+    opacity: 1;
+    transform: rotate(-90deg) translateY(2px);
 }
