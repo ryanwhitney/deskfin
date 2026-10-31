@@ -1,74 +1,70 @@
-<h1 align="center">Jellyfin Web</h1>
-<h3 align="center">Part of the <a href="https://jellyfin.org">Jellyfin Project</a></h3>
+# deskfin
 
----
+A desktop browser-focused frontend for [Jellyfin](https://jellyfin.org). Built as a fork of [jellyfin-web](https://github.com/jellyfin/jellyfin-web) and intended to maintain compatibility.
 
-<p align="center">
-<img alt="Logo Banner" src="https://raw.githubusercontent.com/jellyfin/jellyfin-ux/master/branding/SVG/banner-logo-solid.svg?sanitize=true"/>
-<br/>
-<br/>
-<a href="https://github.com/jellyfin/jellyfin-web">
-<img alt="GPL 2.0 License" src="https://img.shields.io/github/license/jellyfin/jellyfin-web.svg"/>
-</a>
-<a href="https://github.com/jellyfin/jellyfin-web/releases">
-<img alt="Current Release" src="https://img.shields.io/github/release/jellyfin/jellyfin-web.svg"/>
-</a>
-<a href="https://translate.jellyfin.org/projects/jellyfin/jellyfin-web/?utm_source=widget">
-<img src="https://translate.jellyfin.org/widgets/jellyfin/-/jellyfin-web/svg-badge.svg" alt="Translation Status"/>
-</a>
-<br/>
-<a href="https://opencollective.com/jellyfin">
-<img alt="Donate" src="https://img.shields.io/opencollective/all/jellyfin.svg?label=backers"/>
-</a>
-<a href="https://features.jellyfin.org">
-<img alt="Feature Requests" src="https://img.shields.io/badge/fider-vote%20on%20features-success.svg"/>
-</a>
-<a href="https://matrix.to/#/+jellyfin:matrix.org">
-<img alt="Chat on Matrix" src="https://img.shields.io/matrix/jellyfin:matrix.org.svg?logo=matrix"/>
-</a>
-<a href="https://www.reddit.com/r/jellyfin">
-<img alt="Join our Subreddit" src="https://img.shields.io/badge/reddit-r%2Fjellyfin-%23FF5700.svg"/>
-</a>
-</p>
+This replaces the most visible parts of jellyfin-web with a new interface. Deeper screens and controls (admin dashboard, metadata editing, etc.) still render from jellyfin-web, allowing this to be more tightly scoped to the things that matter and more maintainable.
 
-Jellyfin Web is the frontend used for most of the clients available for end users, such as desktop browsers, Android, and iOS. We welcome all contributions and pull requests! If you have a larger feature in mind please open an issue so we can discuss the implementation before you start. Translations can be improved very easily from our <a href="https://translate.jellyfin.org/projects/jellyfin/jellyfin-web">Weblate</a> instance. Look through the following graphic to see if your native language could use some work!
+Designed to be fast, pretty, and keyboard accessible. 
 
-<a href="https://translate.jellyfin.org/engage/jellyfin/?utm_source=widget">
-<img src="https://translate.jellyfin.org/widgets/jellyfin/-/jellyfin-web/multi-auto.svg" alt="Detailed Translation Status"/>
-</a>
+ ## Changes from jellyfin-web:
+ 
+- New home, library, details, and playlist pages are completely replaced. Playback controls are partially replaced.
+- Features keyboard-navigable cards and menus built on [React Aria](https://react-spectrum.adobe.com/react-aria/) instead of MUI
+- Material icons are replaced and system fonts are used.
+- Playlists (re-orderable) display as first-class sections on the home screen.
+- New episode list/picker in playback controls.
+- Faster load times and faster builds. rspack replaces webbpack. Bundles are smaller. No legacy polyfills.
 
-## Build Process
+Deskfin's own code lives in `src/apps/deskfin`, with as little crossover with upstream as possible.
 
-### Dependencies
+## Requirements
 
-- [Node.js](https://nodejs.org/en/download)
-- npm (included in Node.js)
+- Node 24+ and npm 11+
+- A recent Jellyfin server (developed against 12.4)
 
-### Getting Started
+## Development
 
-1. Clone or download this repository.
+```sh
+npm install
+npm start
+```
 
-   ```sh
-   git clone https://github.com/jellyfin/jellyfin-web.git
-   cd jellyfin-web
-   ```
+This starts a dev server at http://localhost:8080. On first load, enter your Jellyfin server's address.
 
-2. Install build dependencies in the project directory.
+`npm run build:check`, `npm run lint` and `npm test` run the type checker, linter and tests.
 
-   ```sh
-   npm install
-   ```
+## Building
 
-3. Run the web client with webpack for local development.
+```sh
+npm run build
+```
 
-   ```sh
-   npm start
-   ```
+The site is written to `dist/`.
 
-4. Build the client with sourcemaps available.
+## Deploying
 
-   ```sh
-   npm run build:development
-   ```
+The simplest setup is to have Jellyfin serve deskfin in place of its bundled web client:
 
-Review the [Contributing Guide](./CONTRIBUTING.md) for more information on our process and tech stack.
+```sh
+jellyfin --webdir /path/to/deskfin/dist
+```
+
+You can also set `JELLYFIN_WEB_DIR`, or with Docker, mount `dist` over `/jellyfin/jellyfin-web`. Deskfin is then at `http://your-server:8096/web/` and connects to the server it's served from.
+
+You can also host `dist/` on any static web server. To point new devices at your server, build with its address:
+
+```sh
+JELLYFIN_SERVERS=https://jellyfin.example.com npm run build
+```
+
+## Keeping up with upstream
+
+```sh
+git remote add upstream https://github.com/jellyfin/jellyfin-web.git
+git fetch upstream && git merge upstream/master
+npm run divergence   # lists files outside src/apps/deskfin that differ from upstream
+```
+
+## License
+
+GPL-2.0-or-later, the same as jellyfin-web.

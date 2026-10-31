@@ -10,7 +10,7 @@
  *  - CSS modules (`*.module.scss`) with a default export, as deskfin components use them.
  *  - Deskfin's SVG icons load as source text so they can be inlined and tinted with currentColor.
  *  - Deskfin's own index.html (splash screen, branding) and favicons.
- *  - Production config.json lists the HTTPS server address (JELLYFIN_SERVERS overrides).
+ *  - Production config.json can list server addresses for new devices (JELLYFIN_SERVERS).
  *
  * Type checking is not part of the build: run `npm run build:check`.
  */
@@ -59,9 +59,9 @@ const Assets = [
     'pdfjs-dist/build/pdf.worker.js'
 ];
 
-// Server(s) prefilled into config.json for production builds, so new devices on https://media.home connect
-// through the HTTPS proxy instead of the LAN address (which browsers block as mixed content).
-const PRODUCTION_SERVERS = (process.env.JELLYFIN_SERVERS ?? 'https://jellyfin.home')
+// Server address(es) offered to new devices, written into config.json for production builds:
+// JELLYFIN_SERVERS="https://jellyfin.example.com[,https://…]". Unset: deskfin uses the server it's served from.
+const PRODUCTION_SERVERS = (process.env.JELLYFIN_SERVERS ?? '')
     .split(',').map(server => server.trim()).filter(Boolean);
 
 let COMMIT_SHA = '';
@@ -174,7 +174,7 @@ module.exports = (env = {}) => {
                     }))
                 ]
             }),
-            ...(PRODUCTION ? [new PrefillServersPlugin()] : []),
+            ...(PRODUCTION && PRODUCTION_SERVERS.length ? [new PrefillServersPlugin()] : []),
             // The libarchive.js worker-bundle is copied manually (see Assets).
             new rspack.IgnorePlugin({
                 resourceRegExp: /worker-bundle\.js$/,
