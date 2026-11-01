@@ -51,6 +51,7 @@ const GridSection = ({ title, items, isLoading, emptyMessage, onToggleFavorite, 
     <div className={styles.section}>
         <h2 className={styles.sectionTitle}>{title}</h2>
         <ItemGrid
+            aria-label={title}
             items={items}
             variant='portrait'
             isLoading={isLoading}
@@ -316,7 +317,7 @@ export default function DetailsPage() {
                                     {primaryUrl ? (
                                         <img
                                             src={primaryUrl}
-                                            alt={item.Name || ''}
+                                            alt='' // the title is the page heading
                                             className={styles.posterImg}
                                         />
                                     ) : null}

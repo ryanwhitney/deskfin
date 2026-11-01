@@ -9,13 +9,7 @@ import type { ItemDto } from 'types/base/models/item-dto';
 import { useApi } from 'hooks/useApi';
 import { useToggleFavoriteMutation, useTogglePlayedMutation } from 'hooks/useFetchItems';
 import Page from 'components/Page';
-import { MediaCard } from 'apps/deskfin/components/media/MediaCard';
-import {
-    buildCardImageUrl,
-    getCardMeta,
-    getProgressPct,
-    getOverlayCount
-} from 'apps/deskfin/features/home/utils/cardHelpers';
+import { MediaCardList } from 'apps/deskfin/components/media/MediaCardList';
 import NoItemsMessage from 'components/common/NoItemsMessage';
 import { useTitle } from 'apps/deskfin/hooks/useTitle';
 import { formatLibraryTitle } from 'apps/deskfin/utils/titleUtils';
@@ -264,30 +258,19 @@ export const PlaylistView: FC<PlaylistViewProps> = ({ playlistId }) => {
                 {items.length === 0 ? (
                     <NoItemsMessage message='MessageNoItemsAvailable' />
                 ) : (
-                    <div className={toolbarStyles.grid} data-variant='portrait'>
-                        {sortedItems.map((item) => (
-                            <MediaCard
-                                key={item.Id}
-                                item={item}
-                                user={user}
-                                variant='portrait'
-                                imageUrl={buildCardImageUrl(item, { variant: 'portrait' })}
-                                title={getCardMeta(item).title}
-                                titleHref={getCardMeta(item).titleHref}
-                                subtitle={getCardMeta(item).subtitle}
-                                subtitleHref={getCardMeta(item).subtitleHref}
-                                progressPct={getProgressPct(item)}
-                                overlayCount={getOverlayCount(item)}
-                                onToggleFavorite={onToggleFavorite}
-                                onTogglePlayed={onTogglePlayed}
-                                onAfterAction={onAfterAction}
-                                playlistContext={{
-                                    playlistId,
-                                    playlistName: playlist.Name ?? 'this list'
-                                }}
-                            />
-                        ))}
-                    </div>
+                    <MediaCardList
+                        aria-label={playlist.Name ?? 'Playlist'}
+                        className={toolbarStyles.grid}
+                        data-variant='portrait'
+                        items={sortedItems}
+                        onToggleFavorite={onToggleFavorite}
+                        onTogglePlayed={onTogglePlayed}
+                        onAfterAction={onAfterAction}
+                        playlistContext={{
+                            playlistId,
+                            playlistName: playlist.Name ?? 'this list'
+                        }}
+                    />
                 )}
             </div>
 

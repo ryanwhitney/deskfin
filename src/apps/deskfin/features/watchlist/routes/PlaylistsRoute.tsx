@@ -1,10 +1,12 @@
 import React, { type FC, useState, useCallback } from 'react';
-import { Button } from 'react-aria-components';
+import { useNavigate } from 'react-router-dom';
+import { Button, GridListItem } from 'react-aria-components';
 
 import { useApi } from 'hooks/useApi';
 import { useGetUserPlaylists } from '../hooks/useGetUserPlaylists';
 import { CreateWatchlistDialog } from '../components/CreateWatchlistDialog';
-import { PlaylistCard } from '../components/PlaylistCard';
+import { getPlaylistPath, PlaylistCard, PlaylistCardStyles } from '../components/PlaylistCard';
+import { CardList } from 'apps/deskfin/components/media/CardList';
 import Page from 'components/Page';
 import Loading from 'components/loading/LoadingComponent';
 import NoItemsMessage from 'components/common/NoItemsMessage';
@@ -20,6 +22,7 @@ import toolbarStyles from 'apps/deskfin/components/library/LibraryToolbar.module
  */
 const PlaylistsRoute: FC = () => {
     const { user } = useApi();
+    const navigate = useNavigate();
     const { data: playlists = [], isPending, isError, refetch } = useGetUserPlaylists();
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
@@ -78,16 +81,27 @@ const PlaylistsRoute: FC = () => {
                 {playlists.length === 0 ? (
                     <NoItemsMessage message='No playlists yet. Create your first playlist to organize your favorite content.' />
                 ) : (
-                    <div className={toolbarStyles.grid} data-variant='portrait'>
+                    <CardList
+                        aria-label={globalize.translate('Playlists') || 'Playlists'}
+                        className={toolbarStyles.grid}
+                        data-variant='portrait'
+                    >
                         {playlists.map((playlist) => (
-                            <PlaylistCard
+                            <GridListItem
                                 key={playlist.Id}
-                                playlist={playlist}
-                                serverId={user?.ServerId ?? undefined}
-                                onDeleted={() => { void refetch(); }}
-                            />
+                                id={playlist.Id ?? ''}
+                                textValue={playlist.Name ?? ''}
+                                className={PlaylistCardStyles.gridItem}
+                                onAction={() => navigate(getPlaylistPath(playlist.Id, user?.ServerId))}
+                            >
+                                <PlaylistCard
+                                    playlist={playlist}
+                                    serverId={user?.ServerId ?? undefined}
+                                    onDeleted={() => { void refetch(); }}
+                                />
+                            </GridListItem>
                         ))}
-                    </div>
+                    </CardList>
                 )}
             </div>
 

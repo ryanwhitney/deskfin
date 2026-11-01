@@ -1,4 +1,4 @@
-import React, { type FC, type MouseEvent, useMemo, useState } from 'react';
+import React, { type FC, type MouseEvent, memo, useMemo, useState } from 'react';
 import { Squircle } from 'apps/deskfin/components/squircle/Squircle';
 
 import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
@@ -234,7 +234,7 @@ const CardSubtitle: FC<{ subtitle?: string; subtitleHref?: string }> = ({ subtit
     );
 };
 
-export const MediaCard: FC<MediaCardProps> = ({
+const MediaCardView: FC<MediaCardProps> = ({
     item,
     user,
     variant = 'portrait',
@@ -323,7 +323,7 @@ export const MediaCard: FC<MediaCardProps> = ({
                         {imageUrl ? (
                             <img
                                 src={imageUrl}
-                                alt={title}
+                                alt='' // title is shown below
                                 className={styles.thumbImg}
                                 loading={isImagePriority ? 'eager' : 'lazy'}
                                 decoding='async'
@@ -416,3 +416,6 @@ export const MediaCard: FC<MediaCardProps> = ({
         </div>
     );
 };
+
+// Memoized: card lists re-render every card when keyboard focus moves, but only two cards' props change.
+export const MediaCard = memo(MediaCardView);

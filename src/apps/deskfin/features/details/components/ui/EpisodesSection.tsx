@@ -1,8 +1,9 @@
 import React, { type FC } from 'react';
-import { GridList, GridListItem } from 'react-aria-components';
+import { GridListItem } from 'react-aria-components';
+import { CardList } from 'apps/deskfin/components/media/CardList';
 import globalize from 'lib/globalize';
 import type { ItemDto } from 'types/base/models/item-dto';
-import { EpisodeRow } from './EpisodeRow';
+import { EpisodeRow, EpisodeRowStyles } from './EpisodeRow';
 import styles from '../../routes/DetailsRoute.module.scss';
 
 interface EpisodesSectionProps {
@@ -27,10 +28,9 @@ export const EpisodesSection: FC<EpisodesSectionProps> = ({
     return (
         <div className={styles.section}>
             <h2 className={styles.sectionTitle}>{sectionTitle}</h2>
-            <GridList
+            <CardList
                 className={styles.episodeList}
                 aria-label={sectionTitle}
-                selectionMode='none'
                 onAction={(key) => { window.location.href = `#/details?id=${String(key)}`; }}
             >
                 {filteredEpisodes.map(ep => (
@@ -38,7 +38,7 @@ export const EpisodesSection: FC<EpisodesSectionProps> = ({
                         key={ep.Id!}
                         id={ep.Id!}
                         textValue={ep.Name ?? ''}
-                        className={styles.episodeGridItem}
+                        className={EpisodeRowStyles.gridItem}
                     >
                         {({ isFocused }) => (
                             <EpisodeRow
@@ -50,7 +50,7 @@ export const EpisodesSection: FC<EpisodesSectionProps> = ({
                         )}
                     </GridListItem>
                 ))}
-            </GridList>
+            </CardList>
         </div>
     );
 };

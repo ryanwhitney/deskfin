@@ -1,5 +1,4 @@
 import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
-import type { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
 import React, { FC } from 'react';
 import { useGetYears } from '../../hooks/useLibraryQueries';
 import NoItemsMessage from 'components/common/NoItemsMessage';
@@ -9,13 +8,11 @@ import type { ParentId } from 'types/library';
 
 interface YearsItemsContainerProps {
     parentId: ParentId;
-    collectionType: CollectionType | undefined;
     itemType: BaseItemKind[];
 }
 
 const YearsItemsContainer: FC<YearsItemsContainerProps> = ({
     parentId,
-    collectionType,
     itemType
 // eslint-disable-next-line sonarjs/function-return-type
 }) => {
@@ -32,7 +29,6 @@ const YearsItemsContainer: FC<YearsItemsContainerProps> = ({
     return yearsResult.Items.map((year) => (
         <YearsSectionContainer
             key={year.Id}
-            collectionType={collectionType}
             parentId={parentId}
             itemType={itemType}
             year={year}

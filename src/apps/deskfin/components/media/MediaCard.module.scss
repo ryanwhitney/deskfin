@@ -4,6 +4,7 @@
     flex: 0 0 auto;
     scroll-snap-align: start;
     outline: none;
+    scroll-margin-top: $topbar-clearance;
 }
 
 .card {

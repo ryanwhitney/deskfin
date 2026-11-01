@@ -12,7 +12,6 @@ import ItemsContainer from 'elements/emby-itemscontainer/ItemsContainer';
 import Loading from 'components/loading/LoadingComponent';
 import NoItemsMessage from 'components/common/NoItemsMessage';
 import globalize from 'lib/globalize';
-import { useApi } from 'hooks/useApi';
 import { useItem } from 'hooks/useItem';
 import {
     useToggleFavoriteMutation,
@@ -24,13 +23,7 @@ import { formatItemTitle } from 'apps/deskfin/utils/titleUtils';
 
 import type { ItemDto } from 'types/base/models/item-dto';
 
-import { MediaCard } from 'apps/deskfin/components/media/MediaCard';
-import {
-    buildCardImageUrl,
-    getCardMeta,
-    getProgressPct,
-    getOverlayCount
-} from 'apps/deskfin/features/home/utils/cardHelpers';
+import { MediaCardList } from 'apps/deskfin/components/media/MediaCardList';
 import styles from 'apps/deskfin/components/library/LibraryToolbar.module.scss';
 
 const getIncludeItemTypesForGenre = (
@@ -53,7 +46,6 @@ export default function GenrePage() {
     const parentId =
         params.get('parentId') || params.get('topParentId') || undefined;
 
-    const { user } = useApi();
     const { data: genre } = useItem(genreId || undefined);
 
     useTitle(genre ? formatItemTitle(genre.Name, genre.Type) : undefined);
@@ -133,30 +125,14 @@ export default function GenrePage() {
                             <h1 className={styles.sectionHeader}>
                                 {genre?.Name || globalize.translate('Genres')}
                             </h1>
-                            <div className={styles.grid}>
-                                {items.map((item) => (
-                                    <MediaCard
-                                        key={item.Id}
-                                        item={item}
-                                        user={user}
-                                        variant='portrait'
-                                        imageUrl={buildCardImageUrl(item, {
-                                            variant: 'portrait'
-                                        })}
-                                        title={getCardMeta(item).title}
-                                        titleHref={getCardMeta(item).titleHref}
-                                        subtitle={getCardMeta(item).subtitle}
-                                        subtitleHref={
-                                            getCardMeta(item).subtitleHref
-                                        }
-                                        progressPct={getProgressPct(item)}
-                                        overlayCount={getOverlayCount(item)}
-                                        onToggleFavorite={onToggleFavorite}
-                                        onTogglePlayed={onTogglePlayed}
-                                        onAfterAction={onAfterAction}
-                                    />
-                                ))}
-                            </div>
+                            <MediaCardList
+                                aria-label={genre?.Name || globalize.translate('Genres')}
+                                className={styles.grid}
+                                items={items}
+                                onToggleFavorite={onToggleFavorite}
+                                onTogglePlayed={onTogglePlayed}
+                                onAfterAction={onAfterAction}
+                            />
                         </div>
                     ) : (
                         <NoItemsMessage message='MessageNoItemsAvailable' />

@@ -1,5 +1,7 @@
 import React, { type FC } from 'react';
+import { GridListItem } from 'react-aria-components';
 import { ServerConnections } from 'lib/jellyfin-apiclient';
+import { CardList } from 'apps/deskfin/components/media/CardList';
 import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
 import { IconSvgs } from 'apps/deskfin/assets/icons';
 import styles from '../../routes/DetailsRoute.module.scss';
@@ -34,16 +36,26 @@ export const DetailsCast: FC<DetailsCastProps> = ({ title, people }) => {
     return (
         <div className={styles.scrollSection}>
             <h2 className={styles.sectionTitle}>{title}</h2>
-            <div className={styles.peopleRow}>
+            <CardList aria-label={title} className={styles.peopleRow}>
                 {people.map(p => {
+                    const key = `${p.Id ?? p.Name}-${p.Type}-${p.Role ?? ''}`;
                     const imageUrl = buildPersonImageUrl(p);
-                    const content = (
-                        <>
+                    const href = p.Id ? `#/details?id=${p.Id}` : undefined;
+
+                    return (
+                        <GridListItem
+                            // The same person can appear more than once (e.g. as writer and director)
+                            id={key}
+                            key={key}
+                            textValue={[p.Name, p.Role].filter(Boolean).join(', ')}
+                            className={href ? styles.personCard : `${styles.personCard} ${styles.personCardStatic}`}
+                            href={href}
+                        >
                             <div className={styles.personThumb}>
                                 {imageUrl ? (
                                     <img
                                         src={imageUrl}
-                                        alt={p.Name || ''}
+                                        alt='' // name is shown below
                                         className={styles.personImg}
                                     />
                                 ) : (
@@ -56,27 +68,10 @@ export const DetailsCast: FC<DetailsCastProps> = ({ title, people }) => {
                                 <div className={styles.personName}>{p.Name}</div>
                                 {p.Role && <div className={styles.personRole}>{p.Role}</div>}
                             </div>
-                        </>
-                    );
-
-                    return p.Id ? (
-                        <a
-                            key={p.Id}
-                            className={styles.personCard}
-                            href={`#/details?id=${p.Id}`}
-                        >
-                            {content}
-                        </a>
-                    ) : (
-                        <div
-                            key={`${p.Type}-${p.Name}-${p.Role ?? ''}`}
-                            className={`${styles.personCard} ${styles.personCardStatic}`}
-                        >
-                            {content}
-                        </div>
+                        </GridListItem>
                     );
                 })}
-            </div>
+            </CardList>
         </div>
     );
 };

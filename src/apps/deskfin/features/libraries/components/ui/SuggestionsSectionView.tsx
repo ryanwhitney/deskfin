@@ -117,6 +117,7 @@ const SuggestionsSectionView: FC<SuggestionsSectionViewProps> = ({
                     title={globalize.translate(section.name)}
                 >
                     <ItemGrid
+                        aria-label={globalize.translate(section.name)}
                         items={items}
                         variant={getVariantForSection(section)}
                         onToggleFavorite={onToggleFavorite}
@@ -133,6 +134,7 @@ const SuggestionsSectionView: FC<SuggestionsSectionViewProps> = ({
                     titleHref={undefined}
                 >
                     <ItemGrid
+                        aria-label={getRecommendationTitle(recommendation)}
                         items={recommendation.Items as ItemDto[]}
                         variant='portrait'
                         onToggleFavorite={onToggleFavorite}

@@ -78,17 +78,14 @@ const GenresSectionContainer: FC<GenresSectionContainerProps> = ({
         return <Loading />;
     }
 
-    // Determine variant based on collection type
-    const variant = collectionType === CollectionType.Music ? 'square' : 'portrait';
-
     return (
         <Section
             title={genre.Name || ''}
             titleHref={getGenreUrl()}
         >
             <ItemGrid
+                aria-label={genre.Name || ''}
                 items={itemsResult?.Items || []}
-                variant={variant}
                 onToggleFavorite={onToggleFavorite}
                 onTogglePlayed={onTogglePlayed}
                 onAfterAction={onAfterAction}

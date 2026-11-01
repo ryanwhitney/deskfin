@@ -14,7 +14,6 @@ export type SeasonCardProps = {
 export function SeasonCard({ season, imageUrl, episodeCount }: Readonly<SeasonCardProps>) {
     return (
         <ItemCard
-            href={`#/details?id=${season.Id}`}
             title={season.Name}
             imageUrl={imageUrl}
             imageFallback={'rgba(255,255,255,0.1)'}

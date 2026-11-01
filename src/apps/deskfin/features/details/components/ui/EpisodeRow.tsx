@@ -12,6 +12,8 @@ import FavoriteButton from 'apps/deskfin/features/userData/components/FavoriteBu
 import PlayedButton from 'apps/deskfin/features/userData/components/PlayedButton';
 
 import styles from './EpisodeRow.module.scss';
+
+export const EpisodeRowStyles = styles;
 import { translateOr } from 'apps/deskfin/utils/translate';
 import { ItemCrumb } from 'apps/deskfin/components/breadcrumb/ItemCrumb';
 
@@ -94,7 +96,7 @@ export const EpisodeRow: FC<EpisodeRowProps> = ({ episode, queryKey, showSeriesA
                     {img ? (
                         <img
                             src={img}
-                            alt={formatEpisodeLabel(episode)}
+                            alt='' // label is shown beside it
                             className={styles.thumbImgElement}
                         />
                     ) : (

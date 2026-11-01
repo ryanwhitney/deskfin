@@ -1,21 +1,11 @@
 import React, { type FC, useEffect, useState } from 'react';
-import { GridList, GridListItem } from 'react-aria-components';
-import { MediaCard, MediaCardStyles } from 'apps/deskfin/components/media/MediaCard';
+import { MediaCardList } from 'apps/deskfin/components/media/MediaCardList';
 import type { ItemDto } from 'types/base/models/item-dto';
-import {
-    buildCardImageUrl,
-    getCardMeta,
-    getProgressPct,
-    getOverlayCount,
-    canNavigate
-} from '../../utils/cardHelpers';
 import styles from '../../routes/HomeRoute.module.scss';
-import type { UserDto } from '@jellyfin/sdk/lib/generated-client/models/user-dto';
 
 interface HomeRowProps {
     title: string;
     items: ItemDto[];
-    user: UserDto | undefined;
     onAfterAction: () => void;
     onToggleFavorite: (item: ItemDto) => void;
     onTogglePlayed: (item: ItemDto) => void;
@@ -36,7 +26,6 @@ const PRIORITY_CARDS = 5;
 export const HomeRow: FC<HomeRowProps> = ({
     title,
     items,
-    user,
     onAfterAction,
     onToggleFavorite,
     onTogglePlayed,
@@ -58,11 +47,6 @@ export const HomeRow: FC<HomeRowProps> = ({
 
     if (!items.length) return null;
 
-    const openDetailsById = (id: string) => {
-        if (!canNavigate()) return;
-        window.location.href = `#/details?id=${id}`;
-    };
-
     return (
         <section className={`${styles.section} ${isVisible ? styles.visible : ''}`}>
             {linkHref ? (
@@ -73,51 +57,18 @@ export const HomeRow: FC<HomeRowProps> = ({
             ) : (
                 <h2 className={styles.sectionTitleStandalone}>{title}</h2>
             )}
-            <GridList
+            <MediaCardList
                 aria-label={title}
                 className={styles.row}
-                selectionMode='none'
-                onAction={(key) => openDetailsById(String(key))}
-            >
-                {items.map((it, index) => {
-                    const id = it.Id ?? `${title}-${it.Name ?? 'item'}`;
-                    const meta = getCardMeta(it);
-                    const img = buildCardImageUrl(it, {
-                        variant: cardVariant,
-                        maxWidth: cardVariant === 'landscape' ? 720 : 420
-                    });
-
-                    return (
-                        <GridListItem
-                            key={id}
-                            id={id}
-                            textValue={it.Name ?? ''}
-                            className={MediaCardStyles.gridItem}
-                        >
-                            {({ isFocused }) => (
-                                <MediaCard
-                                    item={it}
-                                    user={user}
-                                    variant={cardVariant}
-                                    imageUrl={img}
-                                    isImagePriority={isPriority && index < PRIORITY_CARDS}
-                                    overlayCount={getOverlayCount(it)}
-                                    progressPct={getProgressPct(it)}
-                                    title={meta.title}
-                                    titleHref={meta.titleHref}
-                                    subtitle={meta.subtitle}
-                                    subtitleHref={meta.subtitleHref}
-                                    isRovingFocused={isFocused}
-                                    onAfterAction={onAfterAction}
-                                    onToggleFavorite={onToggleFavorite}
-                                    onTogglePlayed={onTogglePlayed}
-                                    playlistContext={playlistContext}
-                                />
-                            )}
-                        </GridListItem>
-                    );
-                })}
-            </GridList>
+                items={items}
+                variant={cardVariant}
+                imageMaxWidth={cardVariant === 'landscape' ? 720 : 420}
+                priorityCount={isPriority ? PRIORITY_CARDS : 0}
+                onAfterAction={onAfterAction}
+                onToggleFavorite={onToggleFavorite}
+                onTogglePlayed={onTogglePlayed}
+                playlistContext={playlistContext}
+            />
         </section>
     );
 };

@@ -305,7 +305,7 @@ const Home: FC = () => {
 
     const sectionOrder = useMemo(() => getAllSectionsToShow(10), []);
 
-    const rowProps = { user, onAfterAction, onToggleFavorite, onTogglePlayed };
+    const rowProps = { onAfterAction, onToggleFavorite, onTogglePlayed };
 
     return (
         <Page
@@ -320,6 +320,7 @@ const Home: FC = () => {
                         {favoriteMovies.length > 0 && (
                             <Section title={t('Movies', 'Movies')}>
                                 <ItemGrid
+                                    aria-label={t('Movies', 'Movies')}
                                     items={favoriteMovies}
                                     variant='portrait'
                                     onToggleFavorite={onToggleFavorite}
@@ -331,6 +332,7 @@ const Home: FC = () => {
                         {favoriteShows.length > 0 && (
                             <Section title={t('Shows', 'Shows')}>
                                 <ItemGrid
+                                    aria-label={t('Shows', 'Shows')}
                                     items={favoriteShows}
                                     variant='portrait'
                                     onToggleFavorite={onToggleFavorite}
@@ -342,6 +344,7 @@ const Home: FC = () => {
                         {favoriteEpisodes.length > 0 && (
                             <Section title={t('Episodes', 'Episodes')}>
                                 <ItemGrid
+                                    aria-label={t('Episodes', 'Episodes')}
                                     items={favoriteEpisodes}
                                     variant='landscape'
                                     onToggleFavorite={onToggleFavorite}
@@ -353,6 +356,7 @@ const Home: FC = () => {
                         {favoriteCollections.length > 0 && (
                             <Section title={t('Collections', 'Collections')}>
                                 <ItemGrid
+                                    aria-label={t('Collections', 'Collections')}
                                     items={favoriteCollections}
                                     variant='portrait'
                                     onToggleFavorite={onToggleFavorite}
@@ -364,6 +368,7 @@ const Home: FC = () => {
                         {favoritePeople.length > 0 && (
                             <Section title={t('People', 'People')}>
                                 <ItemGrid
+                                    aria-label={t('People', 'People')}
                                     items={favoritePeople}
                                     variant='portrait'
                                     onToggleFavorite={onToggleFavorite}

@@ -9,7 +9,7 @@ import {
     useToggleFavoriteMutation,
     useTogglePlayedMutation
 } from 'hooks/useFetchItems';
-import { useApi } from 'hooks/useApi';
+import globalize from 'lib/globalize';
 import { getDefaultLibraryViewSettings, getSettingsKey } from '../../utils/settings';
 import Loading from 'components/loading/LoadingComponent';
 import ItemsContainer from 'elements/emby-itemscontainer/ItemsContainer';
@@ -28,13 +28,7 @@ import {
 } from 'apps/deskfin/components/library/ActionButtons';
 import styles from 'apps/deskfin/components/library/LibraryToolbar.module.scss';
 
-import { MediaCard } from 'apps/deskfin/components/media/MediaCard';
-import {
-    buildCardImageUrl,
-    getCardMeta,
-    getProgressPct,
-    getOverlayCount
-} from 'apps/deskfin/features/home/utils/cardHelpers';
+import { MediaCardList } from 'apps/deskfin/components/media/MediaCardList';
 
 interface ItemsViewProps {
     viewType: LibraryTab;
@@ -61,7 +55,6 @@ const ItemsView: FC<ItemsViewProps> = ({
     itemType,
     noItemsMessage
 }) => {
-    const { user } = useApi();
     const [storedViewSettings, setLibraryViewSettings] =
         useLocalStorage<LibraryViewSettings>(
             getSettingsKey(viewType, parentId),
@@ -205,37 +198,16 @@ const ItemsView: FC<ItemsViewProps> = ({
                 {!items.length ? (
                     <NoItemsMessage message={noItemsMessage} />
                 ) : (
-                    <div
+                    <MediaCardList
+                        aria-label={item?.Name || globalize.translate('Items')}
                         className={styles.grid}
                         data-variant={cardVariant}
-                    >
-                        {items.map((cardItem) => (
-                            <MediaCard
-                                key={cardItem.Id}
-                                item={cardItem}
-                                user={user}
-                                variant={cardVariant}
-                                imageUrl={buildCardImageUrl(cardItem, {
-                                    variant: cardVariant
-                                })}
-                                title={getCardMeta(cardItem).title}
-                                titleHref={
-                                    getCardMeta(cardItem).titleHref
-                                }
-                                subtitle={
-                                    getCardMeta(cardItem).subtitle
-                                }
-                                subtitleHref={
-                                    getCardMeta(cardItem).subtitleHref
-                                }
-                                progressPct={getProgressPct(cardItem)}
-                                overlayCount={getOverlayCount(cardItem)}
-                                onToggleFavorite={onToggleFavorite}
-                                onTogglePlayed={onTogglePlayed}
-                                onAfterAction={onAfterAction}
-                            />
-                        ))}
-                    </div>
+                        items={items}
+                        variant={cardVariant}
+                        onToggleFavorite={onToggleFavorite}
+                        onTogglePlayed={onTogglePlayed}
+                        onAfterAction={onAfterAction}
+                    />
                 )}
             </div>
         </ItemsContainer>

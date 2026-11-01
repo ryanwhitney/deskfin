@@ -70,7 +70,6 @@ export const PlaylistRow: FC<PlaylistRowProps> = ({
             cardVariant='portrait'
             linkHref={linkHref}
             linkText={linkText}
-            user={user}
             onToggleFavorite={onToggleFavorite}
             onTogglePlayed={onTogglePlayed}
             onAfterAction={handleAfterAction}

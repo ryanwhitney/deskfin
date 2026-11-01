@@ -31,6 +31,11 @@ import { ManagePlaylistDialog } from './ManagePlaylistDialog';
 
 import styles from './PlaylistCard.module.scss';
 
+export const PlaylistCardStyles = styles;
+
+export const getPlaylistPath = (playlistId: string | null | undefined, serverId: string | null | undefined) =>
+    `/list?id=${playlistId}&serverId=${serverId}`;
+
 interface PlaylistCardProps {
     playlist: BaseItemDto;
     serverId?: string;
@@ -105,7 +110,7 @@ export const PlaylistCard: FC<PlaylistCardProps> = ({ playlist, serverId, onDele
         staleTime: 60 * 1000 // 1 minute
     });
 
-    const href = `/list?id=${playlist.Id}&serverId=${serverId || user?.ServerId}`;
+    const href = getPlaylistPath(playlist.Id, serverId || user?.ServerId);
     const itemCount = playlist.ChildCount || 0;
     const isFavorite = !!playlist.UserData?.IsFavorite;
 
@@ -117,10 +122,10 @@ export const PlaylistCard: FC<PlaylistCardProps> = ({ playlist, serverId, onDele
 
     const handleCardClick = (e: React.MouseEvent) => {
         const target = e.target as HTMLElement;
-        if (target.closest('button, [role="menu"], [role="menuitem"]')) return;
+        if (target.closest('a, button, [role="menu"], [role="menuitem"]')) return;
 
         if (e.metaKey || e.ctrlKey) {
-            window.open(href, '_blank');
+            window.open(`#${href}`, '_blank');
         } else {
             navigate(href);
         }
@@ -152,7 +157,7 @@ export const PlaylistCard: FC<PlaylistCardProps> = ({ playlist, serverId, onDele
     };
 
     return (
-        // Pointer convenience: keyboard users open the playlist from its title link (to be added on the accessibility branch).
+        // The card is clickable for pointer users; keyboard and screen-reader users open it via the name link.
         // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
         <div className={styles.card} onClick={handleCardClick}>
             <Squircle
@@ -253,7 +258,13 @@ export const PlaylistCard: FC<PlaylistCardProps> = ({ playlist, serverId, onDele
             </Squircle>
 
             <div className={styles.meta}>
-                <h3 className={styles.title}>{playlist.Name || 'Unnamed Playlist'}</h3>
+                <h3 className={styles.title}>
+                    <FocusRing focusRingClass='focus-ring'>
+                        <a className={styles.titleLink} href={`#${href}`}>
+                            {playlist.Name || 'Unnamed Playlist'}
+                        </a>
+                    </FocusRing>
+                </h3>
                 <p className={styles.subtitle}>
                     {itemCount} {itemCount === 1 ? 'item' : 'items'}
                 </p>

@@ -1,9 +1,11 @@
 import React, { type FC } from 'react';
 import type { BaseItemDto } from '@jellyfin/sdk/lib/generated-client/models/base-item-dto';
+import { GridListItem } from 'react-aria-components';
 
 import globalize from 'lib/globalize';
 import { playbackManager } from 'components/playback/playbackmanager';
 import { Squircle } from 'apps/deskfin/components/squircle/Squircle';
+import { CardList } from 'apps/deskfin/components/media/CardList';
 import datetime from 'scripts/datetime';
 import { buildCardImageUrl } from 'apps/deskfin/features/home/utils/cardHelpers';
 
@@ -36,17 +38,18 @@ export const ExtrasSection: FC<ExtrasSectionProps> = ({ extras }) => {
             <h2 className={styles.title}>
                 {globalize.translate('Extras')}
             </h2>
-            <div className={styles.row}>
+            <CardList aria-label={globalize.translate('Extras')} className={styles.row}>
                 {extras.map((extra) => {
                     const imageUrl = buildCardImageUrl(extra, { variant: 'landscape', maxWidth: 400 });
                     const runtime = formatRuntime(extra.RunTimeTicks);
 
                     return (
-                        <button
+                        <GridListItem
                             key={extra.Id}
-                            type='button'
+                            id={extra.Id ?? extra.Name ?? ''}
+                            textValue={extra.Name ?? ''}
                             className={styles.card}
-                            onClick={() => handlePlay(extra)}
+                            onAction={() => handlePlay(extra)}
                         >
                             <Squircle
                                 radius={10}
@@ -55,7 +58,7 @@ export const ExtrasSection: FC<ExtrasSectionProps> = ({ extras }) => {
                                 {imageUrl ? (
                                     <img
                                         src={imageUrl}
-                                        alt={extra.Name || ''}
+                                        alt='' // name is shown below
                                         className={styles.thumb}
                                     />
                                 ) : (
@@ -73,10 +76,10 @@ export const ExtrasSection: FC<ExtrasSectionProps> = ({ extras }) => {
                                     <div className={styles.info}>{runtime}</div>
                                 )}
                             </div>
-                        </button>
+                        </GridListItem>
                     );
                 })}
-            </div>
+            </CardList>
         </section>
     );
 };

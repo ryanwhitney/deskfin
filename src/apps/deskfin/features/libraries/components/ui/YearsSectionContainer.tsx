@@ -1,4 +1,3 @@
-import { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
 import { ItemFields } from '@jellyfin/sdk/lib/generated-client/models/item-fields';
 import { ImageType } from '@jellyfin/sdk/lib/generated-client/models/image-type';
 import { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
@@ -17,14 +16,12 @@ import { ItemGrid } from 'apps/deskfin/components/media/ItemGrid';
 
 interface YearsSectionContainerProps {
     parentId: ParentId;
-    collectionType: CollectionType | undefined;
     itemType: BaseItemKind[];
     year: ItemDto;
 }
 
 const YearsSectionContainer: FC<YearsSectionContainerProps> = ({
     parentId,
-    collectionType,
     itemType,
     year
 }) => {
@@ -76,17 +73,14 @@ const YearsSectionContainer: FC<YearsSectionContainerProps> = ({
         return <Loading />;
     }
 
-    // Determine variant based on collection type
-    const variant = collectionType === CollectionType.Music ? 'square' : 'portrait';
-
     return (
         <Section
             title={year.Name || ''}
             titleHref={getYearUrl()}
         >
             <ItemGrid
+                aria-label={year.Name || ''}
                 items={itemsResult?.Items || []}
-                variant={variant}
                 onToggleFavorite={onToggleFavorite}
                 onTogglePlayed={onTogglePlayed}
                 onAfterAction={onAfterAction}

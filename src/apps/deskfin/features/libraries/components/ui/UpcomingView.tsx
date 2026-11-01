@@ -42,6 +42,7 @@ const UpcomingView: FC<LibraryViewProps> = ({ parentId }) => {
             {groupsUpcomingEpisodes.map((group) => (
                 <Section key={group.name} title={group.name}>
                     <ItemGrid
+                        aria-label={group.name}
                         items={group.items}
                         variant='landscape'
                         onToggleFavorite={onToggleFavorite}

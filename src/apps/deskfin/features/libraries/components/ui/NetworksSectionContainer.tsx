@@ -79,6 +79,7 @@ const NetworksSectionContainer: FC<NetworksSectionContainerProps> = ({
             titleHref={getStudioUrl()}
         >
             <ItemGrid
+                aria-label={studio.Name || ''}
                 items={itemsResult?.Items || []}
                 variant='portrait'
                 onToggleFavorite={onToggleFavorite}

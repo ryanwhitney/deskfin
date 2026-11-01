@@ -21,6 +21,9 @@ $surface-elevated: #1c1c1c;
 $topbar-bg: rgba(20, 20, 21, 0.86);
 $topbar-border: rgba(251, 0, 0, 0.963);
 
+// Scroll margin that keeps keyboard-focused cards clear of the sticky topbar
+$topbar-clearance: 72px;
+
 // ============================================================================
 // DERIVED COLORS - These use the core colors above
 // ============================================================================

@@ -78,7 +78,6 @@ const PageTabContent: FC<PageTabContentProps> = ({ parentId, currentTab }) => {
             <div className={styles.content}>
                 <YearsView
                     parentId={parentId}
-                    collectionType={currentTab.collectionType ?? undefined}
                     itemType={currentTab.itemType || []}
                 />
             </div>

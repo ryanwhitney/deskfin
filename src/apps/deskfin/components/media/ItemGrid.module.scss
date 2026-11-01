@@ -21,31 +21,6 @@
     @include grid-layout-portrait;
 }
 
-// Scrollable horizontal variant
-.scrollContainer {
-    @include grid-container;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-        display: none;
-    }
-}
-
-.scrollRow {
-    display: flex;
-    gap: $grid-gap-base;
-    padding-bottom: $space-2;
-}
-
-.scrollRow > * {
-    flex: 0 0 auto;
-    scroll-snap-align: start;
-}
-
 // Loading state
 .loading {
     display: flex;
