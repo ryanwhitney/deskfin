@@ -1,7 +1,7 @@
 import type { ItemSortBy } from '@jellyfin/sdk/lib/generated-client/models/item-sort-by';
 import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
 import type { CollectionType } from '@jellyfin/sdk/lib/generated-client/models/collection-type';
-import React, { type FC, useCallback, useMemo } from 'react';
+import React, { type FC, useCallback, useMemo, useState } from 'react';
 
 import { useLocalStorage } from 'apps/deskfin/hooks/useLocalStorage';
 import {
@@ -69,7 +69,7 @@ const ItemsView: FC<ItemsViewProps> = ({
 
     const {
         isPending,
-        data: itemsResult,
+        data: currentResult,
         refetch
     } = useGetItemsViewByType(
         viewType,
@@ -77,6 +77,14 @@ const ItemsView: FC<ItemsViewProps> = ({
         itemType,
         libraryViewSettings
     );
+
+    // While a new sort or filter loads, keep showing the current items instead of a spinner. Swapping the page for a
+    // spinner collapses it (scrolling back to the top) and removes the sort and filter menus that had focus.
+    const viewKey = `${parentId}-${viewType}`;
+    const [lastResult, setLastResult] = useState({ viewKey, result: currentResult });
+    if (currentResult && currentResult !== lastResult.result) setLastResult({ viewKey, result: currentResult });
+    const isShowingPrevious = !currentResult && lastResult.viewKey === viewKey && !!lastResult.result;
+    const itemsResult = isShowingPrevious ? lastResult.result : currentResult;
     const { data: item } = useItem(parentId || undefined);
 
     const { mutateAsync: toggleFavorite } = useToggleFavoriteMutation();
@@ -124,7 +132,7 @@ const ItemsView: FC<ItemsViewProps> = ({
 
     const cardVariant = getCardVariant();
 
-    if (isPending) return <Loading />;
+    if (isPending && !isShowingPrevious) return <Loading />;
 
     return (
         <ItemsContainer
@@ -132,7 +140,7 @@ const ItemsView: FC<ItemsViewProps> = ({
             reloadItems={refetch}
             queryKey={['ItemsViewByType']}
         >
-            <div className={styles.gridContainer}>
+            <div className={styles.gridContainer} aria-busy={isShowingPrevious}>
                 {/* Header: count on left, all actions on right */}
                 <div className={styles.gridHeader}>
                     <div className={styles.itemCount}>

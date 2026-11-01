@@ -1,0 +1,30 @@
+@use "../../styles/theme" as *;
+
+// Hidden until focused: the first Tab on any page reaches it
+.skipLink {
+    position: fixed;
+    top: $space-2;
+    left: $space-2;
+    z-index: 10000;
+    padding: $space-2 $space-4;
+    border: none;
+    border-radius: $radius-md;
+    background: $surface-menu;
+    color: #fff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    outline: 2px solid $focus-ring;
+    transform: translateY(-200%);
+}
+
+.skipLink:focus {
+    transform: none;
+}
+
+.main {
+    width: 100%;
+    flex-grow: 1;
+    outline: none; // focused only by the skip link, as a starting point for Tab
+}

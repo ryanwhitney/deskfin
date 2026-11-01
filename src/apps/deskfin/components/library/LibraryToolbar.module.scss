@@ -248,13 +248,58 @@
     color: $text-muted;
 }
 
-// Filter accordion styles
+// Filter menu: collapsible sections of checkboxes
+.filterDialog {
+    width: 280px;
+    outline: none;
+}
+
+.filterSummaryBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $space-2 $space-4;
+    border-bottom: 1px solid $border-subtle;
+    color: $text-muted;
+    font-size: 13px;
+}
+
+.clearButton {
+    padding: $space-1 $space-2;
+    border: none;
+    border-radius: 6px;
+    background: none;
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+    outline: none;
+}
+
+.clearButton[data-hovered] {
+    background: $hover-bg;
+    color: #fff;
+}
+
+.clearButton[data-focus-visible] {
+    outline: 2px solid $focus-ring;
+}
+
+.clearButton[data-disabled] {
+    opacity: 0.4;
+    cursor: default;
+}
+
 .accordionSection {
     border-bottom: 1px solid $border-subtle;
 }
 
 .accordionSection:last-child {
     border-bottom: none;
+}
+
+.accordionHeading {
+    margin: 0;
+    font: inherit;
 }
 
 .accordionHeader {
@@ -271,56 +316,97 @@
     cursor: pointer;
     text-align: left;
     transition: background 120ms ease;
+    outline: none;
 }
 
-.accordionHeader:hover {
+.accordionHeader[data-hovered] {
     background: $hover-bg;
 }
 
-.accordionHeader:focus-visible {
+.accordionHeader[data-focus-visible] {
     outline: 2px solid $focus-ring;
     outline-offset: -2px;
 }
 
+.accordionTitle {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+// What's selected in the section, readable while it's collapsed
+.accordionSummary {
+    overflow: hidden;
+    color: $accent-color;
+    font-size: 12px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 .accordionChevron {
+    flex: none;
     transition: transform 200ms ease;
 }
 
-.accordionChevron[data-expanded="true"] {
-    transform: rotate(90deg);
+.accordionSection[data-expanded] .accordionChevron {
+    transform: rotate(180deg);
 }
 
 .accordionContent {
-    padding: $space-2 $space-4 $space-3;
+    padding: $space-1 $space-2 $space-2;
 }
 
-.checkboxGroup {
+// The panel stays in the DOM while collapsed (so the browser can find text in it); hide its padding too
+.accordionContent[hidden] {
+    display: none;
+}
+
+.optionList {
     display: flex;
     flex-direction: column;
-    gap: $space-1;
+    outline: none;
 }
 
-.checkboxLabel {
+.option {
     display: flex;
     align-items: center;
     gap: $space-2;
-    padding: $space-1 0;
+    padding: 6px $space-2;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 13px;
+    outline: none;
 }
 
-.checkboxLabel:hover {
+.option[data-hovered],
+.option[data-focused] {
+    background: $hover-bg;
     color: #fff;
 }
 
 .checkbox {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
     width: 16px;
     height: 16px;
-    border-radius: 3px;
+    border-radius: 4px;
     border: 1px solid $border-control;
-    background: transparent;
-    cursor: pointer;
-    accent-color: #3b82f6;
+    color: white;
+
+    svg {
+        visibility: hidden;
+    }
+
+    .option[data-selected] & {
+        background: $accent-color;
+        border-color: $accent-color;
+
+        svg {
+            visibility: visible;
+        }
+    }
 }
 
 // Grid container - sets up container queries AND constrains max-width (like Section)
@@ -363,4 +449,10 @@
     color: #fff;
 
     @include grid-section-content;
+}
+
+// Previous results stay on screen while a new sort or filter loads
+.gridContainer[aria-busy="true"] .grid {
+    opacity: 0.5;
+    transition: opacity 150ms ease 150ms; // only dims if loading takes a moment
 }

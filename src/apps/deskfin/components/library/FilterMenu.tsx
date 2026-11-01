@@ -1,5 +1,17 @@
-import React, { type FC, useState, useCallback } from 'react';
-import { Button, DialogTrigger, Popover } from 'react-aria-components';
+import React, { type FC, useRef } from 'react';
+import {
+    Button,
+    Dialog,
+    DialogTrigger,
+    Disclosure,
+    DisclosureGroup,
+    DisclosurePanel,
+    Heading,
+    ListBox,
+    ListBoxItem,
+    Popover,
+    type Selection
+} from 'react-aria-components';
 import type { BaseItemKind } from '@jellyfin/sdk/lib/generated-client/models/base-item-kind';
 import { ItemFilter } from '@jellyfin/sdk/lib/generated-client/models/item-filter';
 import { SeriesStatus } from '@jellyfin/sdk/lib/generated-client/models/series-status';
@@ -20,54 +32,19 @@ import { LibraryTab } from 'apps/deskfin/types/libraryTab';
 
 import styles from './LibraryToolbar.module.scss';
 
-interface AccordionSectionProps {
+/** The filters this menu sets. All hold strings except Years, which holds numbers. */
+type FilterKey = 'Status' | 'SeriesStatus' | 'EpisodeFilter' | 'Features' | 'VideoBasicFilter' | 'Genres'
+    | 'OfficialRatings' | 'Tags' | 'Years' | 'StudioIds';
+
+interface FilterSection {
+    filter: FilterKey;
     title: string;
-    defaultOpen?: boolean;
-    children: React.ReactNode;
+    options: { id: string; value: string; label: string }[];
+    isExpanded?: boolean;
 }
 
-const AccordionSection: FC<AccordionSectionProps> = ({ title, defaultOpen = false, children }) => {
-    const [isOpen, setIsOpen] = useState(defaultOpen);
-
-    return (
-        <div className={styles.accordionSection}>
-            <button
-                type='button'
-                className={styles.accordionHeader}
-                onClick={() => setIsOpen(!isOpen)}
-                aria-expanded={isOpen}
-            >
-                <span>{title}</span>
-                <SvgIcon
-                    svg={IconSvgs.chevronDown}
-                    size={14}
-                    className={styles.accordionChevron}
-                    data-expanded={isOpen}
-                    style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
-                />
-            </button>
-            {isOpen && <div className={styles.accordionContent}>{children}</div>}
-        </div>
-    );
-};
-
-interface CheckboxOptionProps {
-    label: string;
-    checked: boolean;
-    onChange: (checked: boolean) => void;
-}
-
-const CheckboxOption: FC<CheckboxOptionProps> = ({ label, checked, onChange }) => (
-    <label className={styles.checkboxLabel}>
-        <input
-            type='checkbox'
-            className={styles.checkbox}
-            checked={checked}
-            onChange={(e) => onChange(e.target.checked)}
-        />
-        <span>{label}</span>
-    </label>
-);
+// `id` is for the ListBox's item collection
+const option = (value: string, label = value) => ({ id: value, value, label });
 
 interface FilterMenuProps {
     parentId: ParentId;
@@ -90,114 +67,106 @@ export const FilterMenu: FC<FilterMenuProps> = ({
     const { data: studios } = useGetStudios(parentId, itemType);
 
     const filters = libraryViewSettings.Filters || {};
+    const firstHeaderRef = useRef<HTMLButtonElement>(null);
 
-    // Helper to update a filter property
-    const updateFilter = useCallback(<K extends keyof Filters>(
-        key: K,
-        value: Filters[K]
-    ) => {
-        setLibraryViewSettings((prev) => ({
-            ...prev,
-            StartIndex: 0,
-            Filters: {
-                ...prev.Filters,
-                [key]: value
-            }
-        }));
-    }, [setLibraryViewSettings]);
+    const setFilters = (update: (prev: Filters | undefined) => Filters) => {
+        setLibraryViewSettings((prev) => ({ ...prev, StartIndex: 0, Filters: update(prev.Filters) }));
+    };
 
-    // Toggle array filter helpers
-    const toggleStatusFilter = useCallback((value: ItemFilter) => {
-        const current = filters.Status || [];
-        const updated = current.includes(value) ?
-            current.filter((v) => v !== value) :
-            [...current, value];
-        updateFilter('Status', updated.length > 0 ? updated : undefined);
-    }, [filters.Status, updateFilter]);
+    const setFilter = (filter: FilterKey, values: string[]) => {
+        const value = filter === 'Years' ? values.map(Number) : values;
+        setFilters(prev => ({ ...prev, [filter]: value.length ? value : undefined }));
+    };
 
-    const toggleSeriesStatusFilter = useCallback((value: SeriesStatus) => {
-        const current = filters.SeriesStatus || [];
-        const updated = current.includes(value) ?
-            current.filter((v) => v !== value) :
-            [...current, value];
-        updateFilter('SeriesStatus', updated.length > 0 ? updated : undefined);
-    }, [filters.SeriesStatus, updateFilter]);
+    const isMoviesOrSeries = [LibraryTab.Movies, LibraryTab.Series].includes(viewType);
+    const isVideo = [LibraryTab.Movies, LibraryTab.Episodes].includes(viewType);
 
-    const toggleEpisodeFilter = useCallback((value: EpisodeFilter) => {
-        const current = filters.EpisodeFilter || [];
-        const updated = current.includes(value) ?
-            current.filter((v) => v !== value) :
-            [...current, value];
-        updateFilter('EpisodeFilter', updated.length > 0 ? updated : undefined);
-    }, [filters.EpisodeFilter, updateFilter]);
+    // Sections with no options aren't shown
+    const sections: FilterSection[] = [
+        {
+            filter: 'Status',
+            title: globalize.translate('Filters'),
+            isExpanded: true,
+            options: [
+                option(ItemFilter.IsPlayed, globalize.translate('Played')),
+                option(ItemFilter.IsUnplayed, globalize.translate('Unplayed')),
+                option(ItemFilter.IsFavorite, globalize.translate('Favorite')),
+                option(ItemFilter.IsResumable, globalize.translate('ContinueWatching'))
+            ]
+        },
+        {
+            filter: 'SeriesStatus',
+            title: globalize.translate('HeaderSeriesStatus'),
+            options: viewType === LibraryTab.Series ? [
+                option(SeriesStatus.Continuing, globalize.translate('Continuing')),
+                option(SeriesStatus.Ended, globalize.translate('Ended'))
+            ] : []
+        },
+        {
+            filter: 'EpisodeFilter',
+            title: globalize.translate('HeaderEpisodesStatus'),
+            options: viewType === LibraryTab.Episodes ? [
+                option(EpisodeFilter.IsMissing, globalize.translate('OptionMissingEpisode')),
+                option(EpisodeFilter.IsUnaired, globalize.translate('OptionUnairedEpisode'))
+            ] : []
+        },
+        {
+            filter: 'Features',
+            title: globalize.translate('Features'),
+            options: isMoviesOrSeries || viewType === LibraryTab.Episodes ? [
+                option(FeatureFilters.HasSubtitles, globalize.translate('Subtitles')),
+                option(FeatureFilters.HasTrailer, globalize.translate('Trailers')),
+                option(FeatureFilters.HasSpecialFeature, globalize.translate('SpecialFeatures')),
+                option(FeatureFilters.HasThemeSong, globalize.translate('ThemeSongs')),
+                option(FeatureFilters.HasThemeVideo, globalize.translate('ThemeVideos'))
+            ] : []
+        },
+        {
+            filter: 'VideoBasicFilter',
+            title: globalize.translate('HeaderVideoType'),
+            options: isVideo ? [
+                option(VideoBasicFilter.Is4K, '4K'),
+                option(VideoBasicFilter.IsHD, 'HD'),
+                option(VideoBasicFilter.IsSD, 'SD'),
+                option(VideoBasicFilter.Is3D, '3D')
+            ] : []
+        },
+        {
+            filter: 'Genres',
+            title: globalize.translate('Genres'),
+            options: (filtersData?.Genres ?? []).map(genre => option(genre))
+        },
+        {
+            filter: 'OfficialRatings',
+            title: globalize.translate('HeaderParentalRatings'),
+            options: (filtersData?.OfficialRatings ?? []).map(rating => option(rating))
+        },
+        {
+            filter: 'Tags',
+            title: globalize.translate('Tags'),
+            options: (filtersData?.Tags ?? []).map(tag => option(tag))
+        },
+        {
+            filter: 'Years',
+            title: globalize.translate('HeaderYears'),
+            options: (filtersData?.Years ?? []).map(year => option(String(year)))
+        },
+        {
+            filter: 'StudioIds',
+            title: globalize.translate('Studios'),
+            options: isMoviesOrSeries ?
+                (studios ?? []).filter(studio => studio.Id).map(studio => option(studio.Id!, studio.Name ?? '')) :
+                []
+        }
+    ];
 
-    const toggleFeatureFilter = useCallback((value: FeatureFilters) => {
-        const current = filters.Features || [];
-        const updated = current.includes(value) ?
-            current.filter((v) => v !== value) :
-            [...current, value];
-        updateFilter('Features', updated.length > 0 ? updated : undefined);
-    }, [filters.Features, updateFilter]);
-
-    const toggleVideoBasicFilter = useCallback((value: VideoBasicFilter) => {
-        const current = filters.VideoBasicFilter || [];
-        const updated = current.includes(value) ?
-            current.filter((v) => v !== value) :
-            [...current, value];
-        updateFilter('VideoBasicFilter', updated.length > 0 ? updated : undefined);
-    }, [filters.VideoBasicFilter, updateFilter]);
-
-    const toggleGenreFilter = useCallback((value: string) => {
-        const current = filters.Genres || [];
-        const updated = current.includes(value) ?
-            current.filter((v) => v !== value) :
-            [...current, value];
-        updateFilter('Genres', updated.length > 0 ? updated : undefined);
-    }, [filters.Genres, updateFilter]);
-
-    const toggleRatingFilter = useCallback((value: string) => {
-        const current = filters.OfficialRatings || [];
-        const updated = current.includes(value) ?
-            current.filter((v) => v !== value) :
-            [...current, value];
-        updateFilter('OfficialRatings', updated.length > 0 ? updated : undefined);
-    }, [filters.OfficialRatings, updateFilter]);
-
-    const toggleTagFilter = useCallback((value: string) => {
-        const current = filters.Tags || [];
-        const updated = current.includes(value) ?
-            current.filter((v) => v !== value) :
-            [...current, value];
-        updateFilter('Tags', updated.length > 0 ? updated : undefined);
-    }, [filters.Tags, updateFilter]);
-
-    const toggleYearFilter = useCallback((value: number) => {
-        const current = filters.Years || [];
-        const updated = current.includes(value) ?
-            current.filter((v) => v !== value) :
-            [...current, value];
-        updateFilter('Years', updated.length > 0 ? updated : undefined);
-    }, [filters.Years, updateFilter]);
-
-    const toggleStudioFilter = useCallback((value: string) => {
-        const current = filters.StudioIds || [];
-        const updated = current.includes(value) ?
-            current.filter((v) => v !== value) :
-            [...current, value];
-        updateFilter('StudioIds', updated.length > 0 ? updated : undefined);
-    }, [filters.StudioIds, updateFilter]);
-
-    // Determine which filter sections to show based on view type
-    const showStatusFilters = true;
-    const showSeriesStatus = viewType === LibraryTab.Series;
-    const showEpisodeStatus = viewType === LibraryTab.Episodes;
-    const showFeatures = [LibraryTab.Movies, LibraryTab.Series, LibraryTab.Episodes].includes(viewType);
-    const showVideoTypes = [LibraryTab.Movies, LibraryTab.Episodes].includes(viewType);
-    const showGenres = filtersData?.Genres && filtersData.Genres.length > 0;
-    const showRatings = filtersData?.OfficialRatings && filtersData.OfficialRatings.length > 0;
-    const showTags = filtersData?.Tags && filtersData.Tags.length > 0;
-    const showYears = filtersData?.Years && filtersData.Years.length > 0;
-    const showStudios = [LibraryTab.Movies, LibraryTab.Series].includes(viewType) && studios && studios.length > 0;
+    const visibleSections = sections
+        .filter(section => section.options.length)
+        .map(section => {
+            const values = (filters[section.filter] ?? []).map(String);
+            return { ...section, selected: section.options.filter(o => values.includes(o.value)) };
+        });
+    const activeCount = visibleSections.reduce((count, section) => count + section.selected.length, 0);
 
     return (
         <DialogTrigger>
@@ -212,212 +181,75 @@ export const FilterMenu: FC<FilterMenuProps> = ({
                 <span>{globalize.translate('Filter')}</span>
             </Button>
             <Popover className={styles.popover} placement='bottom start' offset={4}>
-                <div style={{ maxHeight: '60vh', overflow: 'auto' }}>
-                    {/* Status filters */}
-                    {showStatusFilters && (
-                        <AccordionSection title={globalize.translate('Filters')} defaultOpen>
-                            <div className={styles.checkboxGroup}>
-                                <CheckboxOption
-                                    label={globalize.translate('Played')}
-                                    checked={(filters.Status || []).includes(ItemFilter.IsPlayed)}
-                                    onChange={() => toggleStatusFilter(ItemFilter.IsPlayed)}
-                                />
-                                <CheckboxOption
-                                    label={globalize.translate('Unplayed')}
-                                    checked={(filters.Status || []).includes(ItemFilter.IsUnplayed)}
-                                    onChange={() => toggleStatusFilter(ItemFilter.IsUnplayed)}
-                                />
-                                <CheckboxOption
-                                    label={globalize.translate('Favorite')}
-                                    checked={(filters.Status || []).includes(ItemFilter.IsFavorite)}
-                                    onChange={() => toggleStatusFilter(ItemFilter.IsFavorite)}
-                                />
-                                <CheckboxOption
-                                    label={globalize.translate('ContinueWatching')}
-                                    checked={(filters.Status || []).includes(ItemFilter.IsResumable)}
-                                    onChange={() => toggleStatusFilter(ItemFilter.IsResumable)}
-                                />
-                            </div>
-                        </AccordionSection>
-                    )}
-
-                    {/* Series status */}
-                    {showSeriesStatus && (
-                        <AccordionSection title={globalize.translate('HeaderSeriesStatus')}>
-                            <div className={styles.checkboxGroup}>
-                                <CheckboxOption
-                                    label={globalize.translate('Continuing')}
-                                    checked={(filters.SeriesStatus || []).includes(SeriesStatus.Continuing)}
-                                    onChange={() => toggleSeriesStatusFilter(SeriesStatus.Continuing)}
-                                />
-                                <CheckboxOption
-                                    label={globalize.translate('Ended')}
-                                    checked={(filters.SeriesStatus || []).includes(SeriesStatus.Ended)}
-                                    onChange={() => toggleSeriesStatusFilter(SeriesStatus.Ended)}
-                                />
-                            </div>
-                        </AccordionSection>
-                    )}
-
-                    {/* Episode status */}
-                    {showEpisodeStatus && (
-                        <AccordionSection title={globalize.translate('HeaderEpisodesStatus')}>
-                            <div className={styles.checkboxGroup}>
-                                <CheckboxOption
-                                    label={globalize.translate('OptionMissingEpisode')}
-                                    checked={(filters.EpisodeFilter || []).includes(EpisodeFilter.IsMissing)}
-                                    onChange={() => toggleEpisodeFilter(EpisodeFilter.IsMissing)}
-                                />
-                                <CheckboxOption
-                                    label={globalize.translate('OptionUnairedEpisode')}
-                                    checked={(filters.EpisodeFilter || []).includes(EpisodeFilter.IsUnaired)}
-                                    onChange={() => toggleEpisodeFilter(EpisodeFilter.IsUnaired)}
-                                />
-                            </div>
-                        </AccordionSection>
-                    )}
-
-                    {/* Features */}
-                    {showFeatures && (
-                        <AccordionSection title={globalize.translate('Features')}>
-                            <div className={styles.checkboxGroup}>
-                                <CheckboxOption
-                                    label={globalize.translate('Subtitles')}
-                                    checked={(filters.Features || []).includes(FeatureFilters.HasSubtitles)}
-                                    onChange={() => toggleFeatureFilter(FeatureFilters.HasSubtitles)}
-                                />
-                                <CheckboxOption
-                                    label={globalize.translate('Trailers')}
-                                    checked={(filters.Features || []).includes(FeatureFilters.HasTrailer)}
-                                    onChange={() => toggleFeatureFilter(FeatureFilters.HasTrailer)}
-                                />
-                                <CheckboxOption
-                                    label={globalize.translate('SpecialFeatures')}
-                                    checked={(filters.Features || []).includes(FeatureFilters.HasSpecialFeature)}
-                                    onChange={() => toggleFeatureFilter(FeatureFilters.HasSpecialFeature)}
-                                />
-                                <CheckboxOption
-                                    label={globalize.translate('ThemeSongs')}
-                                    checked={(filters.Features || []).includes(FeatureFilters.HasThemeSong)}
-                                    onChange={() => toggleFeatureFilter(FeatureFilters.HasThemeSong)}
-                                />
-                                <CheckboxOption
-                                    label={globalize.translate('ThemeVideos')}
-                                    checked={(filters.Features || []).includes(FeatureFilters.HasThemeVideo)}
-                                    onChange={() => toggleFeatureFilter(FeatureFilters.HasThemeVideo)}
-                                />
-                            </div>
-                        </AccordionSection>
-                    )}
-
-                    {/* Video types */}
-                    {showVideoTypes && (
-                        <AccordionSection title={globalize.translate('HeaderVideoType')}>
-                            <div className={styles.checkboxGroup}>
-                                <CheckboxOption
-                                    label='4K'
-                                    checked={(filters.VideoBasicFilter || []).includes(VideoBasicFilter.Is4K)}
-                                    onChange={() => toggleVideoBasicFilter(VideoBasicFilter.Is4K)}
-                                />
-                                <CheckboxOption
-                                    label='HD'
-                                    checked={(filters.VideoBasicFilter || []).includes(VideoBasicFilter.IsHD)}
-                                    onChange={() => toggleVideoBasicFilter(VideoBasicFilter.IsHD)}
-                                />
-                                <CheckboxOption
-                                    label='SD'
-                                    checked={(filters.VideoBasicFilter || []).includes(VideoBasicFilter.IsSD)}
-                                    onChange={() => toggleVideoBasicFilter(VideoBasicFilter.IsSD)}
-                                />
-                                <CheckboxOption
-                                    label='3D'
-                                    checked={(filters.VideoBasicFilter || []).includes(VideoBasicFilter.Is3D)}
-                                    onChange={() => toggleVideoBasicFilter(VideoBasicFilter.Is3D)}
-                                />
-                            </div>
-                        </AccordionSection>
-                    )}
-
-                    {/* Genres */}
-                    {showGenres && (
-                        <AccordionSection title={globalize.translate('Genres')}>
-                            <div className={styles.checkboxGroup}>
-                                {filtersData!.Genres!.map((genre) => (
-                                    <CheckboxOption
-                                        key={genre}
-                                        label={genre}
-                                        checked={(filters.Genres || []).includes(genre)}
-                                        onChange={() => toggleGenreFilter(genre)}
-                                    />
-                                ))}
-                            </div>
-                        </AccordionSection>
-                    )}
-
-                    {/* Parental ratings */}
-                    {showRatings && (
-                        <AccordionSection title={globalize.translate('HeaderParentalRatings')}>
-                            <div className={styles.checkboxGroup}>
-                                {filtersData!.OfficialRatings!.map((rating) => (
-                                    <CheckboxOption
-                                        key={rating}
-                                        label={rating}
-                                        checked={(filters.OfficialRatings || []).includes(rating)}
-                                        onChange={() => toggleRatingFilter(rating)}
-                                    />
-                                ))}
-                            </div>
-                        </AccordionSection>
-                    )}
-
-                    {/* Tags */}
-                    {showTags && (
-                        <AccordionSection title={globalize.translate('Tags')}>
-                            <div className={styles.checkboxGroup}>
-                                {filtersData!.Tags!.map((tag) => (
-                                    <CheckboxOption
-                                        key={tag}
-                                        label={tag}
-                                        checked={(filters.Tags || []).includes(tag)}
-                                        onChange={() => toggleTagFilter(tag)}
-                                    />
-                                ))}
-                            </div>
-                        </AccordionSection>
-                    )}
-
-                    {/* Years */}
-                    {showYears && (
-                        <AccordionSection title={globalize.translate('HeaderYears')}>
-                            <div className={styles.checkboxGroup}>
-                                {filtersData!.Years!.map((year) => (
-                                    <CheckboxOption
-                                        key={year}
-                                        label={String(year)}
-                                        checked={(filters.Years || []).includes(year)}
-                                        onChange={() => toggleYearFilter(year)}
-                                    />
-                                ))}
-                            </div>
-                        </AccordionSection>
-                    )}
-
-                    {/* Studios */}
-                    {showStudios && (
-                        <AccordionSection title={globalize.translate('Studios')}>
-                            <div className={styles.checkboxGroup}>
-                                {studios!.map((studio) => (
-                                    <CheckboxOption
-                                        key={studio.Id}
-                                        label={studio.Name || ''}
-                                        checked={(filters.StudioIds || []).includes(studio.Id!)}
-                                        onChange={() => toggleStudioFilter(studio.Id!)}
-                                    />
-                                ))}
-                            </div>
-                        </AccordionSection>
-                    )}
-                </div>
+                <Dialog className={styles.filterDialog} aria-label={globalize.translate('Filter')}>
+                    <div className={styles.filterSummaryBar}>
+                        <span>{activeCount ? `${activeCount} active` : 'No filters'}</span>
+                        <Button
+                            className={styles.clearButton}
+                            isDisabled={!activeCount}
+                            onPress={() => {
+                                // This button disables itself once nothing is active; keep focus in the menu
+                                firstHeaderRef.current?.focus();
+                                setFilters(() => ({}));
+                            }}
+                        >
+                            Clear all
+                        </Button>
+                    </div>
+                    <DisclosureGroup
+                        allowsMultipleExpanded
+                        defaultExpandedKeys={visibleSections.filter(s => s.isExpanded || s.selected.length).map(s => s.filter)}
+                    >
+                        {visibleSections.map((section, index) => (
+                            <Disclosure key={section.filter} id={section.filter} className={styles.accordionSection}>
+                                <Heading level={3} className={styles.accordionHeading}>
+                                    <Button
+                                        ref={index === 0 ? firstHeaderRef : undefined}
+                                        slot='trigger'
+                                        className={styles.accordionHeader}
+                                        // Like the Sort menu, opening starts on the first option, so focus is visible
+                                        // eslint-disable-next-line jsx-a11y/no-autofocus
+                                        autoFocus={index === 0}
+                                    >
+                                        <span className={styles.accordionTitle}>
+                                            <span>{section.title}</span>
+                                            {section.selected.length > 0 && (
+                                                <span className={styles.accordionSummary}>
+                                                    {section.selected.map(o => o.label).join(', ')}
+                                                </span>
+                                            )}
+                                        </span>
+                                        <SvgIcon svg={IconSvgs.chevronDown} size={14} className={styles.accordionChevron} />
+                                    </Button>
+                                </Heading>
+                                <DisclosurePanel className={styles.accordionContent}>
+                                    <ListBox
+                                        aria-label={section.title}
+                                        className={styles.optionList}
+                                        selectionMode='multiple'
+                                        // Escape closes the menu rather than clearing this section's choices
+                                        escapeKeyBehavior='none'
+                                        items={section.options}
+                                        selectedKeys={section.selected.map(o => o.value)}
+                                        onSelectionChange={(keys: Selection) => setFilter(
+                                            section.filter,
+                                            keys === 'all' ? section.options.map(o => o.value) : [...keys].map(String)
+                                        )}
+                                    >
+                                        {opt => (
+                                            <ListBoxItem id={opt.value} textValue={opt.label} className={styles.option}>
+                                                <span className={styles.checkbox} aria-hidden='true'>
+                                                    <SvgIcon svg={IconSvgs.checkmark} size={12} />
+                                                </span>
+                                                {opt.label}
+                                            </ListBoxItem>
+                                        )}
+                                    </ListBox>
+                                </DisclosurePanel>
+                            </Disclosure>
+                        ))}
+                    </DisclosureGroup>
+                </Dialog>
             </Popover>
         </DialogTrigger>
     );
