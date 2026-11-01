@@ -92,10 +92,17 @@ html {
     height: 42px;
 }
 
-// Shared focus ring class for React Aria's FocusRing (focusRingClass='focus-ring')
+// Keyboard focus default for anything without its own focus style. :where() keeps it at zero specificity, so any
+// component rule (including outline: none on elements that show focus another way) wins.
+:where(:focus-visible) {
+    @include focus-outline;
+
+    border-radius: 4px; // rounds the outline on plain links; elements with their own radius keep it
+}
+
+// For React Aria's FocusRing (focusRingClass='focus-ring')
 .focus-ring {
-    outline: 2px solid white;
-    outline-offset: 2px;
+    @include focus-outline;
 }
 
 // hide pinterest popovers that show in SOME people's browsers

@@ -15,12 +15,13 @@
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    outline: 2px solid $focus-ring;
     transform: translateY(-200%);
 }
 
 .skipLink:focus {
     transform: none;
+
+    @include focus-outline;
 }
 
 .main {

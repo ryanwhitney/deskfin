@@ -64,8 +64,8 @@
         border-color: $border-muted;
     }
 
-    &:focus {
-        border-color: $focus-ring;
+    &:focus-visible {
+        @include focus-outline;
     }
 
     &::placeholder {
@@ -92,8 +92,8 @@
     transition: all 0.15s;
 
     .checkbox[data-selected] & {
-        background: $focus-ring;
-        border-color: $focus-ring;
+        background: $accent-fill;
+        border-color: $accent-fill;
 
         &::after {
             content: "✓";
@@ -127,7 +127,7 @@
     outline: none;
 
     &:focus-visible {
-        border-color: $focus-ring;
+        @include focus-outline;
     }
 
     &[data-disabled] {
@@ -141,13 +141,13 @@
 }
 
 .buttonPrimary {
-    background: $focus-ring;
-    border-color: $focus-ring;
+    background: $accent-fill;
+    border-color: $accent-fill;
     color: white;
 
     &:hover:not([data-disabled]) {
         opacity: 0.9;
-        background: $focus-ring;
+        background: $accent-fill;
     }
 }
 

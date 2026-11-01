@@ -46,7 +46,16 @@ $grey-transparent: rgba(255, 255, 255, 0.85);
 $hover-bg: rgba(255, 255, 255, 0.06);
 $hover-bg-strong: rgba(255, 255, 255, 0.08);
 $hover-bg-stronger: rgba(255, 255, 255, 0.12);
-$focus-ring: rgba($accent-color, 0.75);
+$accent-fill: rgba($accent-color, 0.75); // selected checkboxes, primary buttons
+
+// Keyboard focus: the same white outline everywhere (media cards draw a thicker white ring around their image).
+// app-overrides.scss applies it to anything focusable without its own focus style.
+$focus-outline-color: white;
+
+@mixin focus-outline($offset: 2px) {
+    outline: 2px solid $focus-outline-color;
+    outline-offset: $offset;
+}
 
 // Controls (buttons, inputs)
 $border-control: rgba(255, 255, 255, 0.12);

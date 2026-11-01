@@ -1,3 +1,5 @@
+@use "../../../../styles/theme" as *;
+
 .actionButton {
     display: inline-flex;
     align-items: center;
@@ -16,8 +18,7 @@
     }
 
     &:focus-visible {
-        outline: 2px solid rgba(255, 255, 255, 0.35);
-        outline-offset: 2px;
+        @include focus-outline;
         border-radius: 4px;
     }
 }

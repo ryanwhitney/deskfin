@@ -107,8 +107,7 @@
 }
 
 .tab:focus-visible {
-    outline: 2px solid $focus-ring;
-    outline-offset: 2px;
+    @include focus-outline;
 }
 
 .itemCount,
@@ -142,8 +141,7 @@
 }
 
 .toolbarButton:focus-visible {
-    outline: 2px solid rgba(255, 255, 255, 0.35);
-    outline-offset: 2px;
+    @include focus-outline;
     border-radius: 4px;
 }
 
@@ -207,8 +205,7 @@
 }
 
 .menuItem[data-focus-visible] {
-    outline: 2px solid $focus-ring;
-    outline-offset: -2px;
+    @include focus-outline(-2px);
 }
 
 .menuItem[data-selected] {
@@ -281,7 +278,7 @@
 }
 
 .clearButton[data-focus-visible] {
-    outline: 2px solid $focus-ring;
+    @include focus-outline;
 }
 
 .clearButton[data-disabled] {
@@ -324,8 +321,7 @@
 }
 
 .accordionHeader[data-focus-visible] {
-    outline: 2px solid $focus-ring;
-    outline-offset: -2px;
+    @include focus-outline(-2px);
 }
 
 .accordionTitle {
@@ -382,6 +378,10 @@
 .option[data-focused] {
     background: $hover-bg;
     color: #fff;
+}
+
+.option[data-focus-visible] {
+    @include focus-outline(-2px);
 }
 
 .checkbox {

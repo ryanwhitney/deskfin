@@ -53,6 +53,10 @@
     outline: none;
     transform-origin: center;
 
+    &:focus-visible {
+        @include focus-outline(4px);
+    }
+
     &::-webkit-slider-thumb {
         appearance: none;
         width: 16px;

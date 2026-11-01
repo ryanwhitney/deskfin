@@ -53,9 +53,8 @@
         color: #fff;
     }
 
-    &[data-focused] {
-        outline: 2px solid white;
-        outline-offset: 2px;
+    &[data-focus-visible] {
+        @include focus-outline;
     }
 }
 
@@ -181,8 +180,7 @@
         background: $hover-bg-strong;
     }
 
-    &[data-focused] {
-        outline: 2px solid white;
-        outline-offset: 2px;
+    &[data-focus-visible] {
+        @include focus-outline;
     }
 }
