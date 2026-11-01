@@ -8,18 +8,6 @@ $leftMargin: 20px;
     gap: 28px;
     padding: 40px 0 40px;
     color: #eee;
-
-    &::after {
-        content: "";
-        background: linear-gradient(to left, $app-background -10%, transparent 10%);
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        z-index: 10;
-        pointer-events: none;
-    }
 }
 
 .section {
@@ -75,6 +63,9 @@ $leftMargin: 20px;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     padding-bottom: 10px;
+    // Fades the row out at the right edge. A mask on the row, rather than an overlay on the page, leaves section
+    // headers and their links untouched.
+    mask-image: linear-gradient(to left, rgb(0 0 0 / 50%), #000 10%);
 
     > div:first-of-type {
         padding-left: $leftMargin; //

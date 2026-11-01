@@ -255,6 +255,9 @@
     gap: 16px;
     overflow-x: auto;
     padding-bottom: 10px;
+    // Room for focus outlines, which the scrolling row would otherwise clip; the negative margin keeps the layout
+    padding-top: 4px;
+    margin-top: -4px;
 
     // Left padding on first item only
     > *:first-child {
@@ -344,6 +347,9 @@
     gap: 12px;
     overflow-x: auto;
     padding-bottom: 4px;
+    // Room for focus outlines, which the scrolling row would otherwise clip; the negative margin keeps the layout
+    padding-top: 4px;
+    margin-top: -4px;
 
     // Left padding on first item only
     > *:first-child {

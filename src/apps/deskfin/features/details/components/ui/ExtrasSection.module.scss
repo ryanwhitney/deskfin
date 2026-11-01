@@ -25,6 +25,9 @@ $containerPadding: 48px;
     gap: 16px;
     overflow-x: auto;
     padding-bottom: 10px;
+    // Room for focus outlines, which the scrolling row would otherwise clip; the negative margin keeps the layout
+    padding-top: 4px;
+    margin-top: -4px;
 
     // Left padding on first item only
     > *:first-child {
@@ -45,7 +48,7 @@ $containerPadding: 48px;
     transition: transform 150ms ease;
 
     &[data-focus-visible] {
-        @include focus-outline(4px);
+        @include focus-outline;
         border-radius: $radius-md;
     }
 }
