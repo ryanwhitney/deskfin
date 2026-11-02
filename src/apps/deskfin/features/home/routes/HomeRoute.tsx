@@ -10,7 +10,6 @@ import { ServerConnections } from 'lib/jellyfin-apiclient';
 import { useUserViews } from 'apps/deskfin/hooks/api/useUserViews';
 import { useToggleFavoriteMutation, useTogglePlayedMutation } from 'hooks/useFetchItems';
 import { useTitle } from 'apps/deskfin/hooks/useTitle';
-import { formatLibraryTitle } from 'apps/deskfin/utils/titleUtils';
 import * as userSettings from 'scripts/settings/userSettings';
 import { clearBackdrop } from 'components/backdrop/backdrop';
 import Page from 'components/Page';
@@ -301,7 +300,7 @@ const Home: FC = () => {
         if (!isFavoritesTab) void loadLatestSections();
     }, [isFavoritesTab, loadLatestSections]);
 
-    useTitle(isFavoritesTab ? formatLibraryTitle('Favorites') : 'desk');
+    useTitle(isFavoritesTab ? 'Favorites' : undefined);
 
     const sectionOrder = useMemo(() => getAllSectionsToShow(10), []);
 

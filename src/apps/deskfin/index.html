@@ -9,7 +9,7 @@
         <meta http-equiv="X-UA-Compatibility" content="IE=Edge" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="application-name" content="deskfun" />
+        <meta name="application-name" content="Jellyfin" />
         <meta name="robots" content="noindex, nofollow, noarchive" />
         <meta name="referrer" content="no-referrer" />
         <meta id="themeColor" name="theme-color" content="#202020" />
@@ -21,7 +21,21 @@
         />
         <link rel="icon" href="deskfin/favicon.ico" />
 
-        <title>desk</title>
+        <title>Jellyfin</title>
+        <script>
+            // Show the server's name before the app loads: Jellyfin saves it with the connection details of each
+            // server it has connected to. On a first visit there's none yet, so "Jellyfin" stays until the app sets it.
+            try {
+                const servers = JSON.parse(localStorage.getItem('jellyfin_credentials')).Servers;
+                const name = servers.sort((a, b) => (b.DateLastAccessed || 0) - (a.DateLastAccessed || 0))[0].Name;
+                if (name) {
+                    document.title = name;
+                    document.querySelector('meta[name="application-name"]').content = name;
+                }
+            } catch {
+                // No saved servers yet
+            }
+        </script>
 
         <style>
             .transparentDocument,

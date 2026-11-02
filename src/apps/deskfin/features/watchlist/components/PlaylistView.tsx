@@ -12,7 +12,6 @@ import Page from 'components/Page';
 import { MediaCardList } from 'apps/deskfin/components/media/MediaCardList';
 import NoItemsMessage from 'components/common/NoItemsMessage';
 import { useTitle } from 'apps/deskfin/hooks/useTitle';
-import { formatLibraryTitle } from 'apps/deskfin/utils/titleUtils';
 import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
 import { IconSvgs } from 'apps/deskfin/assets/icons';
 import globalize from 'lib/globalize';
@@ -42,7 +41,7 @@ export const PlaylistView: FC<PlaylistViewProps> = ({ playlistId }) => {
     const { mutateAsync: toggleFavorite } = useToggleFavoriteMutation();
     const { mutateAsync: togglePlayed } = useTogglePlayedMutation();
 
-    useTitle(playlist?.Name ? formatLibraryTitle(playlist.Name) : 'Playlist');
+    useTitle(playlist?.Name || 'Playlist');
 
     const fetchPlaylist = useCallback(async () => {
         if (!api || !user?.Id) return;

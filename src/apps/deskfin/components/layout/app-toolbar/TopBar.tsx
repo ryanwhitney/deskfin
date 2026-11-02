@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 import SvgIcon from 'apps/deskfin/components/icons/SvgIcon';
 import { IconSvgs } from 'apps/deskfin/assets/icons';
+import { useServerName } from 'apps/deskfin/hooks/useServerName';
 
 import SearchButton from './SearchButton';
 import UserMenuButton from './UserMenuButton';
@@ -32,15 +33,13 @@ const MenuIcon = () => (
     </svg>
 );
 
-const TITLE = 'desk';
-const SUBTITLE = '';
-
 export const TopBar: FC<TopBarProps> = ({
     isDrawerAvailable,
     isDrawerOpen,
     onDrawerButtonClick
 }) => {
     const location = useLocation();
+    const serverName = useServerName();
 
     // The video osd does not show the standard toolbar
     if (location.pathname === '/video') return null;
@@ -65,8 +64,7 @@ export const TopBar: FC<TopBarProps> = ({
                         <SvgIcon svg={IconSvgs.macMini} size={24} />
                     </span>
                     <span className={styles.brandText}>
-                        <span className={styles.brandTitle}>{TITLE}</span>
-                        {SUBTITLE ? <span className={styles.brandSub}>{SUBTITLE}</span> : null}
+                        <span className={styles.brandTitle}>{serverName}</span>
                     </span>
                 </Link>
             </div>

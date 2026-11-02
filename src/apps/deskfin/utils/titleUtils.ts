@@ -1,25 +1,25 @@
-const SITE_TITLE = 'desk';
+// useTitle adds the server name to these, e.g. "Favorites - Movies - Jellyfin"
 
 /**
- * Formats a library title with the site title
+ * Formats a library title
  * @param libraryName - The library name (e.g., "Movies", "TV Shows")
  * @param tabName - Optional tab name (e.g., "Favorites", "Genres")
- * @returns Formatted title like "Movies - desk" or "Favorites - Movies - desk"
+ * @returns Formatted title like "Movies" or "Favorites - Movies"
  */
 export function formatLibraryTitle(libraryName: string, tabName?: string): string {
     if (tabName && tabName !== libraryName) {
-        return `${tabName} - ${libraryName} - ${SITE_TITLE}`;
+        return `${tabName} - ${libraryName}`;
     }
-    return `${libraryName} - ${SITE_TITLE}`;
+    return libraryName;
 }
 
 /**
- * Formats an item title with proper context and site title
+ * Formats an item title with proper context
  * @param itemName - The item name
  * @param itemType - The item type (Movie, Series, Season, Episode, etc.)
  * @param seriesName - Optional series name (for seasons/episodes)
  * @param seasonName - Optional season name (for episodes)
- * @returns Formatted title with proper hierarchy and site title
+ * @returns Formatted title with proper hierarchy, or an empty string without a name
  */
 export function formatItemTitle(
     itemName: string | null | undefined,
@@ -27,7 +27,7 @@ export function formatItemTitle(
     seriesName?: string | null,
     seasonName?: string | null
 ): string {
-    if (!itemName) return SITE_TITLE;
+    if (!itemName) return '';
 
     const parts: string[] = [];
 
@@ -43,9 +43,6 @@ export function formatItemTitle(
     if ((itemType === 'Season' || itemType === 'Episode') && seriesName) {
         parts.push(seriesName);
     }
-
-    // Add site title
-    parts.push(SITE_TITLE);
 
     return parts.join(' - ');
 }
