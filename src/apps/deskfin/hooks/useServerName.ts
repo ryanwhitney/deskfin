@@ -24,7 +24,6 @@ export const useServerName = () => {
         queryKey: [ 'PublicSystemInfo' ],
         queryFn: async ({ signal }) => (await getSystemApi(api!).getPublicSystemInfo({ signal })).data,
         enabled: !!api,
-        staleTime: Infinity,
         placeholderData: getSavedServerInfo
     });
 
